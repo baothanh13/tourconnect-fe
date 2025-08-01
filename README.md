@@ -9,12 +9,14 @@ TourConnect is a comprehensive platform that bridges the gap between tourists se
 ## 🚀 Features
 
 ### Authentication System
+
 - **Multi-role login**: Tourist, Guide, Support Staff, Administrator
 - **Dynamic registration**: Role-specific registration forms
 - **Persistent sessions**: Stay logged in across browser sessions
 - **Demo credentials**: Easy testing with predefined accounts
 
 ### Tourist Features
+
 - Browse verified tour guides
 - Advanced search and filtering
 - View guide profiles and specialties
@@ -22,12 +24,14 @@ TourConnect is a comprehensive platform that bridges the gap between tourists se
 - Leave reviews (coming soon)
 
 ### Guide Features
+
 - Profile management with specialties
 - Availability scheduling (coming soon)
 - Booking management (coming soon)
 - Revenue tracking (coming soon)
 
 ### Admin Features
+
 - User verification system (coming soon)
 - Platform management (coming soon)
 - Analytics dashboard (coming soon)
@@ -44,6 +48,7 @@ TourConnect is a comprehensive platform that bridges the gap between tourists se
 ## 🚦 Getting Started
 
 ### Prerequisites
+
 - Node.js (v16 or higher)
 - npm or yarn
 - Git
@@ -51,17 +56,20 @@ TourConnect is a comprehensive platform that bridges the gap between tourists se
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/baothanh13/tourconnect-fe.git
    cd tourconnect-fe
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Start development server**
+
    ```bash
    npm start
    ```
@@ -75,11 +83,11 @@ TourConnect is a comprehensive platform that bridges the gap between tourists se
 
 Test the application with these demo accounts:
 
-| Role | Email | Password |
-|------|-------|----------|
-| Tourist | `tourist@example.com` | `123456` |
-| Guide | `guide@example.com` | `123456` |
-| Admin | `admin@tourconnect.com` | `admin123` |
+| Role    | Email                   | Password   |
+| ------- | ----------------------- | ---------- |
+| Tourist | `tourist@example.com`   | `123456`   |
+| Guide   | `guide@example.com`     | `123456`   |
+| Admin   | `admin@tourconnect.com` | `admin123` |
 
 ## 📁 Project Structure
 
@@ -107,30 +115,35 @@ src/
 ## 🔄 Development Roadmap
 
 ### Phase 1: Core Authentication ✅
+
 - [x] Multi-role authentication system
 - [x] User registration with role-specific forms
 - [x] Dynamic header with user status
 - [x] Comprehensive mock data structure
 
 ### Phase 2: Enhanced Search & Booking 🔄
+
 - [ ] Advanced guide filtering
 - [ ] Real-time availability checking
 - [ ] Booking system implementation
 - [ ] Payment integration (MoMo)
 
 ### Phase 3: Guide Management 📋
+
 - [ ] Guide dashboard
 - [ ] Schedule management
 - [ ] Booking request handling
 - [ ] Revenue tracking
 
 ### Phase 4: Admin & Support 📊
+
 - [ ] Admin dashboard
 - [ ] User verification system
 - [ ] Support ticket system
 - [ ] Analytics and reporting
 
 ### Phase 5: Advanced Features 🚀
+
 - [ ] Real-time chat
 - [ ] GPS tracking
 - [ ] Mobile app (React Native)
@@ -178,12 +191,14 @@ We welcome contributions! Please follow these steps:
 ## 🌐 System Requirements
 
 ### Functional Requirements
+
 - **Tourists**: Search guides, book tours, make payments, leave reviews
 - **Guides**: Manage profiles, handle bookings, receive payments
 - **Support**: Assist users, handle disputes
 - **Admin**: Verify guides, monitor platform, manage policies
 
 ### Non-Functional Requirements
+
 - **Security**: OTP authentication, secure payments
 - **Integration**: MoMo payments, Google Maps, SMS/Email notifications
 - **Performance**: Fast loading, responsive design

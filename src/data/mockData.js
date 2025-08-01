@@ -117,7 +117,8 @@ export const mockReviews = [
     touristId: 1,
     guideId: 1,
     rating: 5,
-    comment: "Amazing tour! An was very knowledgeable about Hanoi's history. Highly recommended!",
+    comment:
+      "Amazing tour! An was very knowledgeable about Hanoi's history. Highly recommended!",
     createdAt: "2025-08-01T15:00:00Z",
   },
 ];
@@ -146,18 +147,18 @@ export const mockUsers = [
 // Cities and Specialties for filtering
 export const cities = [
   "Hanoi",
-  "Da Nang", 
+  "Da Nang",
   "Ho Chi Minh City",
   "Hoi An",
   "Nha Trang",
   "Hue",
   "Can Tho",
-  "Vung Tau"
+  "Vung Tau",
 ];
 
 export const specialties = [
   "Cultural Tours",
-  "Food Tours", 
+  "Food Tours",
   "Historical Sites",
   "Beach Tours",
   "Mountain Hiking",
@@ -169,5 +170,5 @@ export const specialties = [
   "Lantern Festivals",
   "Island Hopping",
   "Scuba Diving",
-  "Beach Activities"
+  "Beach Activities",
 ];

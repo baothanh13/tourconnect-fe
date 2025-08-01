@@ -1,15 +1,15 @@
-import React, { useState, useMemo } from 'react';
-import { mockGuides, cities, specialties } from '../data/mockData';
-import GuideCard from '../components/guide/GuideCard';
-import './GuidesListPage.css';
+import React, { useState, useMemo } from "react";
+import { mockGuides, cities, specialties } from "../data/mockData";
+import GuideCard from "../components/guide/GuideCard";
+import "./GuidesListPage.css";
 
 const GuidesListPage = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
-  const [selectedSpecialty, setSelectedSpecialty] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [minRating, setMinRating] = useState(0);
-  const [sortBy, setSortBy] = useState('rating');
+  const [sortBy, setSortBy] = useState("rating");
   const [availableOnly, setAvailableOnly] = useState(false);
 
   const filteredAndSortedGuides = useMemo(() => {
@@ -17,22 +17,28 @@ const GuidesListPage = () => {
     if (!mockGuides || !Array.isArray(mockGuides)) {
       return [];
     }
-    
-    let filtered = mockGuides.filter(guide => {
+
+    let filtered = mockGuides.filter((guide) => {
       // Search query filter
-      const matchesSearch = !searchQuery || 
+      const matchesSearch =
+        !searchQuery ||
         guide.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         guide.bio.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        guide.specialties.some(spec => spec.toLowerCase().includes(searchQuery.toLowerCase()));
+        guide.specialties.some((spec) =>
+          spec.toLowerCase().includes(searchQuery.toLowerCase())
+        );
 
       // City filter
       const matchesCity = !selectedCity || guide.location === selectedCity;
 
       // Specialty filter
-      const matchesSpecialty = !selectedSpecialty || guide.specialties.includes(selectedSpecialty);
+      const matchesSpecialty =
+        !selectedSpecialty || guide.specialties.includes(selectedSpecialty);
 
       // Price range filter
-      const matchesPrice = guide.pricePerHour >= priceRange[0] && guide.pricePerHour <= priceRange[1];
+      const matchesPrice =
+        guide.pricePerHour >= priceRange[0] &&
+        guide.pricePerHour <= priceRange[1];
 
       // Rating filter
       const matchesRating = guide.rating >= minRating;
@@ -40,35 +46,50 @@ const GuidesListPage = () => {
       // Availability filter
       const matchesAvailability = !availableOnly || guide.isAvailable;
 
-      return matchesSearch && matchesCity && matchesSpecialty && matchesPrice && matchesRating && matchesAvailability;
+      return (
+        matchesSearch &&
+        matchesCity &&
+        matchesSpecialty &&
+        matchesPrice &&
+        matchesRating &&
+        matchesAvailability
+      );
     });
 
     // Sort guides
     return filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'rating':
+        case "rating":
           return b.rating - a.rating;
-        case 'price-low':
+        case "price-low":
           return a.pricePerHour - b.pricePerHour;
-        case 'price-high':
+        case "price-high":
           return b.pricePerHour - a.pricePerHour;
-        case 'experience':
+        case "experience":
           return b.experienceYears - a.experienceYears;
-        case 'reviews':
+        case "reviews":
           return b.totalReviews - a.totalReviews;
         default:
           return 0;
       }
     });
-  }, [searchQuery, selectedCity, selectedSpecialty, priceRange, minRating, sortBy, availableOnly]);
+  }, [
+    searchQuery,
+    selectedCity,
+    selectedSpecialty,
+    priceRange,
+    minRating,
+    sortBy,
+    availableOnly,
+  ]);
 
   const resetFilters = () => {
-    setSearchQuery('');
-    setSelectedCity('');
-    setSelectedSpecialty('');
+    setSearchQuery("");
+    setSelectedCity("");
+    setSelectedSpecialty("");
     setPriceRange([0, 1000]);
     setMinRating(0);
-    setSortBy('rating');
+    setSortBy("rating");
     setAvailableOnly(false);
   };
 
@@ -77,7 +98,9 @@ const GuidesListPage = () => {
       <div className="container">
         <div className="page-header">
           <h1>Find Your Perfect Tour Guide</h1>
-          <p>Discover amazing local experiences with verified professional guides</p>
+          <p>
+            Discover amazing local experiences with verified professional guides
+          </p>
         </div>
 
         {/* Search and Filter Section */}
@@ -96,36 +119,42 @@ const GuidesListPage = () => {
             <div className="filter-row">
               <div className="filter-group">
                 <label>City/Location</label>
-                <select 
-                  value={selectedCity} 
+                <select
+                  value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
                   className="filter-select"
                 >
                   <option value="">All Cities</option>
-                  {cities && cities.map(city => (
-                    <option key={city} value={city}>{city}</option>
-                  ))}
+                  {cities &&
+                    cities.map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))}
                 </select>
               </div>
 
               <div className="filter-group">
                 <label>Specialty</label>
-                <select 
-                  value={selectedSpecialty} 
+                <select
+                  value={selectedSpecialty}
                   onChange={(e) => setSelectedSpecialty(e.target.value)}
                   className="filter-select"
                 >
                   <option value="">All Specialties</option>
-                  {specialties && specialties.map(specialty => (
-                    <option key={specialty} value={specialty}>{specialty}</option>
-                  ))}
+                  {specialties &&
+                    specialties.map((specialty) => (
+                      <option key={specialty} value={specialty}>
+                        {specialty}
+                      </option>
+                    ))}
                 </select>
               </div>
 
               <div className="filter-group">
                 <label>Sort By</label>
-                <select 
-                  value={sortBy} 
+                <select
+                  value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="filter-select"
                 >
@@ -140,14 +169,18 @@ const GuidesListPage = () => {
 
             <div className="filter-row">
               <div className="filter-group">
-                <label>Price Range: ${priceRange[0]} - ${priceRange[1]}/hour</label>
+                <label>
+                  Price Range: ${priceRange[0]} - ${priceRange[1]}/hour
+                </label>
                 <div className="price-range-container">
                   <input
                     type="range"
                     min="0"
                     max="1000"
                     value={priceRange[0]}
-                    onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
+                    onChange={(e) =>
+                      setPriceRange([parseInt(e.target.value), priceRange[1]])
+                    }
                     className="price-range-slider"
                   />
                   <input
@@ -155,7 +188,9 @@ const GuidesListPage = () => {
                     min="0"
                     max="1000"
                     value={priceRange[1]}
-                    onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                    onChange={(e) =>
+                      setPriceRange([priceRange[0], parseInt(e.target.value)])
+                    }
                     className="price-range-slider"
                   />
                 </div>
@@ -163,8 +198,8 @@ const GuidesListPage = () => {
 
               <div className="filter-group">
                 <label>Minimum Rating</label>
-                <select 
-                  value={minRating} 
+                <select
+                  value={minRating}
                   onChange={(e) => setMinRating(parseFloat(e.target.value))}
                   className="filter-select"
                 >
@@ -199,7 +234,8 @@ const GuidesListPage = () => {
         <div className="results-section">
           <div className="results-header">
             <p className="results-count">
-              {filteredAndSortedGuides.length} guide{filteredAndSortedGuides.length !== 1 ? 's' : ''} found
+              {filteredAndSortedGuides.length} guide
+              {filteredAndSortedGuides.length !== 1 ? "s" : ""} found
             </p>
           </div>
 
@@ -213,7 +249,7 @@ const GuidesListPage = () => {
             </div>
           ) : (
             <div className="guides-grid">
-              {filteredAndSortedGuides.map(guide => (
+              {filteredAndSortedGuides.map((guide) => (
                 <GuideCard key={guide.id} guide={guide} />
               ))}
             </div>

@@ -1,10 +1,142 @@
-# Getting Started with Create React App
+# TourConnect Frontend 🌍
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern web application connecting tourists with local tour guides, built with React.js.
 
-## Available Scripts
+## 🌟 Overview
 
-In the project directory, you can run:
+TourConnect is a comprehensive platform that bridges the gap between tourists seeking authentic local experiences and professional tour guides. The platform offers role-based functionality for tourists, guides, support staff, and administrators.
+
+## 🚀 Features
+
+### Authentication System
+- **Multi-role login**: Tourist, Guide, Support Staff, Administrator
+- **Dynamic registration**: Role-specific registration forms
+- **Persistent sessions**: Stay logged in across browser sessions
+- **Demo credentials**: Easy testing with predefined accounts
+
+### Tourist Features
+- Browse verified tour guides
+- Advanced search and filtering
+- View guide profiles and specialties
+- Book tours (coming soon)
+- Leave reviews (coming soon)
+
+### Guide Features
+- Profile management with specialties
+- Availability scheduling (coming soon)
+- Booking management (coming soon)
+- Revenue tracking (coming soon)
+
+### Admin Features
+- User verification system (coming soon)
+- Platform management (coming soon)
+- Analytics dashboard (coming soon)
+
+## 🛠️ Technology Stack
+
+- **Frontend**: React 19.1.1
+- **Routing**: React Router 6.26.2
+- **State Management**: React Context API
+- **Styling**: CSS3 with Grid and Flexbox
+- **Development**: Create React App
+- **Version Control**: Git & GitHub
+
+## 🚦 Getting Started
+
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
+- Git
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/baothanh13/tourconnect-fe.git
+   cd tourconnect-fe
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start development server**
+   ```bash
+   npm start
+   ```
+
+4. **Open your browser**
+   ```
+   http://localhost:3000
+   ```
+
+## 🧪 Demo Credentials
+
+Test the application with these demo accounts:
+
+| Role | Email | Password |
+|------|-------|----------|
+| Tourist | `tourist@example.com` | `123456` |
+| Guide | `guide@example.com` | `123456` |
+| Admin | `admin@tourconnect.com` | `admin123` |
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── Header.js       # Navigation header
+│   ├── Footer.js       # Page footer
+│   └── guide/          # Guide-specific components
+├── contexts/           # React Context providers
+│   └── AuthContext.js  # Authentication state management
+├── pages/              # Page components
+│   ├── HomePage.js     # Landing page
+│   ├── LoginPage.js    # Authentication
+│   ├── RegisterPage.js # User registration
+│   ├── GuidesListPage.js # Guide browsing
+│   └── GuideDetailPage.js # Individual guide profiles
+├── data/               # Mock data and utilities
+│   └── mockData.js     # Development data
+├── App.js              # Main application component
+├── App.css             # Global styles
+└── index.js            # Application entry point
+```
+
+## 🔄 Development Roadmap
+
+### Phase 1: Core Authentication ✅
+- [x] Multi-role authentication system
+- [x] User registration with role-specific forms
+- [x] Dynamic header with user status
+- [x] Comprehensive mock data structure
+
+### Phase 2: Enhanced Search & Booking 🔄
+- [ ] Advanced guide filtering
+- [ ] Real-time availability checking
+- [ ] Booking system implementation
+- [ ] Payment integration (MoMo)
+
+### Phase 3: Guide Management 📋
+- [ ] Guide dashboard
+- [ ] Schedule management
+- [ ] Booking request handling
+- [ ] Revenue tracking
+
+### Phase 4: Admin & Support 📊
+- [ ] Admin dashboard
+- [ ] User verification system
+- [ ] Support ticket system
+- [ ] Analytics and reporting
+
+### Phase 5: Advanced Features 🚀
+- [ ] Real-time chat
+- [ ] GPS tracking
+- [ ] Mobile app (React Native)
+- [ ] AI-powered recommendations
+
+## 📄 Available Scripts
 
 ### `npm start`
 
@@ -27,44 +159,58 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
 ### `npm run eject`
 
 **Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
 If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🤝 Contributing
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+We welcome contributions! Please follow these steps:
 
-## Learn More
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🌐 System Requirements
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Functional Requirements
+- **Tourists**: Search guides, book tours, make payments, leave reviews
+- **Guides**: Manage profiles, handle bookings, receive payments
+- **Support**: Assist users, handle disputes
+- **Admin**: Verify guides, monitor platform, manage policies
 
-### Code Splitting
+### Non-Functional Requirements
+- **Security**: OTP authentication, secure payments
+- **Integration**: MoMo payments, Google Maps, SMS/Email notifications
+- **Performance**: Fast loading, responsive design
+- **Scalability**: Microservices architecture ready
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🔗 Related Projects
 
-### Analyzing the Bundle Size
+- **Backend API**: Coming soon (Node.js + SQL Server)
+- **Mobile App**: Planned (React Native)
+- **Admin Panel**: Integrated in main app
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📞 Contact
 
-### Making a Progressive Web App
+- **Project Owner**: Bao Thanh
+- **GitHub**: [@baothanh13](https://github.com/baothanh13)
+- **Repository**: [tourconnect-fe](https://github.com/baothanh13/tourconnect-fe)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 📜 License
 
-### Advanced Configuration
+This project is licensed under the MIT License.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 🙏 Acknowledgments
 
-### Deployment
+- React team for the amazing framework
+- Create React App for the development setup
+- All contributors and testers
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**Built with ❤️ for authentic travel experiences**

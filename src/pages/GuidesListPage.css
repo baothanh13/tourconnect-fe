@@ -1,46 +1,246 @@
-/* src/pages/GuidesListPage.css */
-
+/* Enhanced Guides List Page Styles */
 .guides-list-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 0;
+}
+
+.container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
-  font-family: sans-serif;
+  padding: 0 1rem;
 }
 
-.page-title {
+.page-header {
   text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.page-header h1 {
   font-size: 2.5rem;
-  color: #2c3e50;
   margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.page-subtitle {
-  text-align: center;
+.page-header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* Search and Filter Section */
+.search-filter-section {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar {
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: 2px solid #e1e5e9;
+  border-radius: 50px;
   font-size: 1.1rem;
-  color: #7f8c8d;
-  margin-bottom: 3rem;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: white;
+}
+
+.filters-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.filter-select {
+  padding: 0.75rem;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.price-range-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.price-range-slider {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #ddd;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.price-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.price-range-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.checkbox-group {
+  justify-content: flex-end;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #667eea;
+}
+
+.reset-filters-btn {
+  padding: 0.75rem 1.5rem;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.reset-filters-btn:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+/* Results Section */
+.results-section {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.results-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f1f3f4;
+}
+
+.results-count {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.no-results {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6c757d;
+}
+
+.no-results h3 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.no-results p {
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.reset-btn {
+  padding: 0.75rem 2rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.reset-btn:hover {
+  background: #5a6fd8;
+  transform: translateY(-2px);
 }
 
 .guides-grid {
   display: grid;
-  /* Tạo layout dạng lưới, tự động điều chỉnh số cột */
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 2rem;
+  margin-top: 1rem;
 }
 
-/* --- Styling cho GuideCard --- */
-/* Bạn cũng có thể tạo file GuideCard.css riêng và import vào GuideCard.js */
-
+/* Legacy styles for guide cards that might be used */
 .guide-card {
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  text-decoration: none;
-  color: inherit;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .guide-card:hover {
@@ -48,50 +248,233 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
-.card-image-container {
+.guide-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.guide-image-container {
   position: relative;
+  overflow: hidden;
 }
 
-.card-avatar {
+.guide-image {
   width: 100%;
-  height: 250px;
+  height: 200px;
   object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
-.verified-badge {
+.guide-card:hover .guide-image {
+  transform: scale(1.05);
+}
+
+.guide-badges {
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #2ecc71;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.card-content {
+.verified-badge {
+  background: #28a745;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.available-badge {
+  background: #007bff;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.guide-content {
   padding: 1.5rem;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
 
-.card-name {
-  font-size: 1.4rem;
-  margin: 0 0 0.5rem 0;
-  color: #34495e;
-}
-
-.card-city {
-  font-size: 1rem;
-  color: #95a5a6;
-  margin: 0 0 1rem 0;
-}
-
-.card-rating {
-  margin-top: auto; /* Đẩy phần rating xuống cuối card */
-  font-size: 1.1rem;
+.guide-name {
+  font-size: 1.3rem;
   font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.guide-location {
+  color: #e74c3c;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.guide-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.stars {
   color: #f39c12;
+  font-size: 1rem;
+}
+
+.rating-text {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.guide-bio {
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  flex-grow: 1;
+  font-size: 0.9rem;
+}
+
+.guide-specialties {
+  margin-bottom: 1rem;
+}
+
+.specialty-tag {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  padding: 0.3rem 0.7rem;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.specialty-more {
+  color: #666;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.guide-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f3f4;
+}
+
+.experience-text {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.guide-price {
+  text-align: right;
+}
+
+.price-amount {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #27ae60;
+}
+
+.price-unit {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.guide-actions {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #f1f3f4;
+  background: #f8f9fa;
+}
+
+.book-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #667eea;
+  color: white;
+}
+
+.book-btn:hover:not(.disabled) {
+  background: #5a6fd8;
+  transform: translateY(-2px);
+}
+
+.book-btn.disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .guides-list-page {
+    padding: 1rem 0;
+  }
+
+  .container {
+    padding: 0 0.5rem;
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+  }
+
+  .search-filter-section {
+    padding: 1.5rem;
+  }
+
+  .filter-row {
+    grid-template-columns: 1fr;
+  }
+
+  .guides-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .price-range-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .page-header p {
+    font-size: 1rem;
+  }
+
+  .search-filter-section {
+    padding: 1rem;
+  }
+
+  .results-section {
+    padding: 1rem;
+  }
 }

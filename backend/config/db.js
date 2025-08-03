@@ -1,26 +1,22 @@
-const sql = require('mssql');
+const mysql = require('mysql2/promise');  // chú ý thêm 'promise' để dùng async/await
 
 const config = {
-    user: 'tourconnect_user', 
-    password: 'Tienminh25052004@', 
-    server: 'localhost', 
-    database: 'TourConnect', 
-    options: {
-        encrypt: false,
-        trustServerCertificate: true 
-    }
+    host: 'localhost',
+    user: 'root',  // hoặc user bạn tạo, VD: 'tourconnect_user'
+    password: 'Tienminh25052004@',
+    database: 'TourConnect',
 };
 
 async function connectToDB() {
     try {
-        await sql.connect(config);
-        console.log('Connected to SQL Server');
+        const connection = await mysql.createConnection(config);
+        console.log('Connected to MySQL');
+        return connection;  // trả về connection để file khác có thể dùng
     } catch (err) {
         console.error('Database connection failed: ', err);
     }
 }
 
 module.exports = {
-    sql,
     connectToDB
 };

@@ -6,7 +6,7 @@ const register = async (req, res) => {
     try {
         const result = await sql.query`
             INSERT INTO Customer (Auth, Email, Password, Name, Phone, Address)
-            VALUES ((SELECT ISNULL(MAX(Auth), 0) + 1 FROM Customer), ${email}, ${password}, ${name}, ${phone}, ${address})
+            VALUES ((SELECT ISNULL(MAX(Auth), 0) + 1 FROM Customer), ${email}, ${password}, ${name}, ${phone})
         `;
         res.status(201).json({ message: 'User registered successfully!' });
     } catch (error) {

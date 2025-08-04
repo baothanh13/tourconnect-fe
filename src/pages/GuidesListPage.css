@@ -1,31 +1,201 @@
-/* Enhanced Guides List Page Styles */
+/* Modern Guides List Page */
 .guides-list-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem 0;
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.guides-list-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><circle cx="100" cy="100" r="80" fill="rgba(102,126,234,0.02)"/><circle cx="900" cy="200" r="120" fill="rgba(240,147,251,0.02)"/><circle cx="200" cy="800" r="100" fill="rgba(102,126,234,0.02)"/></svg>');
+  background-size: cover;
+  pointer-events: none;
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Hero Section for Guides Page */
+.guides-hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  padding: 6rem 0 4rem;
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.guides-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><circle cx="150" cy="150" r="100" fill="rgba(255,255,255,0.03)"/><circle cx="850" cy="300" r="150" fill="rgba(255,255,255,0.02)"/></svg>');
+  background-size: cover;
+  pointer-events: none;
 }
 
 .page-header {
-  text-align: center;
+  position: relative;
+  z-index: 2;
   margin-bottom: 2rem;
-  color: white;
 }
 
 .page-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  margin-bottom: 1rem;
+  font-weight: 800;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff, #f0f8ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .page-header p {
-  font-size: 1.2rem;
-  opacity: 0.9;
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  opacity: 0.95;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Modern Active Filters Display */
+.active-filters {
+  background: white;
+  border-radius: 24px;
+  padding: 2rem;
+  margin: -2rem 0 3rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  position: relative;
+  z-index: 3;
+  backdrop-filter: blur(10px);
+}
+
+.active-filters h3 {
+  color: #333;
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.filter-tag {
+  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+  color: #667eea;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.filter-tag:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+.filter-tag .remove-filter {
+  background: rgba(102, 126, 234, 0.2);
+  color: #667eea;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.filter-tag .remove-filter:hover {
+  background: #667eea;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Main Content Area */
+.main-content {
+  padding: 3rem 0;
+}
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+}
+
+.filter-tag.city-filter {
+  background: linear-gradient(135deg, #667eea, #5a6fd8);
+}
+
+.filter-tag.country-filter {
+  background: linear-gradient(135deg, #764ba2, #8e44ad);
+}
+
+.remove-filter {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.remove-filter:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.results-count {
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0;
+  font-style: italic;
 }
 
 /* Search and Filter Section */
@@ -112,6 +282,7 @@
   background: #ddd;
   outline: none;
   -webkit-appearance: none;
+  appearance: none;
 }
 
 .price-range-slider::-webkit-slider-thumb {
@@ -476,5 +647,74 @@
 
   .results-section {
     padding: 1rem;
+  }
+}
+
+/* Large Screen Responsive Design */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1400px;
+    padding: 0 2rem;
+  }
+
+  .page-header h1 {
+    font-size: 3rem;
+  }
+
+  .page-header p {
+    font-size: 1.3rem;
+  }
+
+  .search-filter-section {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .results-section {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .guides-grid {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1600px;
+    padding: 0 3rem;
+  }
+
+  .page-header h1 {
+    font-size: 3.5rem;
+  }
+
+  .search-filter-section,
+  .results-section {
+    max-width: 1400px;
+  }
+
+  .guides-grid {
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    max-width: 1400px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1800px;
+    padding: 0 4rem;
+  }
+
+  .search-filter-section,
+  .results-section {
+    max-width: 1600px;
+  }
+
+  .guides-grid {
+    max-width: 1600px;
   }
 }

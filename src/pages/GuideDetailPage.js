@@ -1,9 +1,13 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import { mockGuides } from "../data/mockData";
+import "./GuideDetailPage.css";
+import "./GuideDetailPage.css";
 
 const GuideDetailPage = () => {
   const { id } = useParams();
+  const { isAuthenticated } = useAuth();
 
   // Tìm hướng dẫn viên theo id
   const guide = mockGuides.find((g) => g.id === parseInt(id));
@@ -49,7 +53,22 @@ const GuideDetailPage = () => {
         </div>
 
         <div className="contact-section">
-          <button className="contact-button">Liên hệ hướng dẫn viên</button>
+          <div className="action-buttons">
+            <button className="contact-button">💬 Liên hệ hướng dẫn viên</button>
+            {isAuthenticated ? (
+              <Link to={`/booking/${guide.id}`} className="book-button">
+                🎫 Đặt tour ngay
+              </Link>
+            ) : (
+              <Link to="/login" className="book-button">
+                🎫 Đăng nhập để đặt tour
+              </Link>
+            )}
+          </div>
+          <div className="guide-price">
+            <span className="price-label">Giá:</span>
+            <span className="price-value">${guide.pricePerDay || 100}/ngày</span>
+          </div>
         </div>
       </div>
     </div>

@@ -1,39 +1,29 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { mockGuides } from "../data/mockData";
+import { useLocation, useNavigate } from "react-router-dom";
+import { guidesService } from "../services/guidesService";
+import { mockGuides, cities, specialties } from "../data/mockData";
 import GuideCard from "../components/guide/GuideCard";
 import Loading from "../components/Loading";
 import "./GuidesListPage.css";
 
 const GuidesListPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [guides, setGuides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [priceRange, setPriceRange] = useState("all");
-  const [dateFilter, setDateFilter] = useState("");
   const [minRating, setMinRating] = useState(0);
+  const [sortBy, setSortBy] = useState("rating");
   const [availableOnly, setAvailableOnly] = useState(false);
+  const [dateFilter, setDateFilter] = useState("");
 
-  // Filter options
-  const cities = [
-    "Paris",
-    "London",
-    "Tokyo",
-    "New York",
-    "Rome",
-    "Barcelona",
-    "Amsterdam",
-    "Prague",
-    "Vienna",
-    "Berlin",
-    "Florence",
-    "Venice",
-  ];
-
+  // Available options for filters
   const languages = [
     "English",
     "Spanish",
@@ -44,11 +34,10 @@ const GuidesListPage = () => {
     "Japanese",
     "Chinese",
     "Korean",
+    "Vietnamese",
+    "Thai",
     "Arabic",
-    "Russian",
-    "Dutch",
   ];
-
   const categories = [
     "Cultural Tours",
     "Food Tours",
@@ -73,10 +62,12 @@ const GuidesListPage = () => {
     const loadGuides = async () => {
       try {
         setLoading(true);
+        // In a real app, this would be an API call
+        // const data = await guidesService.getAllGuides();
         setGuides(mockGuides);
       } catch (error) {
         console.error("Error loading guides:", error);
-        setGuides(mockGuides);
+        setGuides(mockGuides); // Fallback to mock data
       } finally {
         setLoading(false);
       }
@@ -85,10 +76,15 @@ const GuidesListPage = () => {
     loadGuides();
   }, []);
 
-  // Handle URL parameters for search
+  // Handle URL parameters
   useEffect(() => {
     const params = new URLSearchParams(location.search);
+    const city = params.get("city");
+    const category = params.get("category");
     const search = params.get("search");
+
+    if (city) setSelectedCity(city);
+    if (category) setSelectedCategory(category);
     if (search) setSearchQuery(search);
   }, [location.search]);
 
@@ -112,10 +108,23 @@ const GuidesListPage = () => {
       );
     }
 
-    // Location filter
+    // Location filters
     if (selectedCity) {
       filtered = filtered.filter((guide) =>
         guide.location.toLowerCase().includes(selectedCity.toLowerCase())
+      );
+    }
+
+    if (selectedCountry) {
+      filtered = filtered.filter((guide) =>
+        guide.location.toLowerCase().includes(selectedCountry.toLowerCase())
+      );
+    }
+
+    // Specialty filter
+    if (selectedSpecialty) {
+      filtered = filtered.filter((guide) =>
+        guide.specialties.includes(selectedSpecialty)
       );
     }
 
@@ -146,11 +155,6 @@ const GuidesListPage = () => {
       }
     }
 
-    // Date filter (simplified - in real app would check guide's actual availability)
-    if (dateFilter) {
-      filtered = filtered.filter((guide) => guide.available);
-    }
-
     // Rating filter
     if (minRating > 0) {
       filtered = filtered.filter((guide) => guide.rating >= minRating);
@@ -161,21 +165,82 @@ const GuidesListPage = () => {
       filtered = filtered.filter((guide) => guide.available);
     }
 
-    // Sort guides by rating (highest first)
-    filtered.sort((a, b) => b.rating - a.rating);
+    // Date filter (simplified - in real app would check guide's actual availability)
+    if (dateFilter) {
+      // For demo purposes, randomly filter some guides
+      filtered = filtered.filter((guide) => guide.available);
+    }
+
+    // Sort guides
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "rating":
+          return b.rating - a.rating;
+        case "price-low":
+          return a.price - b.price;
+        case "price-high":
+          return b.price - a.price;
+        case "experience":
+          return b.experience - a.experience;
+        case "reviews":
+          return b.reviews - a.reviews;
+        default:
+          return b.rating - a.rating;
+      }
+    });
 
     return filtered;
   }, [
     guides,
     searchQuery,
     selectedCity,
+    selectedCountry,
+    selectedSpecialty,
     selectedLanguage,
     selectedCategory,
     priceRange,
-    dateFilter,
     minRating,
+    sortBy,
     availableOnly,
+    dateFilter,
   ]);
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setSearchQuery("");
+    setSelectedCity("");
+    setSelectedCountry("");
+    setSelectedSpecialty("");
+    setSelectedLanguage("");
+    setSelectedCategory("");
+    setPriceRange("all");
+    setMinRating(0);
+    setSortBy("rating");
+    setAvailableOnly(false);
+    setDateFilter("");
+  };
+
+  // Handle search
+  const handleSearch = () => {
+    // Search is handled by the filteredAndSortedGuides memo
+    // This function can be used for analytics or other side effects
+  };
+
+  // Get active filters count
+  const getActiveFiltersCount = () => {
+    let count = 0;
+    if (searchQuery) count++;
+    if (selectedCity) count++;
+    if (selectedCountry) count++;
+    if (selectedSpecialty) count++;
+    if (selectedLanguage) count++;
+    if (selectedCategory) count++;
+    if (priceRange !== "all") count++;
+    if (minRating > 0) count++;
+    if (availableOnly) count++;
+    if (dateFilter) count++;
+    return count;
+  };
 
   if (loading) {
     return <Loading size="large" text="Loading amazing guides..." overlay />;
@@ -197,97 +262,66 @@ const GuidesListPage = () => {
               />
               <button className="search-btn">🔍 Search</button>
             </div>
-
-            <div className="quick-filters">
-              <select
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">📍 Any Location</option>
-                {cities.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">🗣️ Any Language</option>
-                {languages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">🎯 Any Category</option>
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={priceRange}
-                onChange={(e) => setPriceRange(e.target.value)}
-                className="filter-select"
-              >
-                {priceRanges.map((range) => (
-                  <option key={range.value} value={range.value}>
-                    {range.label}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={minRating}
-                onChange={(e) => setMinRating(Number(e.target.value))}
-                className="filter-select"
-              >
-                <option value={0}>⭐ Any Rating</option>
-                <option value={3}>⭐ 3+ Stars</option>
-                <option value={4}>⭐ 4+ Stars</option>
-                <option value={4.5}>⭐ 4.5+ Stars</option>
-              </select>
-
-              <select
-                value={availableOnly ? "available" : "all"}
-                onChange={(e) =>
-                  setAvailableOnly(e.target.value === "available")
-                }
-                className="filter-select"
-              >
-                <option value="all">⚡ Any Availability</option>
-                <option value="available">⚡ Available Now</option>
-              </select>
-
-              <input
-                type="date"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-                className="filter-select"
-                min={new Date().toISOString().split("T")[0]}
-              />
-            </div>
           </div>
         </div>
       </div>
 
       <div className="container">
         <div className="guides-content">
+          {/* Professional Filters Sidebar */}
+          <div className="filters-sidebar">
+            <div className="filters-header">
+              <h3>Refine Your Search</h3>
+              {(minRating > 0 || availableOnly) && (
+                <button
+                  onClick={() => {
+                    setMinRating(0);
+                    setAvailableOnly(false);
+                  }}
+                  className="clear-filters"
+                >
+                  Clear All
+                </button>
+              )}
+            </div>
+
+            <div className="filter-group">
+              <h4>⭐ Minimum Rating</h4>
+              <div className="rating-filter">
+                {[0, 3, 4, 4.5].map((rating) => (
+                  <label key={rating} className="rating-option">
+                    <input
+                      type="radio"
+                      name="rating"
+                      value={rating}
+                      checked={minRating === rating}
+                      onChange={(e) => setMinRating(Number(e.target.value))}
+                    />
+                    <span className="rating-label">
+                      {rating === 0 ? "Any Rating" : `${rating}+ Stars`}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="filter-group">
+              <h4>⚡ Availability</h4>
+              <div className="availability-filter">
+                <label className="availability-option">
+                  <input
+                    type="checkbox"
+                    checked={availableOnly}
+                    onChange={(e) => setAvailableOnly(e.target.checked)}
+                  />
+                  <span className="availability-label">Available Now</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
           {/* Main Content */}
-          <div className="guides-main full-width">
+          <div className="guides-main">
             <div className="guides-header">
               <h1>Find Your Perfect Tour Guide</h1>
               <p className="results-count">
@@ -308,12 +342,6 @@ const GuidesListPage = () => {
                     <p>Try adjusting your filters or search terms</p>
                     <button
                       onClick={() => {
-                        setSearchQuery("");
-                        setSelectedCity("");
-                        setSelectedLanguage("");
-                        setSelectedCategory("");
-                        setPriceRange("all");
-                        setDateFilter("");
                         setMinRating(0);
                         setAvailableOnly(false);
                       }}

@@ -46,16 +46,27 @@ const Header = ({ toggleSidebar }) => {
         {isAuthenticated ? (
           <div className="user-menu">
             <span className="user-greeting">
-              Xin chào, {user.name || user.email}
-              {user.userType === "guide" && " (HDV)"}
-              {user.userType === "admin" && " (Admin)"}
-              {user.userType === "support" && " (Hỗ trợ)"}
-              {user.userType === "tourist" && " (Du khách)"}
+              <span className="greeting-text">Hi, </span>
+              <span className="user-name">
+                {(user.name || user.email).split(" ")[0]}
+              </span>
+              {user.userType === "guide" && (
+                <span className="user-role"> (Guide)</span>
+              )}
+              {user.userType === "admin" && (
+                <span className="user-role"> (Admin)</span>
+              )}
+              {user.userType === "support" && (
+                <span className="user-role"> (Support)</span>
+              )}
+              {user.userType === "tourist" && (
+                <span className="user-role"> (Tourist)</span>
+              )}
             </span>
 
             {user.userType === "tourist" && (
               <Link to="/tourist/dashboard" className="dashboard-link">
-                My Dashboard
+                Dashboard
               </Link>
             )}
 
@@ -67,25 +78,25 @@ const Header = ({ toggleSidebar }) => {
 
             {user.userType === "admin" && (
               <Link to="/admin/dashboard" className="dashboard-link">
-                Admin Panel
+                Admin
               </Link>
             )}
 
             {user.userType === "support" && (
               <Link to="/support/dashboard" className="dashboard-link">
-                Support Center
+                Support
               </Link>
             )}
 
             <button onClick={handleLogout} className="logout-btn">
-              Đăng xuất
+              Logout
             </button>
           </div>
         ) : (
           <div className="auth-links">
-            <Link to="/login">Đăng Nhập</Link>
+            <Link to="/login">Login</Link>
             <Link to="/register" className="register-link">
-              Đăng Ký
+              Register
             </Link>
           </div>
         )}

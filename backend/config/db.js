@@ -4,7 +4,7 @@ const config = {
     host: 'localhost',
     user: 'root',  // hoặc user bạn tạo, VD: 'tourconnect_user'
     password: 'Tienminh25052004@',
-    database: 'TourConnect',
+    database: 'tourconnect',
 };
 
 async function connectToDB() {

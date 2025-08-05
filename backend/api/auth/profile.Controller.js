@@ -2,13 +2,13 @@ const { connectToDB } = require('../../config/db');
 
 // GET /api/auth/me
 const getProfile = async (req, res) => {
-    const userId = req.user.user_id;  // Lấy user_id từ token đã decode (middleware verifyToken)
+    const userId = req.user.id;  // Lấy id từ token đã decode (middleware verifyToken)
 
     try {
         const connection = await connectToDB();
 
         const [users] = await connection.execute(
-            `SELECT user_id, username, email, phone, role, created_at FROM User WHERE user_id = ?`,
+            `SELECT * FROM users WHERE id = ?`,
             [userId]
         );
 
@@ -27,14 +27,16 @@ const getProfile = async (req, res) => {
 // PUT /api/auth/profile
 const updateProfile = async (req, res) => {
     const userId = req.user.user_id;  // Lấy user_id từ token đã decode
-    const { username, phone } = req.body;
+    const { name, phone, avatar_url } = req.body;
 
     try {
         const connection = await connectToDB();
 
         await connection.execute(
-            `UPDATE User SET username = ?, phone = ? WHERE user_id = ?`,
-            [username, phone, userId]
+            `UPDATE users 
+             SET name = ?, phone = ?, avatar_url = ?, updated_at = CURRENT_TIMESTAMP 
+             WHERE id = ?`,
+            [name, phone, avatar_url, userId]
         );
 
         return res.json({ message: 'Profile updated successfully' });

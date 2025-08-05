@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { connectToDB } = require('./config/db');
 const authRoutes = require('./routes/auth.Routes');
+const bookingRoutes = require('./routes/bookings.Routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerOptions'); // Import file cấu hình swagger
 
@@ -11,6 +12,7 @@ const PORT = 3000;
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Middleware
 app.use(bodyParser.json());
+app.use('/api', bookingRoutes);
 
 // Kết nối DB rồi mới start server
 connectToDB().then((connection) => {

@@ -33,6 +33,9 @@ import BecomeGuide from "./pages/BecomeGuide";
 import BlogPage from "./pages/BlogPage";
 import BookingProcessPage from "./pages/BookingProcessPage";
 import CareersPage from "./pages/CareersPage";
+
+// Import API Test Component
+import ApiTest from "./components/ApiTest";
 import HelpCenterPage from "./pages/HelpCenterPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 
@@ -77,6 +80,9 @@ function App() {
               <Route path="/careers" element={<CareersPage />} />
               <Route path="/help" element={<HelpCenterPage />} />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              
+              {/* API Testing Route */}
+              <Route path="/api-test" element={<ApiTest />} />
             </Routes>
           </main>
 

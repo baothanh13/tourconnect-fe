@@ -1,10 +1,11 @@
-const mysql = require('mysql2/promise');  // chú ý thêm 'promise' để dùng async/await
+require('dotenv').config();
+const mysql = require('mysql2/promise');
 
 const config = {
-    host: 'localhost',
-    user: 'root',  // hoặc user bạn tạo, VD: 'tourconnect_user'
-    password: 'Tienminh25052004@',
-    database: 'tourconnect',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
 };
 
 async function connectToDB() {

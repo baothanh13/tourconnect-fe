@@ -1,0 +1,105 @@
+/* Loading Component Styles */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.loading-spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-small .loading-spinner {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+
+.loading-medium .loading-spinner {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+.loading-large .loading-spinner {
+  width: 60px;
+  height: 60px;
+  border-width: 4px;
+}
+
+.loading-text {
+  margin-top: 10px;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.loading-small .loading-text {
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.loading-large .loading-text {
+  font-size: 16px;
+  margin-top: 15px;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+.loading-overlay .loading-container {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  min-width: 150px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .loading-text {
+    color: #ccc;
+  }
+
+  .loading-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  .loading-overlay .loading-container {
+    background: #333;
+    color: white;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .loading-overlay .loading-container {
+    padding: 20px;
+    min-width: 120px;
+  }
+}

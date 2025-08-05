@@ -1,223 +1,331 @@
-import React, { useState, useMemo } from 'react';
-import { mockGuides, cities, specialties } from '../data/mockData';
-import GuideCard from '../components/guide/GuideCard';
-import './GuidesListPage.css';
+import React, { useState, useMemo, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { mockGuides } from "../data/mockData";
+import GuideCard from "../components/guide/GuideCard";
+import Loading from "../components/Loading";
+import "./GuidesListPage.css";
 
 const GuidesListPage = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
-  const [selectedSpecialty, setSelectedSpecialty] = useState('');
-  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const location = useLocation();
+  const [guides, setGuides] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [priceRange, setPriceRange] = useState("all");
+  const [dateFilter, setDateFilter] = useState("");
   const [minRating, setMinRating] = useState(0);
-  const [sortBy, setSortBy] = useState('rating');
   const [availableOnly, setAvailableOnly] = useState(false);
 
-  const filteredAndSortedGuides = useMemo(() => {
-    // Safety check for undefined mockGuides
-    if (!mockGuides || !Array.isArray(mockGuides)) {
-      return [];
-    }
-    
-    let filtered = mockGuides.filter(guide => {
-      // Search query filter
-      const matchesSearch = !searchQuery || 
-        guide.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        guide.bio.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        guide.specialties.some(spec => spec.toLowerCase().includes(searchQuery.toLowerCase()));
+  // Filter options
+  const cities = [
+    "Paris",
+    "London",
+    "Tokyo",
+    "New York",
+    "Rome",
+    "Barcelona",
+    "Amsterdam",
+    "Prague",
+    "Vienna",
+    "Berlin",
+    "Florence",
+    "Venice",
+  ];
 
-      // City filter
-      const matchesCity = !selectedCity || guide.location === selectedCity;
+  const languages = [
+    "English",
+    "Spanish",
+    "French",
+    "German",
+    "Italian",
+    "Portuguese",
+    "Japanese",
+    "Chinese",
+    "Korean",
+    "Arabic",
+    "Russian",
+    "Dutch",
+  ];
 
-      // Specialty filter
-      const matchesSpecialty = !selectedSpecialty || guide.specialties.includes(selectedSpecialty);
+  const categories = [
+    "Cultural Tours",
+    "Food Tours",
+    "Adventure Tours",
+    "City Tours",
+    "Nature Tours",
+    "Photography Tours",
+    "Historical Tours",
+    "Art & Culture",
+  ];
 
-      // Price range filter
-      const matchesPrice = guide.pricePerHour >= priceRange[0] && guide.pricePerHour <= priceRange[1];
+  const priceRanges = [
+    { label: "💰 Any Price", value: "all" },
+    { label: "💰 Under $50", value: "0-50" },
+    { label: "💰 $50 - $100", value: "50-100" },
+    { label: "💰 $100 - $200", value: "100-200" },
+    { label: "💰 $200+", value: "200+" },
+  ];
 
-      // Rating filter
-      const matchesRating = guide.rating >= minRating;
-
-      // Availability filter
-      const matchesAvailability = !availableOnly || guide.isAvailable;
-
-      return matchesSearch && matchesCity && matchesSpecialty && matchesPrice && matchesRating && matchesAvailability;
-    });
-
-    // Sort guides
-    return filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'rating':
-          return b.rating - a.rating;
-        case 'price-low':
-          return a.pricePerHour - b.pricePerHour;
-        case 'price-high':
-          return b.pricePerHour - a.pricePerHour;
-        case 'experience':
-          return b.experienceYears - a.experienceYears;
-        case 'reviews':
-          return b.totalReviews - a.totalReviews;
-        default:
-          return 0;
+  // Load guides data
+  useEffect(() => {
+    const loadGuides = async () => {
+      try {
+        setLoading(true);
+        setGuides(mockGuides);
+      } catch (error) {
+        console.error("Error loading guides:", error);
+        setGuides(mockGuides);
+      } finally {
+        setLoading(false);
       }
-    });
-  }, [searchQuery, selectedCity, selectedSpecialty, priceRange, minRating, sortBy, availableOnly]);
+    };
 
-  const resetFilters = () => {
-    setSearchQuery('');
-    setSelectedCity('');
-    setSelectedSpecialty('');
-    setPriceRange([0, 1000]);
-    setMinRating(0);
-    setSortBy('rating');
-    setAvailableOnly(false);
-  };
+    loadGuides();
+  }, []);
+
+  // Handle URL parameters for search
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const search = params.get("search");
+    if (search) setSearchQuery(search);
+  }, [location.search]);
+
+  // Filter and sort guides
+  const filteredAndSortedGuides = useMemo(() => {
+    let filtered = guides;
+
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (guide) =>
+          guide.name.toLowerCase().includes(query) ||
+          guide.location.toLowerCase().includes(query) ||
+          guide.bio.toLowerCase().includes(query) ||
+          guide.specialties.some((specialty) =>
+            specialty.toLowerCase().includes(query)
+          ) ||
+          (guide.languages &&
+            guide.languages.some((lang) => lang.toLowerCase().includes(query)))
+      );
+    }
+
+    // Location filter
+    if (selectedCity) {
+      filtered = filtered.filter((guide) =>
+        guide.location.toLowerCase().includes(selectedCity.toLowerCase())
+      );
+    }
+
+    // Language filter
+    if (selectedLanguage) {
+      filtered = filtered.filter(
+        (guide) => guide.languages && guide.languages.includes(selectedLanguage)
+      );
+    }
+
+    // Category filter
+    if (selectedCategory) {
+      filtered = filtered.filter((guide) =>
+        guide.specialties.includes(selectedCategory)
+      );
+    }
+
+    // Price range filter
+    if (priceRange !== "all") {
+      const [min, max] = priceRange.split("-").map(Number);
+      if (max) {
+        filtered = filtered.filter(
+          (guide) => guide.price >= min && guide.price <= max
+        );
+      } else {
+        // Handle "200+" case
+        filtered = filtered.filter((guide) => guide.price >= min);
+      }
+    }
+
+    // Date filter (simplified - in real app would check guide's actual availability)
+    if (dateFilter) {
+      filtered = filtered.filter((guide) => guide.available);
+    }
+
+    // Rating filter
+    if (minRating > 0) {
+      filtered = filtered.filter((guide) => guide.rating >= minRating);
+    }
+
+    // Availability filter
+    if (availableOnly) {
+      filtered = filtered.filter((guide) => guide.available);
+    }
+
+    // Sort guides by rating (highest first)
+    filtered.sort((a, b) => b.rating - a.rating);
+
+    return filtered;
+  }, [
+    guides,
+    searchQuery,
+    selectedCity,
+    selectedLanguage,
+    selectedCategory,
+    priceRange,
+    dateFilter,
+    minRating,
+    availableOnly,
+  ]);
+
+  if (loading) {
+    return <Loading size="large" text="Loading amazing guides..." overlay />;
+  }
 
   return (
     <div className="guides-list-page">
+      {/* Search Header */}
+      <div className="search-header">
+        <div className="container">
+          <div className="search-section">
+            <div className="main-search">
+              <input
+                type="text"
+                placeholder="Search guides, locations, or specialties..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+              <button className="search-btn">🔍 Search</button>
+            </div>
+
+            <div className="quick-filters">
+              <select
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+                className="filter-select"
+              >
+                <option value="">📍 Any Location</option>
+                {cities.map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className="filter-select"
+              >
+                <option value="">🗣️ Any Language</option>
+                {languages.map((lang) => (
+                  <option key={lang} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="filter-select"
+              >
+                <option value="">🎯 Any Category</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={priceRange}
+                onChange={(e) => setPriceRange(e.target.value)}
+                className="filter-select"
+              >
+                {priceRanges.map((range) => (
+                  <option key={range.value} value={range.value}>
+                    {range.label}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={minRating}
+                onChange={(e) => setMinRating(Number(e.target.value))}
+                className="filter-select"
+              >
+                <option value={0}>⭐ Any Rating</option>
+                <option value={3}>⭐ 3+ Stars</option>
+                <option value={4}>⭐ 4+ Stars</option>
+                <option value={4.5}>⭐ 4.5+ Stars</option>
+              </select>
+
+              <select
+                value={availableOnly ? "available" : "all"}
+                onChange={(e) =>
+                  setAvailableOnly(e.target.value === "available")
+                }
+                className="filter-select"
+              >
+                <option value="all">⚡ Any Availability</option>
+                <option value="available">⚡ Available Now</option>
+              </select>
+
+              <input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="filter-select"
+                min={new Date().toISOString().split("T")[0]}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="container">
-        <div className="page-header">
-          <h1>Find Your Perfect Tour Guide</h1>
-          <p>Discover amazing local experiences with verified professional guides</p>
-        </div>
-
-        {/* Search and Filter Section */}
-        <div className="search-filter-section">
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Search guides, specialties, or locations..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
-            />
-          </div>
-
-          <div className="filters-container">
-            <div className="filter-row">
-              <div className="filter-group">
-                <label>City/Location</label>
-                <select 
-                  value={selectedCity} 
-                  onChange={(e) => setSelectedCity(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="">All Cities</option>
-                  {cities && cities.map(city => (
-                    <option key={city} value={city}>{city}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="filter-group">
-                <label>Specialty</label>
-                <select 
-                  value={selectedSpecialty} 
-                  onChange={(e) => setSelectedSpecialty(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="">All Specialties</option>
-                  {specialties && specialties.map(specialty => (
-                    <option key={specialty} value={specialty}>{specialty}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="filter-group">
-                <label>Sort By</label>
-                <select 
-                  value={sortBy} 
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="rating">Highest Rated</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="experience">Most Experienced</option>
-                  <option value="reviews">Most Reviews</option>
-                </select>
-              </div>
+        <div className="guides-content">
+          {/* Main Content */}
+          <div className="guides-main full-width">
+            <div className="guides-header">
+              <h1>Find Your Perfect Tour Guide</h1>
+              <p className="results-count">
+                {filteredAndSortedGuides.length} guide
+                {filteredAndSortedGuides.length !== 1 ? "s" : ""} found
+              </p>
             </div>
 
-            <div className="filter-row">
-              <div className="filter-group">
-                <label>Price Range: ${priceRange[0]} - ${priceRange[1]}/hour</label>
-                <div className="price-range-container">
-                  <input
-                    type="range"
-                    min="0"
-                    max="1000"
-                    value={priceRange[0]}
-                    onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
-                    className="price-range-slider"
-                  />
-                  <input
-                    type="range"
-                    min="0"
-                    max="1000"
-                    value={priceRange[1]}
-                    onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                    className="price-range-slider"
-                  />
-                </div>
-              </div>
-
-              <div className="filter-group">
-                <label>Minimum Rating</label>
-                <select 
-                  value={minRating} 
-                  onChange={(e) => setMinRating(parseFloat(e.target.value))}
-                  className="filter-select"
-                >
-                  <option value={0}>Any Rating</option>
-                  <option value={3}>3+ Stars</option>
-                  <option value={4}>4+ Stars</option>
-                  <option value={4.5}>4.5+ Stars</option>
-                </select>
-              </div>
-
-              <div className="filter-group checkbox-group">
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={availableOnly}
-                    onChange={(e) => setAvailableOnly(e.target.checked)}
-                  />
-                  Available Now Only
-                </label>
-              </div>
-
-              <div className="filter-group">
-                <button onClick={resetFilters} className="reset-filters-btn">
-                  Reset Filters
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Results Section */}
-        <div className="results-section">
-          <div className="results-header">
-            <p className="results-count">
-              {filteredAndSortedGuides.length} guide{filteredAndSortedGuides.length !== 1 ? 's' : ''} found
-            </p>
-          </div>
-
-          {filteredAndSortedGuides.length === 0 ? (
-            <div className="no-results">
-              <h3>No guides found</h3>
-              <p>Try adjusting your filters or search criteria</p>
-              <button onClick={resetFilters} className="reset-btn">
-                Clear All Filters
-              </button>
-            </div>
-          ) : (
             <div className="guides-grid">
-              {filteredAndSortedGuides.map(guide => (
-                <GuideCard key={guide.id} guide={guide} />
-              ))}
+              {filteredAndSortedGuides.length > 0 ? (
+                filteredAndSortedGuides.map((guide) => (
+                  <GuideCard key={guide.id} guide={guide} />
+                ))
+              ) : (
+                <div className="no-results">
+                  <div className="no-results-content">
+                    <h3>No guides found</h3>
+                    <p>Try adjusting your filters or search terms</p>
+                    <button
+                      onClick={() => {
+                        setSearchQuery("");
+                        setSelectedCity("");
+                        setSelectedLanguage("");
+                        setSelectedCategory("");
+                        setPriceRange("all");
+                        setDateFilter("");
+                        setMinRating(0);
+                        setAvailableOnly(false);
+                      }}
+                      className="btn btn-primary"
+                    >
+                      Clear All Filters
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

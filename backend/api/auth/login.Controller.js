@@ -22,11 +22,15 @@ const login = async (req, res) => {
 
         const user = users[0];
 
+        if (user.is_verified === 0) {
+            return res.status(403).json({ message: 'Account is not verified. Please verify your email.' });
+        }
+
         // So sánh password hash
         const isMatch = await bcrypt.compare(password, user.password_hash);
 
         if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ message: 'Sai email hoặc mật khẩu.' });
         }
 
          // Tạo JWT Token (field: id, name, role)

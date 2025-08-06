@@ -59,7 +59,7 @@ router.post('/login', login);
  * @swagger
  * /api/auth/register:
  *   post:
- *     summary: User registration
+ *     summary: User registration & send OTP to email
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -68,7 +68,7 @@ router.post('/login', login);
  *           schema:
  *             type: object
  *             properties:
- *               username:
+ *               name:
  *                 type: string
  *                 example: johndoe
  *               email:
@@ -86,7 +86,7 @@ router.post('/login', login);
  *                 example: tourist
  *     responses:
  *       201:
- *         description: Registration successful
+ *         description: Registration successful & OTP sent to email
  *         content:
  *           application/json:
  *             schema:
@@ -94,15 +94,19 @@ router.post('/login', login);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Registration successful
+ *                   example: Registration successful, OTP has been sent to email
  *                 user_id:
  *                   type: string
  *                   example: a12b34c5-678d-90ef-ghij-klmn1234opqr
+ *                 otpToken:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *       400:
- *         description: Username or Email already exists
+ *         description: Email already exists or invalid role
+ *       500:
+ *         description: Server error
  */
 router.post('/register', register);
-
 /**
  * @swagger
  * /api/auth/logout:
@@ -131,80 +135,40 @@ router.get('/me', verifyToken, getProfile);
 
 /**
  * @swagger
- * /api/auth/profile:
- *   put:
- *     summary: Update user profile
+ * /api/auth/me:
+ *   get:
+ *     summary: Get user profile
  *     tags: [Auth]
  *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: John Doe
- *               phone:
- *                 type: string
- *                 example: "0987654321"
- *               avatar_url:
- *                 type: string
- *                 example: https://example.com/avatar.jpg
+ *       - bearerAuth: []   
  *     responses:
  *       200:
- *         description: Profile updated successfully
+ *         description: User profile fetched successfully
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: Profile updated successfully
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     role:
+ *                       type: string
  */
 router.put('/profile', verifyToken, updateProfile);
 
-/**
- * @swagger
- * /api/auth/verify-otp:
- *   post:
- *     summary: Gửi mã OTP xác thực đến email sau đăng ký
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 example: user@example.com
- *     responses:
- *       200:
- *         description: OTP đã gửi thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: OTP đã được gửi về email!
- *                 token:
- *                   type: string
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
- */
-router.post('/verify-otp', verifyOTP);
 
 /**
  * @swagger
  * /api/auth/confirm-otp:
  *   post:
- *     summary: Xác nhận mã OTP từ email
+ *     summary: Confirm OTP from email
  *     tags: [Auth]
  *     requestBody:
  *       required: true

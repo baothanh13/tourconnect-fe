@@ -54,7 +54,7 @@ const register = async (req, res) => {
         await sendOTPEmail(email, otp);
 
         return res.status(201).json({
-            message: 'Registration successful, OTP has been sent to email',
+            message: 'To verified your register, OTP has been sent to email',
             otpToken,
             user_id: userId
         });

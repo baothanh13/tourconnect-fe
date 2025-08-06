@@ -30,7 +30,7 @@ const login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password_hash);
 
         if (!isMatch) {
-            return res.status(401).json({ message: 'Sai email hoặc mật khẩu.' });
+            return res.status(401).json({ message: 'Wrong email or password.' });
         }
 
          // Tạo JWT Token (field: id, name, role)

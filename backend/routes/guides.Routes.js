@@ -58,7 +58,7 @@ const updateGuide = require('../api/guides/updateGuide.Controller');
  *       200:
  *         description: List of guides
  */
-router.get('/guides', getGuides);
+router.get('/', getGuides);
 
 // GET /api/guides/:id - Chi tiết 1 guide
 /**
@@ -81,7 +81,7 @@ router.get('/guides', getGuides);
  *         description: Guide not found
  */
 
-router.get('/guides/:id', getGuideById);
+router.get('/:id', getGuideById);
 
 // POST /api/guides - Tạo guide profile
 /**
@@ -123,7 +123,7 @@ router.get('/guides/:id', getGuideById);
  *       201:
  *         description: Guide profile created successfully
  */
-router.post('/guides', createGuide);
+router.post('/', createGuide);
 
 // PUT /api/guides/:id - Cập nhật guide profile
 /**
@@ -172,6 +172,6 @@ router.post('/guides', createGuide);
  *       404:
  *         description: Guide not found
  */
-router.put('/guides/:id', updateGuide);
+router.put('/:id', updateGuide);
 
 module.exports = router;

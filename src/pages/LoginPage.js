@@ -51,10 +51,10 @@ const LoginPage = () => {
             navigate("/");
         }
       } else {
-        setError(result.error || "Đăng nhập thất bại");
+        setError(result.error || "Login failed");
       }
     } catch (err) {
-      setError("Có lỗi xảy ra. Vui lòng thử lại.");
+      setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -63,13 +63,13 @@ const LoginPage = () => {
   return (
     <div className="login-page">
       <div className="login-container">
-        <h1>Đăng nhập TourConnect</h1>
+        <h1>Login to TourConnect</h1>
 
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="userType">Loại tài khoản:</label>
+            <label htmlFor="userType">Account Type:</label>
             <select
               id="userType"
               name="userType"
@@ -77,10 +77,10 @@ const LoginPage = () => {
               onChange={handleInputChange}
               required
             >
-              <option value="tourist">Du khách</option>
-              <option value="guide">Hướng dẫn viên</option>
-              <option value="support">Nhân viên hỗ trợ</option>
-              <option value="admin">Quản trị viên</option>
+              <option value="tourist">Tourist</option>
+              <option value="guide">Tour Guide</option>
+              <option value="support">Support Staff</option>
+              <option value="admin">Administrator</option>
             </select>
           </div>
 
@@ -93,12 +93,12 @@ const LoginPage = () => {
               value={formData.email}
               onChange={handleInputChange}
               required
-              placeholder="Nhập email của bạn"
+              placeholder="Enter your email"
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Mật khẩu:</label>
+            <label htmlFor="password">Password:</label>
             <input
               type="password"
               id="password"
@@ -106,28 +106,28 @@ const LoginPage = () => {
               value={formData.password}
               onChange={handleInputChange}
               required
-              placeholder="Nhập mật khẩu"
+              placeholder="Enter your password"
             />
           </div>
 
           <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 
         <div className="login-links">
-          <Link to="/register">Chưa có tài khoản? Đăng ký ngay</Link>
-          <Link to="/">← Quay về trang chủ</Link>
+          <Link to="/register">Don't have an account? Register now</Link>
+          <Link to="/">← Back to homepage</Link>
         </div>
 
         {/* Demo credentials for testing */}
         <div className="demo-credentials">
-          <h4>Tài khoản demo:</h4>
+          <h4>Demo accounts:</h4>
           <p>
-            <strong>Du khách:</strong> tourist@example.com / 123456
+            <strong>Tourist:</strong> tourist@example.com / 123456
           </p>
           <p>
-            <strong>Hướng dẫn viên:</strong> guide@example.com / 123456
+            <strong>Tour Guide:</strong> guide@example.com / 123456
           </p>
           <p>
             <strong>Admin:</strong> admin@tourconnect.com / admin123

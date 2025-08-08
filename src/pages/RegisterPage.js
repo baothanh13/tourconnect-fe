@@ -52,13 +52,13 @@ const RegisterPage = () => {
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError("Mật khẩu xác nhận không khớp");
+      setError("Passwords do not match");
       setIsLoading(false);
       return;
     }
 
     if (formData.password.length < 6) {
-      setError("Mật khẩu phải có ít nhất 6 ký tự");
+      setError("Password must be at least 6 characters");
       setIsLoading(false);
       return;
     }
@@ -70,10 +70,10 @@ const RegisterPage = () => {
         // Redirect to appropriate page
         navigate("/");
       } else {
-        setError(result.error || "Đăng ký thất bại");
+        setError(result.error || "Registration failed");
       }
     } catch (err) {
-      setError("Có lỗi xảy ra. Vui lòng thử lại.");
+      setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -97,13 +97,13 @@ const RegisterPage = () => {
   return (
     <div className="register-page">
       <div className="register-container">
-        <h1>Đăng ký TourConnect</h1>
+        <h1>Register for TourConnect</h1>
 
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="register-form">
           <div className="form-group">
-            <label htmlFor="userType">Loại tài khoản:</label>
+            <label htmlFor="userType">Account Type:</label>
             <select
               id="userType"
               name="userType"
@@ -111,14 +111,14 @@ const RegisterPage = () => {
               onChange={handleInputChange}
               required
             >
-              <option value="tourist">Du khách</option>
-              <option value="guide">Hướng dẫn viên</option>
+              <option value="tourist">Tourist</option>
+              <option value="guide">Tour Guide</option>
             </select>
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="name">Họ và tên:</label>
+              <label htmlFor="name">Full Name:</label>
               <input
                 type="text"
                 id="name"
@@ -126,7 +126,7 @@ const RegisterPage = () => {
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                placeholder="Nhập họ và tên"
+                placeholder="Enter your full name"
               />
             </div>
 
@@ -153,13 +153,13 @@ const RegisterPage = () => {
               value={formData.email}
               onChange={handleInputChange}
               required
-              placeholder="Nhập email của bạn"
+              placeholder="Enter your email"
             />
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="password">Mật khẩu:</label>
+              <label htmlFor="password">Password:</label>
               <input
                 type="password"
                 id="password"
@@ -167,12 +167,12 @@ const RegisterPage = () => {
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-                placeholder="Ít nhất 6 ký tự"
+                placeholder="At least 6 characters"
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="confirmPassword">Xác nhận mật khẩu:</label>
+              <label htmlFor="confirmPassword">Confirm Password:</label>
               <input
                 type="password"
                 id="confirmPassword"
@@ -180,7 +180,7 @@ const RegisterPage = () => {
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 required
-                placeholder="Nhập lại mật khẩu"
+                placeholder="Re-enter password"
               />
             </div>
           </div>
@@ -230,7 +230,7 @@ const RegisterPage = () => {
                   name="bio"
                   value={formData.bio}
                   onChange={handleInputChange}
-                  placeholder="Mô tả kinh nghiệm, kỹ năng và những gì bạn có thể mang lại cho du khách..."
+                  placeholder="Describe your experience, skills and what you can offer to tourists..."
                   rows="4"
                 />
               </div>
@@ -242,13 +242,13 @@ const RegisterPage = () => {
             className="register-button"
             disabled={isLoading}
           >
-            {isLoading ? "Đang đăng ký..." : "Đăng ký"}
+            {isLoading ? "Registering..." : "Register"}
           </button>
         </form>
 
         <div className="register-links">
-          <Link to="/login">Đã có tài khoản? Đăng nhập ngay</Link>
-          <Link to="/">← Quay về trang chủ</Link>
+          <Link to="/login">Already have an account? Login now</Link>
+          <Link to="/">← Back to homepage</Link>
         </div>
       </div>
     </div>

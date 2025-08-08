@@ -37,51 +37,51 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const commonItems = [
       {
         id: "home",
-        label: "Trang chủ",
+        label: "Home",
         icon: "🏠",
         path: "/",
         type: "link",
       },
       {
         id: "guides",
-        label: "Tìm hướng dẫn viên",
+        label: "Find Guides",
         icon: "👥",
         path: "/guides",
         type: "link",
       },
       {
         id: "categories",
-        label: "Danh mục tour",
+        label: "Tour Categories",
         icon: "🗂️",
         type: "submenu",
         submenu: [
           {
-            label: "Tour văn hóa",
+            label: "Cultural Tours",
             path: "/guides?category=Cultural%20Tours",
             icon: "🏛️",
           },
           {
-            label: "Tour ẩm thực",
+            label: "Food Tours",
             path: "/guides?category=Food%20Tours",
             icon: "🍜",
           },
           {
-            label: "Tour phiêu lưu",
+            label: "Adventure Tours",
             path: "/guides?category=Adventure%20Tours",
             icon: "🏔️",
           },
           {
-            label: "Di tích lịch sử",
+            label: "Historical Sites",
             path: "/guides?category=Historical%20Sites",
             icon: "🏺",
           },
           {
-            label: "Tour nhiếp ảnh",
+            label: "Photography Tours",
             path: "/guides?category=Photography%20Tours",
             icon: "📸",
           },
           {
-            label: "Tour thiên nhiên",
+            label: "Nature Tours",
             path: "/guides?category=Nature%20Tours",
             icon: "🌿",
           },
@@ -93,21 +93,21 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       ...commonItems,
       {
         id: "about",
-        label: "Về chúng tôi",
+        label: "About Us",
         icon: "ℹ️",
         path: "/about",
         type: "link",
       },
       {
         id: "help",
-        label: "Trợ giúp",
+        label: "Help",
         icon: "❓",
         path: "/help",
         type: "link",
       },
       {
         id: "careers",
-        label: "Tuyển dụng",
+        label: "Careers",
         icon: "💼",
         path: "/careers",
         type: "link",
@@ -118,28 +118,28 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       ...commonItems,
       {
         id: "dashboard",
-        label: "Bảng điều khiển",
+        label: "Dashboard",
         icon: "📊",
         path: "/tourist/dashboard",
         type: "link",
       },
       {
         id: "bookings",
-        label: "Đặt tour của tôi",
+        label: "My Bookings",
         icon: "📅",
         path: "/tourist/dashboard?tab=bookings",
         type: "link",
       },
       {
         id: "favorites",
-        label: "HDV yêu thích",
+        label: "Favorite Guides",
         icon: "❤️",
         path: "/tourist/dashboard?tab=favorites",
         type: "link",
       },
       {
         id: "reviews",
-        label: "Đánh giá của tôi",
+        label: "My Reviews",
         icon: "⭐",
         path: "/tourist/dashboard?tab=reviews",
         type: "link",
@@ -150,28 +150,28 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       ...commonItems,
       {
         id: "guide-dashboard",
-        label: "Bảng điều khiển HDV",
+        label: "Guide Dashboard",
         icon: "🎯",
         path: "/guide/dashboard",
         type: "link",
       },
       {
         id: "my-tours",
-        label: "Tour của tôi",
+        label: "My Tours",
         icon: "🗺️",
         path: "/guide/tours",
         type: "link",
       },
       {
         id: "earnings",
-        label: "Thu nhập",
+        label: "Earnings",
         icon: "💰",
         path: "/guide/earnings",
         type: "link",
       },
       {
         id: "profile",
-        label: "Hồ sơ HDV",
+        label: "Guide Profile",
         icon: "👤",
         path: "/guide/profile",
         type: "link",
@@ -181,35 +181,35 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const adminItems = [
       {
         id: "admin-dashboard",
-        label: "Bảng điều khiển Admin",
+        label: "Admin Dashboard",
         icon: "⚙️",
         path: "/admin/dashboard",
         type: "link",
       },
       {
         id: "users",
-        label: "Quản lý người dùng",
+        label: "User Management",
         icon: "👥",
         path: "/admin/users",
         type: "link",
       },
       {
         id: "guides-management",
-        label: "Quản lý HDV",
+        label: "Guide Management",
         icon: "🎯",
         path: "/admin/guides",
         type: "link",
       },
       {
         id: "bookings-management",
-        label: "Quản lý đặt tour",
+        label: "Booking Management",
         icon: "📋",
         path: "/admin/bookings",
         type: "link",
       },
       {
         id: "reports",
-        label: "Báo cáo",
+        label: "Reports",
         icon: "📊",
         path: "/admin/reports",
         type: "link",
@@ -219,21 +219,21 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const supportItems = [
       {
         id: "support-dashboard",
-        label: "Bảng điều khiển Hỗ trợ",
+        label: "Support Dashboard",
         icon: "🎧",
         path: "/support/dashboard",
         type: "link",
       },
       {
         id: "tickets",
-        label: "Phiếu hỗ trợ",
+        label: "Support Tickets",
         icon: "🎫",
         path: "/support/tickets",
         type: "link",
       },
       {
         id: "chat",
-        label: "Chat hỗ trợ",
+        label: "Support Chat",
         icon: "💬",
         path: "/support/chat",
         type: "link",
@@ -290,10 +290,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <div className="profile-info">
               <h3 className="profile-name">{user?.name || user?.email}</h3>
               <p className="profile-role">
-                {user?.userType === "tourist" && "Du khách"}
-                {user?.userType === "guide" && "Hướng dẫn viên"}
-                {user?.userType === "admin" && "Quản trị viên"}
-                {user?.userType === "support" && "Hỗ trợ"}
+                {user?.userType === "tourist" && "Tourist"}
+                {user?.userType === "guide" && "Tour Guide"}
+                {user?.userType === "admin" && "Administrator"}
+                {user?.userType === "support" && "Support"}
               </p>
             </div>
           </div>
@@ -370,11 +370,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 onClick={handleLinkClick}
               >
                 <span className="footer-icon">⚙️</span>
-                <span className="footer-text">Cài đặt</span>
+                <span className="footer-text">Settings</span>
               </Link>
               <button className="logout-button" onClick={handleLogout}>
                 <span className="footer-icon">🚪</span>
-                <span className="footer-text">Đăng xuất</span>
+                <span className="footer-text">Logout</span>
               </button>
             </div>
           ) : (
@@ -385,7 +385,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 onClick={handleLinkClick}
               >
                 <span className="auth-icon">🔑</span>
-                <span className="auth-text">Đăng nhập</span>
+                <span className="auth-text">Login</span>
               </Link>
               <Link
                 to="/register"
@@ -393,7 +393,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 onClick={handleLinkClick}
               >
                 <span className="auth-icon">📝</span>
-                <span className="auth-text">Đăng ký</span>
+                <span className="auth-text">Register</span>
               </Link>
             </div>
           )}
@@ -410,7 +410,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 onClick={handleLinkClick}
               >
                 <span>🔍</span>
-                <span>Tìm HDV</span>
+                <span>Find Guides</span>
               </Link>
               <Link
                 to="/tourist/dashboard?tab=bookings"
@@ -418,7 +418,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 onClick={handleLinkClick}
               >
                 <span>📅</span>
-                <span>Đặt tour</span>
+                <span>Book Tours</span>
               </Link>
             </div>
           </div>

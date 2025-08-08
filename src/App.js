@@ -1,4 +1,4 @@
-// src/App.js (Phiên bản đầy đủ đã được khôi phục)
+// src/App.js (Full version restored)
 
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -7,7 +7,7 @@ import "./App.css";
 // Import Authentication Context
 import { AuthProvider } from "./contexts/AuthContext";
 
-// Import các component từ các file riêng lẻ
+// Import individual components from separate files
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
@@ -33,6 +33,9 @@ import BecomeGuide from "./pages/BecomeGuide";
 import BlogPage from "./pages/BlogPage";
 import BookingProcessPage from "./pages/BookingProcessPage";
 import CareersPage from "./pages/CareersPage";
+
+// Import API Test Component
+import ApiTest from "./components/ApiTest";
 import HelpCenterPage from "./pages/HelpCenterPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 
@@ -52,7 +55,7 @@ function App() {
 
           <main className="main-content">
             <Routes>
-              {/* Các Route trỏ đến các component đã được import */}
+              {/* Routes pointing to imported components */}
               <Route path="/" element={<HomePage />} />
               <Route path="/guides" element={<GuidesListPage />} />
               <Route path="/guides/:id" element={<GuideDetailPage />} />
@@ -77,6 +80,9 @@ function App() {
               <Route path="/careers" element={<CareersPage />} />
               <Route path="/help" element={<HelpCenterPage />} />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              
+              {/* API Testing Route */}
+              <Route path="/api-test" element={<ApiTest />} />
             </Routes>
           </main>
 

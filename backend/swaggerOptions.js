@@ -9,7 +9,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'http://localhost:3000', // URL backend của bạn
+      url: 'http://localhost:5000', // URL backend của bạn
     },
   ],
   components: {

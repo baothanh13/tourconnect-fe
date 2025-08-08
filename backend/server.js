@@ -6,9 +6,10 @@ const bookingRoutes = require('./routes/bookings.Routes');
 const guideRoutes = require('./routes/guides.Routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerOptions'); // Import file cấu hình swagger
+const cors = require('cors');
 
 const app = express();
-const PORT = 3000;
+const PORT = 5000;
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Middleware
@@ -38,10 +39,16 @@ connectToDB().then((connection) => {
             next();
         }, bookingRoutes);
 
+        app.use(cors({
+            origin: '*', // Hoặc chỉ định domain frontend nếu muốn
+            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+            allowedHeaders: ['Content-Type', 'Authorization']
+        }));
+
         // Start Server
         app.listen(PORT, () => {
             console.log(`Server is running on http://localhost:${PORT}`);
-            console.log('Swagger UI: http://localhost:3000/api-docs');
+            console.log('Swagger UI: http://localhost:5000/api-docs');
         });
     } else {
         console.error('Failed to connect to database, server not started.');

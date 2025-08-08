@@ -1040,7 +1040,7 @@ body {
   }
 
   .greeting-text {
-    display: none; /* Hide "Xin chào," */
+    display: none; /* Hide greeting text */
   }
 }
 

@@ -1,4 +1,4 @@
-// src/App.js (Phiên bản đầy đủ đã được khôi phục)
+// src/App.js (Full version restored)
 
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -7,7 +7,7 @@ import "./App.css";
 // Import Authentication Context
 import { AuthProvider } from "./contexts/AuthContext";
 
-// Import các component từ các file riêng lẻ
+// Import individual components from separate files
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
@@ -55,7 +55,7 @@ function App() {
 
           <main className="main-content">
             <Routes>
-              {/* Các Route trỏ đến các component đã được import */}
+              {/* Routes pointing to imported components */}
               <Route path="/" element={<HomePage />} />
               <Route path="/guides" element={<GuidesListPage />} />
               <Route path="/guides/:id" element={<GuideDetailPage />} />

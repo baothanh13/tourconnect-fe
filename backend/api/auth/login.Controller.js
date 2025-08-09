@@ -2,7 +2,7 @@ const { connectToDB } = require('../../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const SECRET_KEY = 'mysecretkey';  // Nên dùng biến môi trường .env
+const SECRET_KEY = process.env.SECRET_KEY;  // Nên dùng biến môi trường .env
 
 const login = async (req, res) => {
     const { email, password } = req.body;

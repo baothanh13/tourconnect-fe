@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = "mysecretkey";  // Đưa vào .env thực tế
+const SECRET_KEY = process.env.SECRET_KEY;  // Đưa vào .env thực tế
 const { connectToDB } = require('../../config/db');
 
 const confirmOTP = async (req, res) => {

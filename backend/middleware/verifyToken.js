@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const SECRET_KEY = 'your_secret_key';  // Nên dùng biến môi trường .env
+const SECRET_KEY = process.env.SECRET_KEY;  // Nên dùng biến môi trường .env
 
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];

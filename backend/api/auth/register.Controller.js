@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
-const SECRET_KEY = 'mysecretkey';  // Đưa vào .env sau này
+const SECRET_KEY = process.env.SECRET_KEY;  // Đưa vào .env sau này
 
 const register = async (req, res) => {
     const { name, email, password, phone, role } = req.body;

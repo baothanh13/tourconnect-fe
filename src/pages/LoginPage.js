@@ -1,3 +1,4 @@
+// src/pages/LoginPage.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -6,7 +7,7 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    userType: "tourist", // Default to tourist
+    userType: "tourist",
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +21,7 @@ const LoginPage = () => {
       ...prev,
       [name]: value,
     }));
-    setError(""); // Clear error when user types
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -28,36 +29,31 @@ const LoginPage = () => {
     setIsLoading(true);
     setError("");
 
-    try {
-      const result = await login(
-        formData.email,
-        formData.password,
-        formData.userType
-      );
+    const result = await login(
+      formData.email,
+      formData.password,
+      formData.userType
+    );
 
-      if (result.success) {
-        // Redirect based on user type
-        switch (result.user.userType) {
-          case "admin":
-            navigate("/admin/dashboard");
-            break;
-          case "guide":
-            navigate("/guide/dashboard");
-            break;
-          case "support":
-            navigate("/support/dashboard");
-            break;
-          default:
-            navigate("/");
-        }
-      } else {
-        setError(result.error || "Đăng nhập thất bại");
+    if (result.success) {
+      switch (result.user.userType) {
+        case "admin":
+          navigate("/admin/dashboard");
+          break;
+        case "guide":
+          navigate("/guide/dashboard");
+          break;
+        case "support":
+          navigate("/support/dashboard");
+          break;
+        default:
+          navigate("/");
       }
-    } catch (err) {
-      setError("Có lỗi xảy ra. Vui lòng thử lại.");
-    } finally {
-      setIsLoading(false);
+    } else {
+      setError(result.error || "Login failed");
     }
+
+    setIsLoading(false);
   };
 
   return (
@@ -118,20 +114,6 @@ const LoginPage = () => {
         <div className="login-links">
           <Link to="/register">Chưa có tài khoản? Đăng ký ngay</Link>
           <Link to="/">← Quay về trang chủ</Link>
-        </div>
-
-        {/* Demo credentials for testing */}
-        <div className="demo-credentials">
-          <h4>Tài khoản demo:</h4>
-          <p>
-            <strong>Du khách:</strong> tourist@example.com / 123456
-          </p>
-          <p>
-            <strong>Hướng dẫn viên:</strong> guide@example.com / 123456
-          </p>
-          <p>
-            <strong>Admin:</strong> admin@tourconnect.com / admin123
-          </p>
         </div>
       </div>
     </div>

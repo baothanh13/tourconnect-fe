@@ -36,6 +36,9 @@ import CareersPage from "./pages/CareersPage";
 import HelpCenterPage from "./pages/HelpCenterPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 
+// Import API Test component
+import ApiTest from "./components/ApiTest";
+
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -77,6 +80,9 @@ function App() {
               <Route path="/careers" element={<CareersPage />} />
               <Route path="/help" element={<HelpCenterPage />} />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
+
+              {/* API Testing */}
+              <Route path="/api-test" element={<ApiTest />} />
             </Routes>
           </main>
 

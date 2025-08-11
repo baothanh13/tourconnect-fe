@@ -80,8 +80,8 @@ function App() {
               <Route path="/careers" element={<CareersPage />} />
               <Route path="/help" element={<HelpCenterPage />} />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
-              
-              {/* API Testing Route */}
+
+              {/* API Testing */}
               <Route path="/api-test" element={<ApiTest />} />
             </Routes>
           </main>

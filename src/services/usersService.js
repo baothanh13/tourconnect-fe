@@ -30,16 +30,6 @@ const usersService = {
       );
     }
   },
-  // Thêm hàm mới này vào bên trong object usersService
-  verifyOtp: async (otpData) => {
-    try {
-      // Gọi đến endpoint POST /api/auth/confirm-otp
-      const response = await axios.post("/auth/confirm-otp", otpData);
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  },
 };
 
 export default usersService;

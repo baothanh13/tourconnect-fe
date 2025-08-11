@@ -1,9 +1,7 @@
-// src/App.js (Full version restored)
-
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-
+//import VerifyOtpPage from "./pages/VerifyOtpPage";
 // Import Authentication Context
 import { AuthProvider } from "./contexts/AuthContext";
 
@@ -80,7 +78,7 @@ function App() {
               <Route path="/careers" element={<CareersPage />} />
               <Route path="/help" element={<HelpCenterPage />} />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
-
+              {/* <Route path="/verify-otp" element={<VerifyOtpPage />} /> */}
               {/* API Testing */}
               <Route path="/api-test" element={<ApiTest />} />
             </Routes>

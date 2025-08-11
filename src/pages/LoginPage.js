@@ -1,14 +1,10 @@
-// src/pages/LoginPage.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import "./LoginPage.css";
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    userType: "tourist",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -17,10 +13,7 @@ const LoginPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     setError("");
   };
 
@@ -30,26 +23,24 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const result = await login(
-        formData.email,
-        formData.password,
-        formData.userType
-      );
+      const result = await login(formData.email, formData.password);
 
       if (result.success) {
-        // Redirect based on user type
-        switch (result.user.userType) {
-          case "admin":
-            navigate("/admin/dashboard");
-            break;
+        // --- THIS IS THE NEW LOGIC ---
+        // Redirect based on the user's role
+        switch (result.user.role) {
           case "guide":
             navigate("/guide/dashboard");
+            break;
+          case "admin":
+            navigate("/admin/dashboard");
             break;
           case "support":
             navigate("/support/dashboard");
             break;
+          case "tourist":
           default:
-            navigate("/");
+            navigate("/tourist/dashboard"); // Or just navigate('/')
         }
       } else {
         setError(result.error || "Đăng nhập thất bại");
@@ -64,75 +55,43 @@ const LoginPage = () => {
   return (
     <div className="login-page">
       <div className="login-container">
-        <h1>Login to TourConnect</h1>
-
+        <h1>Đăng nhập TourConnect</h1>
         {error && <div className="error-message">{error}</div>}
-
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="userType">Account Type:</label>
-            <select
-              id="userType"
-              name="userType"
-              value={formData.userType}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="tourist">Tourist</option>
-              <option value="guide">Tour Guide</option>
-              <option value="support">Support Staff</option>
-              <option value="admin">Administrator</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">Email:</label>
+            <label>Email:</label>
             <input
               type="email"
-              id="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
+              placeholder="Nhập email của bạn"
+              disabled={isLoading}
               required
-              placeholder="Enter your email"
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password:</label>
+            <label>Mật khẩu:</label>
             <input
               type="password"
-              id="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
+              placeholder="Nhập mật khẩu"
+              disabled={isLoading}
               required
-              placeholder="Enter your password"
             />
           </div>
 
           <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? "Logging in..." : "Login"}
+            {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
           </button>
         </form>
 
         <div className="login-links">
-          <Link to="/register">Don't have an account? Register now</Link>
-          <Link to="/">← Back to homepage</Link>
-        </div>
-
-        {/* Demo credentials for testing */}
-        <div className="demo-credentials">
-          <h4>Tài khoản demo:</h4>
-          <p>
-            <strong>Du khách:</strong> tourist@example.com / 123456
-          </p>
-          <p>
-            <strong>Hướng dẫn viên:</strong> guide@example.com / 123456
-          </p>
-          <p>
-            <strong>Admin:</strong> admin@tourconnect.com / admin123
-          </p>
+          <Link to="/register">Chưa có tài khoản? Đăng ký ngay</Link>
+          <Link to="/">← Quay về trang chủ</Link>
         </div>
       </div>
     </div>

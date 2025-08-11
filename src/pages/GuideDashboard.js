@@ -34,7 +34,7 @@ const GuideDashboard = () => {
   });
 
   useEffect(() => {
-    if (user && (user.userType === "guide" || user.role === "guide")) {
+    if (user && user.role === "guide") {
       loadGuideData();
     }
   }, [user]);
@@ -43,12 +43,14 @@ const GuideDashboard = () => {
     try {
       setLoading(true);
 
-      // Load guide profile
-      const guide = await guidesService.getGuideById(user.id);
+      // Load guide profile by user ID
+      const guide = await guidesService.getGuideByUserId(user.user_id);
       setGuideData(guide);
 
       // Load guide bookings
-      const guideBookings = await bookingsService.getGuideBookings(user.id);
+      const guideBookings = await bookingsService.getGuideBookings(
+        user.user_id
+      );
       setBookings(guideBookings);
 
       // Calculate stats

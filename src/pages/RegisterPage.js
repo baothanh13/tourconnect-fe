@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
 import OtpForm from "../components/OtpForm";
+import "./RegisterPage.css";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +21,6 @@ const RegisterPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [otpStep, setOtpStep] = useState(false); // <-- step state
   const [registeredEmail, setRegisteredEmail] = useState("");
-  const { register } = useAuth();
 
   const specialtiesList = [
     "Cultural Tours",
@@ -81,6 +80,13 @@ const RegisterPage = () => {
         phone: formData.phone,
         role: formData.userType,
       };
+
+      // Add guide-specific data if user is registering as a guide
+      if (formData.userType === "guide") {
+        registrationData.city = formData.city;
+        registrationData.specialties = formData.specialties;
+        registrationData.bio = formData.bio;
+      }
 
       const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",

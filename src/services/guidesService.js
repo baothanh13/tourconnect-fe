@@ -2,6 +2,32 @@ import apiService from "./api";
 import { mockGuides } from "../data/mockData";
 
 export const guidesService = {
+  // Get guide by user ID (for dashboard)
+  async getGuideByUserId(userId) {
+    try {
+      const response = await apiService.get(`/guides/user/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching guide by user ID:", error);
+      // Return mock data as fallback
+      return {
+        id: "mock-guide-1",
+        user_id: userId,
+        name: "Sample Guide",
+        location: "Ho Chi Minh City",
+        languages: ["Vietnamese", "English"],
+        specialties: ["Cultural Tours", "Food Tours"],
+        price_per_hour: 25,
+        experience_years: 3,
+        description: "Experienced local guide",
+        rating: 4.5,
+        total_reviews: 42,
+        is_available: 1,
+        verification_status: "verified",
+      };
+    }
+  },
+
   // Get all guides with filters
   async getGuides(filters = {}) {
     try {

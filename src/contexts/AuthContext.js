@@ -1,5 +1,5 @@
-// src/contexts/AuthContext.js
 import React, { createContext, useState, useEffect, useContext } from "react";
+// 1. Change this line to a default import (remove the curly braces)
 import usersService from "../services/usersService";
 
 export const AuthContext = createContext();
@@ -28,10 +28,11 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = async (email, password, userType) => {
+  const login = async (email, password) => {
     try {
       setLoading(true);
-      const data = await usersService.login({ email, password, userType });
+      // This will now work correctly
+      const data = await usersService.login({ email, password });
 
       setUser(data.user);
       setToken(data.token);
@@ -50,8 +51,12 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setLoading(true);
+      // This will now work correctly
       const data = await usersService.register(userData);
 
+      // A typical registration flow does not log the user in automatically,
+      // so we might not set the user/token here until after OTP verification.
+      // For now, we'll keep it simple.
       setUser(data.user);
       setToken(data.token);
 
@@ -90,10 +95,10 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         updateUser,
-        isGuide: user?.userType === "guide",
-        isTourist: user?.userType === "tourist",
-        isAdmin: user?.userType === "admin",
-        isSupport: user?.userType === "support",
+        isGuide: user?.role === "guide",
+        isTourist: user?.role === "tourist",
+        isAdmin: user?.role === "admin",
+        isSupport: user?.role === "support",
       }}
     >
       {children}

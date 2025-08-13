@@ -1,10 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const getGuides = require('../api/guides/getGuides.Controller');
-const getGuideById = require('../api/guides/getGuideById.Controller');
-const createGuide = require('../api/guides/createGuide.Controller');
-const updateGuide = require('../api/guides/updateGuide.Controller');
+const getGuides = require("../api/guides/getGuides.Controller");
+const getGuideById = require("../api/guides/getGuideById.Controller");
+const getGuideByUserId = require("../api/guides/getGuideByUserId.Controller");
+const createGuide = require("../api/guides/createGuide.Controller");
+const updateGuide = require("../api/guides/updateGuide.Controller");
+const createGuideProfile = require("../api/guides/createGuideProfile.Controller");
 
 // GET /api/guides - Danh sách guides với filter query
 /**
@@ -58,7 +60,7 @@ const updateGuide = require('../api/guides/updateGuide.Controller');
  *       200:
  *         description: List of guides
  */
-router.get('/', getGuides);
+router.get("/", getGuides);
 
 // GET /api/guides/:id - Chi tiết 1 guide
 /**
@@ -81,7 +83,29 @@ router.get('/', getGuides);
  *         description: Guide not found
  */
 
-router.get('/:id', getGuideById);
+router.get("/:id", getGuideById);
+
+// GET /api/guides/user/:userId - Get guide profile by user ID
+/**
+ * @swagger
+ * /api/guides/user/{userId}:
+ *   get:
+ *     summary: Get guide profile by user ID
+ *     tags: [Guides]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: Guide profile found
+ *       404:
+ *         description: Guide not found
+ */
+router.get("/user/:userId", getGuideByUserId);
 
 // POST /api/guides - Tạo guide profile
 /**
@@ -123,7 +147,45 @@ router.get('/:id', getGuideById);
  *       201:
  *         description: Guide profile created successfully
  */
-router.post('/', createGuide);
+router.post("/", createGuide);
+
+// POST /api/guides/profile - Create guide profile from registration
+/**
+ * @swagger
+ * /api/guides/profile:
+ *   post:
+ *     summary: Create guide profile for existing user
+ *     tags: [Guides]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               specialties:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               bio:
+ *                 type: string
+ *               pricePerHour:
+ *                 type: number
+ *               experienceYears:
+ *                 type: number
+ *               languages:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       201:
+ *         description: Guide profile created successfully
+ */
+router.post("/profile", createGuideProfile);
 
 // PUT /api/guides/:id - Cập nhật guide profile
 /**
@@ -172,6 +234,6 @@ router.post('/', createGuide);
  *       404:
  *         description: Guide not found
  */
-router.put('/:id', updateGuide);
+router.put("/:id", updateGuide);
 
 module.exports = router;

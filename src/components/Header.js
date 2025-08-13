@@ -50,39 +50,39 @@ const Header = ({ toggleSidebar }) => {
               <span className="user-name">
                 {(user.name || user.email).split(" ")[0]}
               </span>
-              {user.userType === "guide" && (
+              {user.role === "guide" && (
                 <span className="user-role"> (Guide)</span>
               )}
-              {user.userType === "admin" && (
+              {user.role === "admin" && (
                 <span className="user-role"> (Admin)</span>
               )}
-              {user.userType === "support" && (
+              {user.role === "support" && (
                 <span className="user-role"> (Support)</span>
               )}
-              {user.userType === "tourist" && (
+              {user.role === "tourist" && (
                 <span className="user-role"> (Tourist)</span>
               )}
             </span>
 
-            {user.userType === "tourist" && (
+            {user.role === "tourist" && (
               <Link to="/tourist/dashboard" className="dashboard-link">
                 Dashboard
               </Link>
             )}
 
-            {user.userType === "guide" && (
+            {user.role === "guide" && (
               <Link to="/guide/dashboard" className="dashboard-link">
                 Dashboard
               </Link>
             )}
 
-            {user.userType === "admin" && (
+            {user.role === "admin" && (
               <Link to="/admin/dashboard" className="dashboard-link">
                 Admin
               </Link>
             )}
 
-            {user.userType === "support" && (
+            {user.role === "support" && (
               <Link to="/support/dashboard" className="dashboard-link">
                 Support
               </Link>

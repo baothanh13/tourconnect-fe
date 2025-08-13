@@ -1,3 +1,4 @@
+// src/pages/LoginPage.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -6,7 +7,7 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    userType: "tourist", // Default to tourist
+    userType: "tourist",
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +21,7 @@ const LoginPage = () => {
       ...prev,
       [name]: value,
     }));
-    setError(""); // Clear error when user types
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -28,12 +29,11 @@ const LoginPage = () => {
     setIsLoading(true);
     setError("");
 
-    try {
-      const result = await login(
-        formData.email,
-        formData.password,
-        formData.userType
-      );
+    const result = await login(
+      formData.email,
+      formData.password,
+      formData.userType
+    );
 
       if (result.success) {
         // Redirect based on user type
@@ -51,10 +51,10 @@ const LoginPage = () => {
             navigate("/");
         }
       } else {
-        setError(result.error || "Login failed");
+        setError(result.error || "Đăng nhập thất bại");
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError("Có lỗi xảy ra. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }
@@ -122,12 +122,12 @@ const LoginPage = () => {
 
         {/* Demo credentials for testing */}
         <div className="demo-credentials">
-          <h4>Demo accounts:</h4>
+          <h4>Tài khoản demo:</h4>
           <p>
-            <strong>Tourist:</strong> tourist@example.com / 123456
+            <strong>Du khách:</strong> tourist@example.com / 123456
           </p>
           <p>
-            <strong>Tour Guide:</strong> guide@example.com / 123456
+            <strong>Hướng dẫn viên:</strong> guide@example.com / 123456
           </p>
           <p>
             <strong>Admin:</strong> admin@tourconnect.com / admin123

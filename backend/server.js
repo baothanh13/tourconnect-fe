@@ -1,23 +1,45 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const { connectToDB } = require('./config/db');
-const authRoutes = require('./routes/auth.Routes');
-const bookingRoutes = require('./routes/bookings.Routes');
-const guideRoutes = require('./routes/guides.Routes');
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./swaggerOptions'); // Import file cấu hình swagger
-const cors = require('cors');
+const express = require("express");
+const bodyParser = require("body-parser");
+const { connectToDB } = require("./config/db");
+const authRoutes = require("./routes/auth.Routes");
+const bookingRoutes = require("./routes/bookings.Routes");
+const guideRoutes = require("./routes/guides.Routes");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swaggerOptions");
+const cors = require("cors");
+
+require("dotenv").config();
 
 const app = express();
-const PORT = 3000;
+const PORT = 5000;
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Middleware
 app.use(bodyParser.json());
 
+// ⚠️ ĐƯA health check RA NGOÀI connectToDB
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "OK",
+    message: "TourConnect Backend is running!",
+    timestamp: new Date().toISOString(),
+    version: "1.0.0",
+  });
+});
 
-// Kết nối DB rồi mới start server
-connectToDB().then((connection) => {
+// Swagger UI
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Luôn chạy server - kể cả khi DB lỗi
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+  console.log(`📚 Swagger UI: http://localhost:${PORT}/api-docs`);
+  console.log(`💚 Health Check: http://localhost:${PORT}/api/health`);
+});
+
+// DB connect & gán route sau
+connectToDB()
+  .then((connection) => {
     if (connection) {
         // Lưu connection vào app.locals để các route có thể dùng
         app.locals.db = connection;
@@ -48,9 +70,41 @@ connectToDB().then((connection) => {
         // Start Server
         app.listen(PORT, () => {
             console.log(`Server is running on http://localhost:${PORT}`);
-            console.log('Swagger UI: http://localhost:3000/api-docs');
+            console.log('Swagger UI: http://localhost:5000/api-docs');
         });
     } else {
-        console.error('Failed to connect to database, server not started.');
+      console.warn("⚠️ Database connection failed");
+      app.locals.db = null;
     }
-});
+
+    // Routes
+    app.use(
+      "/api/auth",
+      (req, res, next) => {
+        req.db = app.locals.db;
+        next();
+      },
+      authRoutes
+    );
+
+    app.use(
+      "/api/guides",
+      (req, res, next) => {
+        req.db = app.locals.db;
+        next();
+      },
+      guideRoutes
+    );
+
+    app.use(
+      "/api/bookings",
+      (req, res, next) => {
+        req.db = app.locals.db;
+        next();
+      },
+      bookingRoutes
+    );
+  })
+  .catch((error) => {
+    console.error("❌ Database connection error:", error);
+  });

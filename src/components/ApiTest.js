@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
+import apiService from "../services/api";
 
 const ApiTest = () => {
   const [testResults, setTestResults] = useState({});
   const [loading, setLoading] = useState(false);
+  const [backendStatus, setBackendStatus] = useState("unknown");
 
   useEffect(() => {
-    // Test environment variables on component mount
+    // Test environment variables and backend on component mount
     testEnvVars();
+    testBackendHealth();
   }, []);
 
   // Test Environment Variables
@@ -40,6 +43,148 @@ const ApiTest = () => {
         env: { error: "Failed to load environment variables" },
       }));
     }
+  };
+
+  // Test Backend Health
+  const testBackendHealth = async () => {
+    setLoading(true);
+    try {
+      console.log("🔍 Testing Backend Health...");
+
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/health`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("✅ Backend Health Check Passed:", data);
+        setBackendStatus("online");
+        setTestResults((prev) => ({
+          ...prev,
+          backendHealth: `✅ Backend Online - ${data.message}`,
+        }));
+      } else {
+        throw new Error(`Health check failed: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("❌ Backend Health Check Failed:", error);
+      setBackendStatus("offline");
+      setTestResults((prev) => ({
+        ...prev,
+        backendHealth: `❌ Backend Offline: ${error.message}`,
+      }));
+    }
+    setLoading(false);
+  };
+
+  // Test API Authentication
+  const testAuthAPI = async () => {
+    setLoading(true);
+    try {
+      console.log("🔐 Testing Authentication API...");
+
+      // Test login endpoint with demo credentials
+      const loginData = {
+        email: "tourist@example.com",
+        password: "123456",
+        userType: "tourist",
+      };
+
+      const response = await apiService.post("/auth/login", loginData);
+      console.log("✅ Auth API Test Passed:", response);
+
+      setTestResults((prev) => ({
+        ...prev,
+        authAPI: "✅ Authentication API Working",
+      }));
+
+      // Store token for other tests
+      if (response.token) {
+        apiService.setAuthToken(response.token);
+      }
+    } catch (error) {
+      console.error("❌ Auth API Test Failed:", error);
+      setTestResults((prev) => ({
+        ...prev,
+        authAPI: `❌ Auth API Error: ${error.message}`,
+      }));
+    }
+    setLoading(false);
+  };
+
+  // Test Guides API
+  const testGuidesAPI = async () => {
+    setLoading(true);
+    try {
+      console.log("👥 Testing Guides API...");
+
+      const response = await apiService.get("/guides");
+      console.log("✅ Guides API Test Passed:", response);
+
+      setTestResults((prev) => ({
+        ...prev,
+        guidesAPI: `✅ Guides API Working (${
+          response.length || 0
+        } guides found)`,
+      }));
+    } catch (error) {
+      console.error("❌ Guides API Test Failed:", error);
+      setTestResults((prev) => ({
+        ...prev,
+        guidesAPI: `❌ Guides API Error: ${error.message}`,
+      }));
+    }
+    setLoading(false);
+  };
+
+  // Test Bookings API
+  const testBookingsAPI = async () => {
+    setLoading(true);
+    try {
+      console.log("📅 Testing Bookings API...");
+
+      const response = await apiService.get("/bookings");
+      console.log("✅ Bookings API Test Passed:", response);
+
+      setTestResults((prev) => ({
+        ...prev,
+        bookingsAPI: `✅ Bookings API Working (${
+          response.length || 0
+        } bookings found)`,
+      }));
+    } catch (error) {
+      console.error("❌ Bookings API Test Failed:", error);
+      setTestResults((prev) => ({
+        ...prev,
+        bookingsAPI: `❌ Bookings API Error: ${error.message}`,
+      }));
+    }
+    setLoading(false);
+  };
+
+  // Test Database Connection
+  const testDatabaseConnection = async () => {
+    setLoading(true);
+    try {
+      console.log("🗄️ Testing Database Connection...");
+
+      // Test by trying to fetch guides (which requires DB)
+      const response = await apiService.get("/guides");
+
+      if (response) {
+        setTestResults((prev) => ({
+          ...prev,
+          database: "✅ Database Connection Working",
+        }));
+      }
+    } catch (error) {
+      console.error("❌ Database Test Failed:", error);
+      setTestResults((prev) => ({
+        ...prev,
+        database: `❌ Database Error: ${error.message}`,
+      }));
+    }
+    setLoading(false);
   };
 
   // Test Google Maps API
@@ -156,6 +301,19 @@ const ApiTest = () => {
     }
   };
 
+  // Run all backend tests
+  const runAllBackendTests = async () => {
+    setLoading(true);
+    await testBackendHealth();
+    if (backendStatus === "online") {
+      await testAuthAPI();
+      await testGuidesAPI();
+      await testBookingsAPI();
+      await testDatabaseConnection();
+    }
+    setLoading(false);
+  };
+
   const buttonStyle = {
     padding: "10px 15px",
     margin: "5px",
@@ -176,11 +334,32 @@ const ApiTest = () => {
     fontSize: "14px",
   };
 
+  const statusStyle = {
+    padding: "15px",
+    borderRadius: "8px",
+    margin: "20px 0",
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: "16px",
+    backgroundColor:
+      backendStatus === "online"
+        ? "#d4edda"
+        : backendStatus === "offline"
+        ? "#f8d7da"
+        : "#e2e3e5",
+    color:
+      backendStatus === "online"
+        ? "#155724"
+        : backendStatus === "offline"
+        ? "#721c24"
+        : "#6c757d",
+  };
+
   return (
     <div
       style={{
         padding: "20px",
-        maxWidth: "800px",
+        maxWidth: "1000px",
         margin: "0 auto",
         minHeight: "500px",
       }}
@@ -192,13 +371,23 @@ const ApiTest = () => {
           paddingBottom: "10px",
         }}
       >
-        🧪 TourConnect API Testing Dashboard
+        🧪 TourConnect Frontend-Backend Testing Dashboard
       </h1>
 
       <p style={{ color: "#666", marginBottom: "30px" }}>
-        This page tests your environment variables and API connectivity to
-        ensure everything is working properly.
+        This page tests your frontend-backend integration, API connectivity, and
+        third-party services.
       </p>
+
+      {/* Backend Status */}
+      <div style={statusStyle}>
+        Backend Status:{" "}
+        {backendStatus === "online"
+          ? "🟢 ONLINE"
+          : backendStatus === "offline"
+          ? "🔴 OFFLINE"
+          : "🟡 UNKNOWN"}
+      </div>
 
       {/* Environment Variables Section */}
       <div
@@ -229,16 +418,97 @@ const ApiTest = () => {
         )}
       </div>
 
-      {/* API Tests Section */}
+      {/* Backend API Tests */}
       <div
         style={{
           marginBottom: "30px",
-          backgroundColor: "#f8f9fa",
+          backgroundColor: "#fff3cd",
           padding: "20px",
           borderRadius: "8px",
         }}
       >
-        <h2>🔌 API Tests</h2>
+        <h2>🔗 Backend API Tests</h2>
+        <div style={{ marginBottom: "15px" }}>
+          <button
+            onClick={testBackendHealth}
+            disabled={loading}
+            style={buttonStyle}
+          >
+            Test Backend Health
+          </button>
+          <button onClick={testAuthAPI} disabled={loading} style={buttonStyle}>
+            Test Authentication
+          </button>
+          <button
+            onClick={testGuidesAPI}
+            disabled={loading}
+            style={buttonStyle}
+          >
+            Test Guides API
+          </button>
+          <button
+            onClick={testBookingsAPI}
+            disabled={loading}
+            style={buttonStyle}
+          >
+            Test Bookings API
+          </button>
+          <button
+            onClick={testDatabaseConnection}
+            disabled={loading}
+            style={buttonStyle}
+          >
+            Test Database
+          </button>
+          <button
+            onClick={runAllBackendTests}
+            disabled={loading}
+            style={{ ...buttonStyle, backgroundColor: "#28a745" }}
+          >
+            🚀 Run All Backend Tests
+          </button>
+        </div>
+
+        {/* Backend Test Results */}
+        <div>
+          {testResults.backendHealth && (
+            <div style={resultStyle}>
+              <strong>Backend Health:</strong> {testResults.backendHealth}
+            </div>
+          )}
+          {testResults.authAPI && (
+            <div style={resultStyle}>
+              <strong>Authentication API:</strong> {testResults.authAPI}
+            </div>
+          )}
+          {testResults.guidesAPI && (
+            <div style={resultStyle}>
+              <strong>Guides API:</strong> {testResults.guidesAPI}
+            </div>
+          )}
+          {testResults.bookingsAPI && (
+            <div style={resultStyle}>
+              <strong>Bookings API:</strong> {testResults.bookingsAPI}
+            </div>
+          )}
+          {testResults.database && (
+            <div style={resultStyle}>
+              <strong>Database:</strong> {testResults.database}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Frontend API Tests */}
+      <div
+        style={{
+          marginBottom: "30px",
+          backgroundColor: "#d1ecf1",
+          padding: "20px",
+          borderRadius: "8px",
+        }}
+      >
+        <h2>🔌 Frontend API Tests</h2>
         <div style={{ marginBottom: "15px" }}>
           <button
             onClick={testGoogleMaps}
@@ -255,7 +525,7 @@ const ApiTest = () => {
           </button>
         </div>
 
-        {/* Test Results */}
+        {/* Frontend Test Results */}
         <div>
           {testResults.googleMaps && (
             <div style={resultStyle}>
@@ -294,10 +564,13 @@ const ApiTest = () => {
           {`Environment: ${process.env.NODE_ENV || "development"}
 App Name: ${process.env.REACT_APP_APP_NAME || "Not Set"}
 Frontend URL: ${process.env.REACT_APP_FRONTEND_URL || "Not Set"}
-API URL: ${process.env.REACT_APP_API_URL || "Not Set"}
+Backend API URL: ${process.env.REACT_APP_API_URL || "http://localhost:5000"}
 Current URL: ${
             typeof window !== "undefined" ? window.location.href : "Server Side"
           }
+
+Backend Status: ${backendStatus}
+Auth Token: ${localStorage.getItem("authToken") ? "Present ✅" : "Not Set ❌"}
 
 API Keys Status:
 - Google Maps: ${

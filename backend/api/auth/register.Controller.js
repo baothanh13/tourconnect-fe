@@ -10,7 +10,7 @@ const register = async (req, res) => {
   const { name, email, password, phone, role, city, specialties, bio } =
     req.body;
 
-  const allowedRoles = ["tourist", "guide"];
+  const allowedRoles = ["tourist", "guide", "admin", "support"];
 
   if (!allowedRoles.includes(role)) {
     return res.status(400).json({ message: "Invalid role" });

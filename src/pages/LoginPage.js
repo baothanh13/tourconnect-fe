@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import "./LoginPage.css";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -26,7 +24,6 @@ const LoginPage = () => {
       const result = await login(formData.email, formData.password);
 
       if (result.success) {
-        // --- THIS IS THE NEW LOGIC ---
         // Redirect based on the user's role
         switch (result.user.role) {
           case "guide":
@@ -40,13 +37,13 @@ const LoginPage = () => {
             break;
           case "tourist":
           default:
-            navigate("/tourist/dashboard"); // Or just navigate('/')
+            navigate("/"); // Tourists go to homepage
         }
       } else {
-        setError(result.error || "Đăng nhập thất bại");
+        setError(result.error || "Login failed");
       }
     } catch (err) {
-      setError("Có lỗi xảy ra. Vui lòng thử lại.");
+      setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -55,7 +52,7 @@ const LoginPage = () => {
   return (
     <div className="login-page">
       <div className="login-container">
-        <h1>Đăng nhập TourConnect</h1>
+        <h1>Login to TourConnect</h1>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
@@ -65,33 +62,33 @@ const LoginPage = () => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              placeholder="Nhập email của bạn"
+              placeholder="Enter your email"
               disabled={isLoading}
               required
             />
           </div>
 
           <div className="form-group">
-            <label>Mật khẩu:</label>
+            <label>Password:</label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              placeholder="Nhập mật khẩu"
+              placeholder="Enter your password"
               disabled={isLoading}
               required
             />
           </div>
 
           <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 
         <div className="login-links">
-          <Link to="/register">Chưa có tài khoản? Đăng ký ngay</Link>
-          <Link to="/">← Quay về trang chủ</Link>
+          <Link to="/register">Don't have an account? Register now</Link>
+          <Link to="/">← Back to Home</Link>
         </div>
       </div>
     </div>

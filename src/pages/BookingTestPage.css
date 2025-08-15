@@ -1,0 +1,237 @@
+/* Booking Test Page Styles */
+.booking-test-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f6f9fc 0%, #ffffff 100%);
+  padding: 2rem 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.booking-test-page h1 {
+  color: #2d3748;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.user-info p {
+  margin: 0.5rem 0;
+  font-weight: 500;
+}
+
+.warning {
+  background: #fed7d7;
+  color: #c53030;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  border: 1px solid #feb2b2;
+  font-weight: 500;
+}
+
+.test-section,
+.form-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.test-section h2,
+.form-section h2 {
+  color: #2d3748;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 0.5rem;
+}
+
+.btn-test {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.btn-test:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+.btn-test:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-submit {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  margin-top: 1rem;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error-section {
+  background: #fed7d7;
+  color: #c53030;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  border: 1px solid #feb2b2;
+}
+
+.error-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.result-section {
+  background: #c6f6d5;
+  color: #2f855a;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  border: 1px solid #9ae6b4;
+}
+
+.result-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.debug-section {
+  background: #edf2f7;
+  color: #4a5568;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  border: 1px solid #cbd5e0;
+}
+
+.debug-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #2d3748;
+}
+
+.debug-section pre {
+  background: #f7fafc;
+  padding: 1rem;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  border: 1px solid #e2e8f0;
+}
+
+.error-section pre,
+.result-section pre {
+  background: rgba(255, 255, 255, 0.7);
+  padding: 1rem;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .booking-test-page h1 {
+    font-size: 2rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .test-section,
+  .form-section {
+    padding: 1.5rem;
+  }
+}

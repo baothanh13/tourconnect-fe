@@ -45,6 +45,7 @@ CREATE TABLE `bookings` (
 
 LOCK TABLES `bookings` WRITE;
 /*!40000 ALTER TABLE `bookings` DISABLE KEYS */;
+INSERT INTO `bookings` VALUES ('44af3e43-53f9-443e-b1f0-54ef0d5bc4b7','71ab5530-a5d3-46b9-9f03-374dc96e0221','a4bcb60a-62da-4da8-a465-174075eb3bfe','2025-08-09','08:00:00',5,20,200.00,'pending','pending','I hope you can singing while guide us','2025-08-09 11:58:56');
 /*!40000 ALTER TABLE `bookings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -80,7 +81,80 @@ CREATE TABLE `guides` (
 
 LOCK TABLES `guides` WRITE;
 /*!40000 ALTER TABLE `guides` DISABLE KEYS */;
+INSERT INTO `guides` VALUES ('49be27bf-2aad-443c-8afd-2fc596a0eaed','71ab5530-a5d3-46b9-9f03-374dc96e0221','Ho Chi Minh City','[\"English\", \"Vietnamese\", \"Japanese\"]','[\"singing\", \"dancing\"]',10.00,2,'I really like to guide people','[\"string\"]',0.00,0,1,NULL,'pending'),('64643690-5b99-4ac9-99d1-ea163230bcdb','string','Da Nang City','[\"string\"]','[\"string\"]',0.00,0,'string','[\"string\"]',0.00,0,1,NULL,'pending'),('6da03ad3-0d81-48a8-b671-1eadc2bc1811','string','string','[\"English\"]','[\"string\"]',100.00,4,'string','[\"string\"]',0.00,0,1,NULL,'pending'),('c92b7a82-54a9-4243-96ba-846461a1353d','string','string','[\"string\"]','[\"string\"]',0.00,0,'string','[\"string\"]',0.00,0,1,NULL,'pending');
 /*!40000 ALTER TABLE `guides` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `reviews`
+--
+
+DROP TABLE IF EXISTS `reviews`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reviews` (
+  `id` varchar(50) NOT NULL,
+  `booking_id` varchar(50) NOT NULL,
+  `tourist_id` varchar(50) NOT NULL,
+  `guide_id` varchar(50) NOT NULL,
+  `tour_id` varchar(50) NOT NULL,
+  `rating` decimal(2,1) NOT NULL,
+  `comment` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `booking_id` (`booking_id`),
+  KEY `tourist_id` (`tourist_id`),
+  KEY `guide_id` (`guide_id`),
+  KEY `tour_id` (`tour_id`),
+  CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`),
+  CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`tourist_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `reviews_ibfk_3` FOREIGN KEY (`guide_id`) REFERENCES `guides` (`id`),
+  CONSTRAINT `reviews_ibfk_4` FOREIGN KEY (`tour_id`) REFERENCES `tours` (`id`),
+  CONSTRAINT `reviews_chk_1` CHECK (((`rating` >= 1) and (`rating` <= 5)))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reviews`
+--
+
+LOCK TABLES `reviews` WRITE;
+/*!40000 ALTER TABLE `reviews` DISABLE KEYS */;
+/*!40000 ALTER TABLE `reviews` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tours`
+--
+
+DROP TABLE IF EXISTS `tours`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tours` (
+  `id` varchar(50) NOT NULL,
+  `guide_id` varchar(50) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text,
+  `duration_hours` int DEFAULT NULL,
+  `max_people` int DEFAULT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `image_url` text,
+  `category` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `guide_id` (`guide_id`),
+  CONSTRAINT `tours_ibfk_1` FOREIGN KEY (`guide_id`) REFERENCES `guides` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tours`
+--
+
+LOCK TABLES `tours` WRITE;
+/*!40000 ALTER TABLE `tours` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tours` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -113,7 +187,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('082c56d8-005b-44a5-a0bd-bff4e8cb40a0','tienbi63543@gmail.com','$2b$10$0mP3rqHCtynb/EHcQ.9.VuTzI3y26L7KmI3CWWcbf24p89S5fSSy6','tourist','Tien Dang','0123456789',NULL,1,1,'2025-08-06 02:22:44','2025-08-06 03:09:20'),('a4bcb60a-62da-4da8-a465-174075eb3bfe','kiritanitaiyo@gmail.com','$2b$10$wYf0fws0.Ii4ad/Nh1DAhud3Y0..QWmRBejhKTk5qi6aqTD1vOPr2','tourist','johndoe','0123456789',NULL,1,1,'2025-08-06 02:54:57','2025-08-06 02:56:57'),('e7ab7661-51cc-4e7d-8fc0-74a78cadcd4f','2251120118@ut.edu.vn','$2b$10$pJ92Ydme.KxfQlRILUAlSuHCr8r7pnTYZ0Zq4KublxmsyUVUlVgFq','tourist','Dang Minh Tien','0123456789',NULL,1,1,'2025-08-06 05:28:58','2025-08-06 05:29:54');
+INSERT INTO `users` VALUES ('082c56d8-005b-44a5-a0bd-bff4e8cb40a0','tienbi63543@gmail.com','$2b$10$0mP3rqHCtynb/EHcQ.9.VuTzI3y26L7KmI3CWWcbf24p89S5fSSy6','tourist','Tien Dang','0123456789',NULL,1,1,'2025-08-06 02:22:44','2025-08-06 03:09:20'),('0f3baa94-1610-4e20-820e-5ba3e8a3e12e','2251120118@ut.edu.vn','$2b$10$k5yZhBfu4lKhwwBng0lK1.H4iAIdF.5VY2RygAV3WgA/AaICUJa5i','support','support1','0123456789',NULL,1,1,'2025-08-14 13:47:13','2025-08-14 13:48:04'),('71ab5530-a5d3-46b9-9f03-374dc96e0221','2251120124@ut.edu.vn','$2b$10$OLpwXMNr4IH2soB13OLJ7O8kyYZm7CeEPfgf.01WxJMCrs4hrgUcC','guide','Pham Cong Tru','0123456789',NULL,1,1,'2025-08-06 08:03:38','2025-08-06 08:04:17'),('76a9100a-1aef-457f-bc6e-c595fa06d889','tien632004@gmail.com','$2b$10$ipcyA/aSsIFXVq4nvTvxeuJ3wYTgTz/2oUp/XZJ/Kc73W1e3fGZDe','admin','Admin','0123456789',NULL,1,1,'2025-08-14 13:42:06','2025-08-14 13:42:57'),('a4bcb60a-62da-4da8-a465-174075eb3bfe','kiritanitaiyo@gmail.com','$2b$10$wYf0fws0.Ii4ad/Nh1DAhud3Y0..QWmRBejhKTk5qi6aqTD1vOPr2','tourist','johndoe','0123456789',NULL,1,1,'2025-08-06 02:54:57','2025-08-06 02:56:57');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -126,4 +200,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-06 13:58:28
+-- Dump completed on 2025-08-14 20:50:31

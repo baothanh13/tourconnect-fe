@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { mockGuides, mockReviews } from "../data/mockData";
+//import { mockGuides, mockReviews } from "../data/mockData";
 import Loading from "../components/Loading";
 import "./TouristDashboard.css";
 
@@ -62,7 +62,6 @@ const TouristDashboard = () => {
         return;
       }
 
-      // TEMPORARY: Skip service calls and use mock data directly
       console.log("Using mock data directly");
 
       const mockBookings = [
@@ -98,8 +97,6 @@ const TouristDashboard = () => {
       ];
 
       setUserBookings(mockBookings);
-      setFavoriteGuides(mockGuides.slice(0, 3));
-      setUserReviews(mockReviews.slice(0, 2));
       setProfileData({
         name: user?.name || "Tourist User",
         email: user?.email || "user@example.com",

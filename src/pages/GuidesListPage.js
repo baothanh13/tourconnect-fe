@@ -1,332 +1,381 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { mockGuides } from "../data/mockData";
-import GuideCard from "../components/guide/GuideCard";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Loading from "../components/Loading";
+import GuideCard from "../components/GuideCard";
 import "./GuidesListPage.css";
 
+// Mock guides data
+const mockGuides = [
+  {
+    id: 1,
+    name: "Sarah Chen",
+    location: "Ho Chi Minh City",
+    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b372?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
+    rating: 4.9,
+    reviewCount: 124,
+    pricePerHour: 25,
+    specialties: ["Food Tours", "Cultural Tours"],
+    languages: ["English", "Vietnamese"],
+    description: "Passionate local guide with 5+ years experience showing the hidden gems of Saigon.",
+    isVerified: true,
+    totalTours: 156,
+    yearsExperience: 5
+  },
+  {
+    id: 2,
+    name: "Ahmed Hassan",
+    location: "Hanoi",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
+    rating: 4.8,
+    reviewCount: 89,
+    pricePerHour: 30,
+    specialties: ["Historical Sites", "Architecture"],
+    languages: ["English", "Vietnamese", "French"],
+    description: "History enthusiast ready to share the fascinating stories of Vietnam's capital.",
+    isVerified: true,
+    totalTours: 98,
+    yearsExperience: 4
+  },
+  {
+    id: 3,
+    name: "Maria Rodriguez",
+    location: "Hoi An",
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
+    rating: 4.9,
+    reviewCount: 167,
+    pricePerHour: 35,
+    specialties: ["Photography", "Art & Culture"],
+    languages: ["English", "Spanish", "Vietnamese"],
+    description: "Professional photographer and cultural enthusiast who loves capturing Hoi An's magic.",
+    isVerified: true,
+    totalTours: 203,
+    yearsExperience: 6
+  },
+  {
+    id: 4,
+    name: "Duc Nguyen",
+    location: "Da Nang",
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
+    rating: 4.7,
+    reviewCount: 76,
+    pricePerHour: 28,
+    specialties: ["Adventure", "Nature"],
+    languages: ["English", "Vietnamese"],
+    description: "Adventure guide specializing in Ba Na Hills and Marble Mountain expeditions.",
+    isVerified: true,
+    totalTours: 112,
+    yearsExperience: 3
+  },
+  {
+    id: 5,
+    name: "Emily Thompson",
+    location: "Hue",
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
+    rating: 4.8,
+    reviewCount: 134,
+    pricePerHour: 32,
+    specialties: ["Historical Sites", "Royal Heritage"],
+    languages: ["English", "Vietnamese", "German"],
+    description: "Former historian turned guide, expert in Imperial City and royal tombs.",
+    isVerified: true,
+    totalTours: 145,
+    yearsExperience: 7
+  },
+  {
+    id: 6,
+    name: "Linh Pham",
+    location: "Nha Trang",
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
+    rating: 4.9,
+    reviewCount: 92,
+    pricePerHour: 26,
+    specialties: ["Beach Activities", "Water Sports"],
+    languages: ["English", "Vietnamese", "Korean"],
+    description: "Marine biologist turned guide, perfect for beach and underwater adventures.",
+    isVerified: true,
+    totalTours: 87,
+    yearsExperience: 4
+  }
+];
+
 const GuidesListPage = () => {
-  const location = useLocation();
   const [guides, setGuides] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [priceRange, setPriceRange] = useState("all");
-  const [dateFilter, setDateFilter] = useState("");
-  const [minRating, setMinRating] = useState(0);
-  const [availableOnly, setAvailableOnly] = useState(false);
+  const [searchParams] = useSearchParams();
+  
+  // Filter states
+  const [filters, setFilters] = useState({
+    location: searchParams.get("location") || "",
+    priceRange: [0, 100],
+    languages: [],
+    specialties: [],
+    rating: 0,
+    searchQuery: ""
+  });
 
-  // Filter options
-  const cities = [
-    "Paris",
-    "London",
-    "Tokyo",
-    "New York",
-    "Rome",
-    "Barcelona",
-    "Amsterdam",
-    "Prague",
-    "Vienna",
-    "Berlin",
-    "Florence",
-    "Venice",
-  ];
+  const [sortBy, setSortBy] = useState("rating");
 
-  const languages = [
-    "English",
-    "Spanish",
-    "French",
-    "German",
-    "Italian",
-    "Portuguese",
-    "Japanese",
-    "Chinese",
-    "Korean",
-    "Arabic",
-    "Russian",
-    "Dutch",
-  ];
-
-  const categories = [
-    "Cultural Tours",
-    "Food Tours",
-    "Adventure Tours",
-    "City Tours",
-    "Nature Tours",
-    "Photography Tours",
-    "Historical Tours",
-    "Art & Culture",
-  ];
-
-  const priceRanges = [
-    { label: "💰 Any Price", value: "all" },
-    { label: "💰 Under $50", value: "0-50" },
-    { label: "💰 $50 - $100", value: "50-100" },
-    { label: "💰 $100 - $200", value: "100-200" },
-    { label: "💰 $200+", value: "200+" },
-  ];
-
-  // Load guides data
   useEffect(() => {
     const loadGuides = async () => {
-      try {
-        setLoading(true);
-        setGuides(mockGuides);
-      } catch (error) {
-        console.error("Error loading guides:", error);
-        setGuides(mockGuides);
-      } finally {
+      setLoading(true);
+      
+      // Simulate API call
+      setTimeout(() => {
+        let filteredGuides = [...mockGuides];
+        
+        // Apply filters
+        if (filters.location) {
+          filteredGuides = filteredGuides.filter(guide =>
+            guide.location.toLowerCase().includes(filters.location.toLowerCase())
+          );
+        }
+        
+        if (filters.searchQuery) {
+          filteredGuides = filteredGuides.filter(guide =>
+            guide.name.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
+            guide.specialties.some(specialty =>
+              specialty.toLowerCase().includes(filters.searchQuery.toLowerCase())
+            )
+          );
+        }
+        
+        if (filters.languages.length > 0) {
+          filteredGuides = filteredGuides.filter(guide =>
+            filters.languages.some(lang => guide.languages.includes(lang))
+          );
+        }
+        
+        if (filters.specialties.length > 0) {
+          filteredGuides = filteredGuides.filter(guide =>
+            filters.specialties.some(specialty => guide.specialties.includes(specialty))
+          );
+        }
+        
+        if (filters.rating > 0) {
+          filteredGuides = filteredGuides.filter(guide => guide.rating >= filters.rating);
+        }
+        
+        filteredGuides = filteredGuides.filter(guide =>
+          guide.pricePerHour >= filters.priceRange[0] && guide.pricePerHour <= filters.priceRange[1]
+        );
+        
+        // Apply sorting
+        switch (sortBy) {
+          case "rating":
+            filteredGuides.sort((a, b) => b.rating - a.rating);
+            break;
+          case "price-low":
+            filteredGuides.sort((a, b) => a.pricePerHour - b.pricePerHour);
+            break;
+          case "price-high":
+            filteredGuides.sort((a, b) => b.pricePerHour - a.pricePerHour);
+            break;
+          case "reviews":
+            filteredGuides.sort((a, b) => b.reviewCount - a.reviewCount);
+            break;
+          default:
+            break;
+        }
+        
+        setGuides(filteredGuides);
         setLoading(false);
-      }
+      }, 500);
     };
 
     loadGuides();
-  }, []);
+  }, [filters, sortBy]);
 
-  // Handle URL parameters for search
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const search = params.get("search");
-    if (search) setSearchQuery(search);
-  }, [location.search]);
+  const handleFilterChange = (filterType, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: value
+    }));
+  };
 
-  // Filter and sort guides
-  const filteredAndSortedGuides = useMemo(() => {
-    let filtered = guides;
+  const handleLanguageToggle = (language) => {
+    setFilters(prev => ({
+      ...prev,
+      languages: prev.languages.includes(language)
+        ? prev.languages.filter(lang => lang !== language)
+        : [...prev.languages, language]
+    }));
+  };
 
-    // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (guide) =>
-          guide.name.toLowerCase().includes(query) ||
-          guide.location.toLowerCase().includes(query) ||
-          guide.bio.toLowerCase().includes(query) ||
-          guide.specialties.some((specialty) =>
-            specialty.toLowerCase().includes(query)
-          ) ||
-          (guide.languages &&
-            guide.languages.some((lang) => lang.toLowerCase().includes(query)))
-      );
-    }
+  const handleSpecialtyToggle = (specialty) => {
+    setFilters(prev => ({
+      ...prev,
+      specialties: prev.specialties.includes(specialty)
+        ? prev.specialties.filter(spec => spec !== specialty)
+        : [...prev.specialties, specialty]
+    }));
+  };
 
-    // Location filter
-    if (selectedCity) {
-      filtered = filtered.filter((guide) =>
-        guide.location.toLowerCase().includes(selectedCity.toLowerCase())
-      );
-    }
+  const clearFilters = () => {
+    setFilters({
+      location: "",
+      priceRange: [0, 100],
+      languages: [],
+      specialties: [],
+      rating: 0,
+      searchQuery: ""
+    });
+  };
 
-    // Language filter
-    if (selectedLanguage) {
-      filtered = filtered.filter(
-        (guide) => guide.languages && guide.languages.includes(selectedLanguage)
-      );
-    }
-
-    // Category filter
-    if (selectedCategory) {
-      filtered = filtered.filter((guide) =>
-        guide.specialties.includes(selectedCategory)
-      );
-    }
-
-    // Price range filter
-    if (priceRange !== "all") {
-      const [min, max] = priceRange.split("-").map(Number);
-      if (max) {
-        filtered = filtered.filter(
-          (guide) => guide.price >= min && guide.price <= max
-        );
-      } else {
-        // Handle "200+" case
-        filtered = filtered.filter((guide) => guide.price >= min);
-      }
-    }
-
-    // Date filter (simplified - in real app would check guide's actual availability)
-    if (dateFilter) {
-      filtered = filtered.filter((guide) => guide.available);
-    }
-
-    // Rating filter
-    if (minRating > 0) {
-      filtered = filtered.filter((guide) => guide.rating >= minRating);
-    }
-
-    // Availability filter
-    if (availableOnly) {
-      filtered = filtered.filter((guide) => guide.available);
-    }
-
-    // Sort guides by rating (highest first)
-    filtered.sort((a, b) => b.rating - a.rating);
-
-    return filtered;
-  }, [
-    guides,
-    searchQuery,
-    selectedCity,
-    selectedLanguage,
-    selectedCategory,
-    priceRange,
-    dateFilter,
-    minRating,
-    availableOnly,
-  ]);
+  const availableLanguages = ["English", "Vietnamese", "French", "Spanish", "German", "Korean", "Japanese"];
+  const availableSpecialties = ["Food Tours", "Cultural Tours", "Historical Sites", "Architecture", "Photography", "Art & Culture", "Adventure", "Nature", "Beach Activities", "Water Sports", "Royal Heritage"];
 
   if (loading) {
-    return <Loading size="large" text="Loading amazing guides..." overlay />;
+    return <Loading />;
   }
 
   return (
     <div className="guides-list-page">
-      {/* Search Header */}
-      <div className="search-header">
-        <div className="container">
-          <div className="search-section">
-            <div className="main-search">
-              <input
-                type="text"
-                placeholder="Search guides, locations, or specialties..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-              />
-              <button className="search-btn">🔍 Search</button>
-            </div>
-
-            <div className="quick-filters">
-              <select
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">📍 Any Location</option>
-                {cities.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">🗣️ Any Language</option>
-                {languages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">🎯 Any Category</option>
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={priceRange}
-                onChange={(e) => setPriceRange(e.target.value)}
-                className="filter-select"
-              >
-                {priceRanges.map((range) => (
-                  <option key={range.value} value={range.value}>
-                    {range.label}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={minRating}
-                onChange={(e) => setMinRating(Number(e.target.value))}
-                className="filter-select"
-              >
-                <option value={0}>⭐ Any Rating</option>
-                <option value={3}>⭐ 3+ Stars</option>
-                <option value={4}>⭐ 4+ Stars</option>
-                <option value={4.5}>⭐ 4.5+ Stars</option>
-              </select>
-
-              <select
-                value={availableOnly ? "available" : "all"}
-                onChange={(e) =>
-                  setAvailableOnly(e.target.value === "available")
-                }
-                className="filter-select"
-              >
-                <option value="all">⚡ Any Availability</option>
-                <option value="available">⚡ Available Now</option>
-              </select>
-
-              <input
-                type="date"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-                className="filter-select"
-                min={new Date().toISOString().split("T")[0]}
-              />
-            </div>
-          </div>
-        </div>
+      <div className="page-header">
+        <h1>Find Your Perfect Guide</h1>
+        <p>Discover local experts ready to show you the authentic Vietnam</p>
       </div>
-
-      <div className="container">
-        <div className="guides-content">
-          {/* Main Content */}
-          <div className="guides-main full-width">
-            <div className="guides-header">
-              <h1>Find Your Perfect Tour Guide</h1>
-              <p className="results-count">
-                {filteredAndSortedGuides.length} guide
-                {filteredAndSortedGuides.length !== 1 ? "s" : ""} found
-              </p>
-            </div>
-
-            <div className="guides-grid">
-              {filteredAndSortedGuides.length > 0 ? (
-                filteredAndSortedGuides.map((guide) => (
-                  <GuideCard key={guide.id} guide={guide} />
-                ))
-              ) : (
-                <div className="no-results">
-                  <div className="no-results-content">
-                    <h3>No guides found</h3>
-                    <p>Try adjusting your filters or search terms</p>
-                    <button
-                      onClick={() => {
-                        setSearchQuery("");
-                        setSelectedCity("");
-                        setSelectedLanguage("");
-                        setSelectedCategory("");
-                        setPriceRange("all");
-                        setDateFilter("");
-                        setMinRating(0);
-                        setAvailableOnly(false);
-                      }}
-                      className="btn btn-primary"
-                    >
-                      Clear All Filters
-                    </button>
-                  </div>
-                </div>
-              )}
+      
+      <div className="guides-content">
+        {/* Filters Panel */}
+        <aside className="filters-panel">
+          <div className="filters-header">
+            <h3>Filters</h3>
+            <button className="clear-filters" onClick={clearFilters}>
+              Clear All
+            </button>
+          </div>
+          
+          {/* Search */}
+          <div className="filter-group">
+            <label>Search</label>
+            <input
+              type="text"
+              placeholder="Guide name or specialty..."
+              value={filters.searchQuery}
+              onChange={(e) => handleFilterChange("searchQuery", e.target.value)}
+              className="filter-input"
+            />
+          </div>
+          
+          {/* Location */}
+          <div className="filter-group">
+            <label>Location</label>
+            <input
+              type="text"
+              placeholder="City or region..."
+              value={filters.location}
+              onChange={(e) => handleFilterChange("location", e.target.value)}
+              className="filter-input"
+            />
+          </div>
+          
+          {/* Price Range */}
+          <div className="filter-group">
+            <label>Price Range ($/hour)</label>
+            <div className="price-range">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={filters.priceRange[1]}
+                onChange={(e) => handleFilterChange("priceRange", [0, parseInt(e.target.value)])}
+                className="price-slider"
+              />
+              <div className="price-display">
+                $0 - ${filters.priceRange[1]}
+              </div>
             </div>
           </div>
-        </div>
+          
+          {/* Languages */}
+          <div className="filter-group">
+            <label>Languages</label>
+            <div className="checkbox-group">
+              {availableLanguages.map(language => (
+                <label key={language} className="checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={filters.languages.includes(language)}
+                    onChange={() => handleLanguageToggle(language)}
+                  />
+                  <span>{language}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          
+          {/* Specialties */}
+          <div className="filter-group">
+            <label>Specialties</label>
+            <div className="checkbox-group">
+              {availableSpecialties.map(specialty => (
+                <label key={specialty} className="checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={filters.specialties.includes(specialty)}
+                    onChange={() => handleSpecialtyToggle(specialty)}
+                  />
+                  <span>{specialty}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          
+          {/* Rating */}
+          <div className="filter-group">
+            <label>Minimum Rating</label>
+            <div className="rating-filter">
+              {[4, 4.5, 4.8].map(rating => (
+                <button
+                  key={rating}
+                  className={`rating-button ${filters.rating === rating ? 'active' : ''}`}
+                  onClick={() => handleFilterChange("rating", filters.rating === rating ? 0 : rating)}
+                >
+                  ⭐ {rating}+
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
+        
+        {/* Results Panel */}
+        <main className="results-panel">
+          <div className="results-header">
+            <div className="results-info">
+              <span>{guides.length} guides found</span>
+            </div>
+            
+            <div className="sort-controls">
+              <label>Sort by:</label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="sort-select"
+              >
+                <option value="rating">Highest Rated</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="reviews">Most Reviews</option>
+              </select>
+            </div>
+          </div>
+          
+          <div className="guides-grid">
+            {guides.map(guide => (
+              <GuideCard key={guide.id} guide={guide} />
+            ))}
+          </div>
+          
+          {guides.length === 0 && (
+            <div className="no-results">
+              <h3>No guides found</h3>
+              <p>Try adjusting your filters or search criteria</p>
+              <button onClick={clearFilters} className="btn-primary">
+                Clear Filters
+              </button>
+            </div>
+          )}
+        </main>
       </div>
     </div>
   );

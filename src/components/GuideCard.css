@@ -1,0 +1,253 @@
+.guide-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #e5e7eb;
+}
+
+.guide-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.guide-card-header {
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.guide-avatar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.guide-avatar img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+}
+
+.verified-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: #10b981;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border: 2px solid white;
+}
+
+.guide-basic-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.guide-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  color: #111827;
+}
+
+.guide-location {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 0.5rem 0;
+}
+
+.guide-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.star {
+  font-size: 0.875rem;
+  color: #fbbf24;
+}
+
+.star.empty {
+  color: #d1d5db;
+}
+
+.star.half {
+  background: linear-gradient(90deg, #fbbf24 50%, #d1d5db 50%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rating-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.guide-price {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.price-amount {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #059669;
+}
+
+.price-unit {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.guide-card-body {
+  padding: 1.5rem;
+}
+
+.guide-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0 0 1rem 0;
+}
+
+.guide-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.specialty-tag {
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.specialty-tag.more {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.guide-languages {
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.languages-label {
+  font-weight: 500;
+  color: #374151;
+  margin-right: 0.5rem;
+}
+
+.languages-list {
+  color: #6b7280;
+}
+
+.guide-stats {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.guide-card-footer {
+  padding: 1rem 1.5rem;
+  background: #f9fafb;
+  display: flex;
+  gap: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-view-profile {
+  flex: 1;
+  background: #2563eb;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.btn-view-profile:hover {
+  background: #1d4ed8;
+  color: white;
+  text-decoration: none;
+}
+
+.btn-message {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-message:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .guide-card-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .guide-price {
+    text-align: center;
+  }
+
+  .guide-stats {
+    justify-content: center;
+  }
+
+  .guide-card-footer {
+    flex-direction: column;
+  }
+}

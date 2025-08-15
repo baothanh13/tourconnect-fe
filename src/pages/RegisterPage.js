@@ -1,16 +1,20 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import OtpForm from "../components/OtpForm";
 import "./RegisterPage.css";
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+  const { register, confirmOTP } = useAuth();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
     phone: "",
-    userType: "tourist",
+    role: "tourist", // Changed from userType to role to match backend
     city: "",
     specialties: [],
     bio: "",
@@ -19,7 +23,8 @@ const RegisterPage = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [otpStep, setOtpStep] = useState(false); // <-- step state
+  const [otpStep, setOtpStep] = useState(false);
+  const [otpToken, setOtpToken] = useState("");
   const [registeredEmail, setRegisteredEmail] = useState("");
 
   const specialtiesList = [
@@ -62,12 +67,12 @@ const RegisterPage = () => {
     setSuccess("");
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Mật khẩu không khớp.");
+      setError("Passwords do not match.");
       setIsLoading(false);
       return;
     }
     if (formData.password.length < 6) {
-      setError("Mật khẩu phải có ít nhất 6 ký tự.");
+      setError("Password must be at least 6 characters.");
       setIsLoading(false);
       return;
     }
@@ -78,39 +83,52 @@ const RegisterPage = () => {
         email: formData.email,
         password: formData.password,
         phone: formData.phone,
-        role: formData.userType,
+        role: formData.role,
       };
 
       // Add guide-specific data if user is registering as a guide
-      if (formData.userType === "guide") {
+      if (formData.role === "guide") {
         registrationData.city = formData.city;
         registrationData.specialties = formData.specialties;
         registrationData.bio = formData.bio;
       }
 
-      const res = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(registrationData),
-      });
+      const result = await register(registrationData);
 
-      const data = await res.json();
-
-      if (res.status === 201) {
-        localStorage.setItem("otpToken", data.otpToken);
-        localStorage.setItem("userId", data.user_id);
-
-        setSuccess(
-          "Để xác thực tài khoản! Vui lòng nhập OTP được gửi qua email."
-        );
-        setRegisteredEmail(formData.email); // save email for OTP form
-        setOtpStep(true); // switch to OTP form
+      if (result.success) {
+        setOtpToken(result.otpToken);
+        setRegisteredEmail(formData.email);
+        setSuccess(result.message);
+        setOtpStep(true);
       } else {
-        setError(data.error || "Đăng ký thất bại. Vui lòng thử lại.");
+        setError(result.error || "Registration failed. Please try again.");
       }
     } catch (err) {
-      console.error("Lỗi đăng ký:", err);
-      setError("Đã xảy ra lỗi máy chủ. Vui lòng thử lại.");
+      console.error("Registration error:", err);
+      setError("Server error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOtpSubmit = async (otp) => {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const result = await confirmOTP(otp, otpToken);
+
+      if (result.success) {
+        setSuccess("Account verified successfully! Please login.");
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      } else {
+        setError(result.error || "OTP verification failed.");
+      }
+    } catch (err) {
+      console.error("OTP verification error:", err);
+      setError("OTP verification failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -119,7 +137,7 @@ const RegisterPage = () => {
   return (
     <div className="register-page">
       <div className="register-container">
-        <h1 className="register-title">Đăng ký TourConnect</h1>
+        <h1 className="register-title">Register for TourConnect</h1>
 
         {error && <div className="alert alert-error">{error}</div>}
         {success && <div className="alert alert-success">{success}</div>}
@@ -127,34 +145,34 @@ const RegisterPage = () => {
         {!otpStep ? (
           <form onSubmit={handleSubmit} className="register-form">
             <div className="form-group">
-              <label>Loại tài khoản:</label>
+              <label>Account Type:</label>
               <select
-                name="userType"
-                value={formData.userType}
+                name="role"
+                value={formData.role}
                 onChange={handleInputChange}
                 disabled={isLoading}
                 required
               >
-                <option value="tourist">Du khách</option>
-                <option value="guide">Hướng dẫn viên</option>
+                <option value="tourist">Tourist</option>
+                <option value="guide">Tour Guide</option>
               </select>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label>Họ và tên:</label>
+                <label>Full Name:</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="Nhập họ và tên"
+                  placeholder="Enter your full name"
                   disabled={isLoading}
                   required
                 />
               </div>
               <div className="form-group">
-                <label>Số điện thoại:</label>
+                <label>Phone Number:</label>
                 <input
                   type="tel"
                   name="phone"
@@ -174,7 +192,7 @@ const RegisterPage = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                placeholder="Nhập email"
+                placeholder="Enter your email"
                 disabled={isLoading}
                 required
               />
@@ -182,35 +200,35 @@ const RegisterPage = () => {
 
             <div className="form-row">
               <div className="form-group">
-                <label>Mật khẩu:</label>
+                <label>Password:</label>
                 <input
                   type="password"
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  placeholder="Ít nhất 6 ký tự"
+                  placeholder="At least 6 characters"
                   disabled={isLoading}
                   required
                 />
               </div>
               <div className="form-group">
-                <label>Xác nhận mật khẩu:</label>
+                <label>Confirm Password:</label>
                 <input
                   type="password"
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  placeholder="Nhập lại mật khẩu"
+                  placeholder="Re-enter password"
                   disabled={isLoading}
                   required
                 />
               </div>
             </div>
 
-            {formData.userType === "guide" && (
+            {formData.role === "guide" && (
               <>
                 <div className="form-group">
-                  <label>Thành phố:</label>
+                  <label>City:</label>
                   <select
                     name="city"
                     value={formData.city}
@@ -218,18 +236,18 @@ const RegisterPage = () => {
                     disabled={isLoading}
                     required
                   >
-                    <option value="">Chọn thành phố</option>
-                    <option value="Hà Nội">Hà Nội</option>
-                    <option value="Đà Nẵng">Đà Nẵng</option>
-                    <option value="Hồ Chí Minh">Hồ Chí Minh</option>
-                    <option value="Huế">Huế</option>
-                    <option value="Hội An">Hội An</option>
+                    <option value="">Select City</option>
+                    <option value="Ha Noi">Ha Noi</option>
+                    <option value="Da Nang">Da Nang</option>
+                    <option value="Ho Chi Minh">Ho Chi Minh</option>
+                    <option value="Hue">Hue</option>
+                    <option value="Hoi An">Hoi An</option>
                     <option value="Nha Trang">Nha Trang</option>
                   </select>
                 </div>
 
                 <div className="form-group">
-                  <label>Chuyên môn:</label>
+                  <label>Specialties:</label>
                   <div className="specialties-grid">
                     {specialtiesList.map((specialty) => (
                       <label key={specialty}>
@@ -247,12 +265,12 @@ const RegisterPage = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Giới thiệu bản thân:</label>
+                  <label>Bio:</label>
                   <textarea
                     name="bio"
                     value={formData.bio}
                     onChange={handleInputChange}
-                    placeholder="Mô tả kinh nghiệm, kỹ năng và những gì bạn có thể mang đến..."
+                    placeholder="Describe your experience, skills and what you can offer..."
                     rows="4"
                     disabled={isLoading}
                   />
@@ -265,17 +283,21 @@ const RegisterPage = () => {
               className="register-button"
               disabled={isLoading}
             >
-              {isLoading ? "Đang đăng ký..." : "Đăng ký"}
+              {isLoading ? "Registering..." : "Register"}
             </button>
           </form>
         ) : (
-          <OtpForm email={registeredEmail} />
+          <OtpForm
+            email={registeredEmail}
+            onSubmit={handleOtpSubmit}
+            isLoading={isLoading}
+          />
         )}
 
         {!otpStep && (
           <div className="register-links">
-            <Link to="/login">Đã có tài khoản? Đăng nhập</Link>
-            <Link to="/">← Quay về trang chủ</Link>
+            <Link to="/login">Already have an account? Login</Link>
+            <Link to="/">← Back to Home</Link>
           </div>
         )}
       </div>

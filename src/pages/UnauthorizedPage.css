@@ -1,96 +1,84 @@
-/* Unauthorized Page Styles */
 .unauthorized-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
-  padding: 20px;
+  background: #f9fafb;
+  padding: 2rem;
 }
 
-.unauthorized-container {
-  background: white;
-  padding: 60px 40px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+.unauthorized-content {
   text-align: center;
-  max-width: 500px;
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  max-width: 400px;
   width: 100%;
 }
 
 .unauthorized-icon {
-  font-size: 72px;
-  margin-bottom: 24px;
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
 }
 
-.unauthorized-container h1 {
-  color: #2d3436;
-  margin-bottom: 16px;
-  font-size: 28px;
-  font-weight: 600;
+.unauthorized-content h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
 }
 
-.unauthorized-container p {
-  color: #636e72;
-  margin-bottom: 32px;
-  font-size: 16px;
-  line-height: 1.6;
+.unauthorized-content p {
+  color: #6b7280;
+  margin-bottom: 2rem;
+  line-height: 1.5;
 }
 
 .unauthorized-actions {
   display: flex;
-  gap: 16px;
+  gap: 1rem;
   justify-content: center;
-  flex-wrap: wrap;
 }
 
-.login-link,
-.home-link {
-  padding: 12px 24px;
+.btn-home,
+.btn-login {
+  padding: 0.75rem 1.5rem;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 500;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s;
 }
 
-.login-link {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.btn-home {
+  background: #2563eb;
   color: white;
 }
 
-.home-link {
-  background: #f8f9fa;
-  color: #495057;
-  border: 2px solid #e9ecef;
+.btn-home:hover {
+  background: #1d4ed8;
+  color: white;
+  text-decoration: none;
 }
 
-.login-link:hover,
-.home-link:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+.btn-login {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
 }
 
-/* Responsive design */
+.btn-login:hover {
+  background: #f9fafb;
+  color: #374151;
+  text-decoration: none;
+}
+
 @media (max-width: 480px) {
-  .unauthorized-page {
-    padding: 10px;
-  }
-
-  .unauthorized-container {
-    padding: 40px 20px;
-  }
-
-  .unauthorized-container h1 {
-    font-size: 24px;
+  .unauthorized-content {
+    padding: 2rem;
   }
 
   .unauthorized-actions {
     flex-direction: column;
-    align-items: center;
-  }
-
-  .login-link,
-  .home-link {
-    width: 200px;
   }
 }

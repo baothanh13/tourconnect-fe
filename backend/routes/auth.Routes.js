@@ -7,6 +7,7 @@ const logout = require('../api/auth/logout.Controller');
 const { getProfile, updateProfile } = require('../api/auth/profile.Controller');
 const verifyToken = require('../middleware/verifyToken');  // Import middleware
 const confirmOTP = require('../api/auth/confirmOTP.Controller');
+const { sendForgotPasswordOTP, resetPassword } = require('../api/auth/forgotPassword.Controller');
 /**
  * @swagger
  * /api/auth/login:
@@ -194,4 +195,79 @@ router.put('/profile', verifyToken, updateProfile);
  */
 router.post('/confirm-otp', confirmOTP);
 
+/**
+ * @swagger
+ * /api/auth/forgot-password/send-otp:
+ *   post:
+ *     summary: Send OTP to email for password reset verification
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *     responses:
+ *       200:
+ *         description: OTP has been sent to your email
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 otpToken:
+ *                   type: string
+ *       404:
+ *         description: Email not found
+ *       400:
+ *         description: Invalid email
+ */
+router.post('/forgot-password/send-otp', sendForgotPasswordOTP);
+
+/**
+ * @swagger
+ * /api/auth/forgot-password/reset:
+ *   post:
+ *     summary: Confirm OTP and reset new password
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               otp:
+ *                 type: string
+ *                 example: "123456"
+ *               token:
+ *                 type: string
+ *                 example: "jwt-token"
+ *               newPassword:
+ *                 type: string
+ *                 example: "newpassword123"
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Missing fields or invalid token
+ *       401:
+ *         description: OTP is not correct
+ */
+router.post('/forgot-password/reset', resetPassword);
 module.exports = router;

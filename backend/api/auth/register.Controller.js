@@ -1,19 +1,25 @@
 const { connectToDB } = require("../../config/db");
-const bcrypt = require("bcrypt");
-const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 const SECRET_KEY = process.env.SECRET_KEY;  // Đưa vào .env sau này
 
+function isValidEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
 const register = async (req, res) => {
-  const { name, email, password, phone, role, city, specialties, bio } =
-    req.body;
+  const { email, role } = req.body;
 
   const allowedRoles = ["tourist", "guide", "admin", "support"];
 
   if (!allowedRoles.includes(role)) {
     return res.status(400).json({ message: "Invalid role" });
+  }
+
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ message: "Invalid email format" });
   }
 
   try {
@@ -29,61 +35,18 @@ const register = async (req, res) => {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // Hash password
-    const password_hash = await bcrypt.hash(password, 10);
-
-    // Generate UUID
-    const userId = uuidv4();
-
-    // Insert into users table
-    await connection.execute(
-      `INSERT INTO users (id, email, password_hash, role, name, phone) VALUES (?, ?, ?, ?, ?, ?)`,
-      [userId, email, password_hash, role, name, phone]
-    );
-
-    // If role is guide, create guide profile
-    if (role === "guide" && city && specialties) {
-      const guideId = uuidv4();
-      const guideSpecialties = Array.isArray(specialties)
-        ? specialties
-        : [specialties];
-
-      await connection.execute(
-        `INSERT INTO guides (
-                    id, user_id, location, languages, specialties, 
-                    price_per_hour, experience_years, description, 
-                    rating, total_reviews, is_available, verification_status
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          guideId,
-          userId,
-          city,
-          JSON.stringify(["Vietnamese"]),
-          JSON.stringify(guideSpecialties),
-          0,
-          0,
-          bio || "",
-          0.0,
-          0,
-          1,
-          "pending",
-        ]
-      );
-    }
-
     // Tạo OTP 6 số ngẫu nhiên
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     // Tạo Token chứa OTP + email, sống 5 phút
-    const otpToken = jwt.sign({ email, otp }, SECRET_KEY, { expiresIn: "5m" });
+    const otpToken = jwt.sign({ email, otp, role, ...req.body }, SECRET_KEY, { expiresIn: "5m" });
 
     // Gửi Email OTP ngay sau khi đăng ký
     await sendOTPEmail(email, otp);
 
     return res.status(201).json({
-      message: "To verified your register, OTP has been sent to email",
-      otpToken,
-      user_id: userId,
+      message: "OTP has been sent to your email for verification.",
+      otpToken
     });
   } catch (err) {
     console.error("Registration Error:", err);

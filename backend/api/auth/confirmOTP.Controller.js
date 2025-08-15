@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.SECRET_KEY;  // Đưa vào .env thực tế
 const { connectToDB } = require('../../config/db');
+const bcrypt = require('bcrypt');
+const { v4: uuidv4 } = require('uuid');
 
 const confirmOTP = async (req, res) => {
     try {
@@ -18,11 +20,68 @@ const confirmOTP = async (req, res) => {
 
         const connection = await connectToDB();
 
-        // Cập nhật is_verified = true
-        await connection.execute(
-            `UPDATE users SET is_verified = ? WHERE email = ?`,
-            [1, decoded.email]
+        // Kiểm tra email đã tồn tại chưa
+        const [existingUsers] = await connection.execute(
+            `SELECT * FROM users WHERE email = ?`,
+            [decoded.email]
         );
+        if (existingUsers.length > 0) {
+            return res.status(400).json({ message: "Email already exists!" });
+        }
+
+        // Hash password nếu có
+        let password_hash = null;
+        if (decoded.password) {
+            password_hash = await bcrypt.hash(decoded.password, 10);
+        }
+
+        // Tạo user_id
+        const userId = uuidv4();
+
+        // Insert vào bảng users
+        await connection.execute(
+            `INSERT INTO users (id, email, password_hash, role, name, phone, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [
+                userId,
+                decoded.email,
+                password_hash,
+                decoded.role,
+                decoded.name || null,
+                decoded.phone || null,
+                1
+            ]
+        );
+
+        // Nếu là guide, insert vào bảng guides (nếu có thông tin)
+        if (decoded.role === "guide" && decoded.city && decoded.specialties) {
+            const guideId = uuidv4();
+            const guideSpecialties = Array.isArray(decoded.specialties)
+                ? decoded.specialties
+                : [decoded.specialties];
+
+            await connection.execute(
+                `INSERT INTO guides (
+                    id, user_id, location, languages, specialties, 
+                    price_per_hour, experience_years, description, 
+                    rating, total_reviews, is_available, verification_status
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    guideId,
+                    userId,
+                    decoded.city,
+                    JSON.stringify(["Vietnamese"]),
+                    JSON.stringify(guideSpecialties),
+                    0,
+                    0,
+                    decoded.bio || "",
+                    0.0,
+                    0,
+                    1,
+                    "pending",
+                ]
+            );
+        }
+
         // Trả về thông tin xác thực thành công
         return res.status(200).json({
             message: "Successfully registered and verified!",

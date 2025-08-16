@@ -1,7 +1,7 @@
 // src/services/paymentService.js
 
 // Note: Stripe will be initialized when needed
-// const stripePromise = loadStripe('pk_test_51234567890abcdef...');
+// const stripePromise = loadStripe('pk_live_...');
 
 export const PaymentService = {
   // Process booking payment

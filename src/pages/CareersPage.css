@@ -52,20 +52,40 @@
   gap: 4rem;
 }
 
+/* === REPLACE THE OLD .stat STYLES WITH THIS NEW BLOCK === */
+
 .stat {
+  background: rgba(255, 255, 255, 0.15); /* Semi-transparent white background */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border for definition */
+  border-radius: 16px; /* Rounded corners */
+  padding: 1.5rem 2.5rem; /* Space inside the box */
+  min-width: 220px; /* Ensures boxes have a nice width */
   text-align: center;
+  backdrop-filter: blur(10px); /* The "glass" effect */
+  -webkit-backdrop-filter: blur(10px); /* For Safari compatibility */
+  transition: all 0.3s ease; /* Smooth transition for hover */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.stat:hover {
+  background: rgba(255, 255, 255, 0.25); /* Light up on hover */
+  transform: translateY(-5px); /* Lift effect on hover */
 }
 
 .stat h3 {
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
+  color: #ffffff; /* Ensures the number is pure white */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Adds depth to the text */
 }
 
 .stat p {
   font-size: 1rem;
-  opacity: 0.9;
+  opacity: 0.95;
   margin: 0;
+  color: #f0f0f0; /* Slightly off-white for the description */
+  font-weight: 400;
 }
 
 /* Culture Section */

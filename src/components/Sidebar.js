@@ -1,6 +1,31 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import {
+  FiHome,
+  FiUsers,
+  FiGrid,
+  FiCalendar,
+  FiHeart,
+  FiStar,
+  FiCompass,
+  FiDollarSign,
+  FiUser,
+  FiSettings,
+  FiLogIn,
+  FiLogOut,
+  FiEdit3,
+  FiBarChart2,
+  FiBriefcase,
+  FiHelpCircle,
+  FiInfo,
+  FiMessageSquare,
+  FiClipboard,
+  FiHeadphones,
+  FiFileText,
+  FiTag,
+  FiChevronDown, // Changed FiTicket to FiTag
+} from "react-icons/fi";
 import "./Sidebar.css";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
@@ -12,78 +37,45 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const handleLogout = () => {
     logout();
     toggleSidebar();
-    setTimeout(() => {
-      navigate("/");
-    }, 100);
+    setTimeout(() => navigate("/"), 100);
   };
+
+  const handleLinkClick = () => {
+    if (window.innerWidth <= 992) toggleSidebar();
+  };
+
+  const isActiveLink = (path) => location.pathname === path;
 
   const toggleSubmenu = (menu) => {
     setActiveSubmenu(activeSubmenu === menu ? null : menu);
   };
 
-  const handleLinkClick = () => {
-    // Close sidebar on mobile when link is clicked
-    if (window.innerWidth <= 768) {
-      toggleSidebar();
-    }
-  };
-
-  const isActiveLink = (path) => {
-    return location.pathname === path;
-  };
-
-  // Menu items based on user role
   const getMenuItems = () => {
     const commonItems = [
-      {
-        id: "home",
-        label: "Home",
-        icon: "🏠",
-        path: "/",
-        type: "link",
-      },
+      { id: "home", label: "Home", icon: <FiHome />, path: "/", type: "link" },
       {
         id: "guides",
         label: "Find Guides",
-        icon: "👥",
+        icon: <FiUsers />,
         path: "/guides",
         type: "link",
       },
       {
         id: "categories",
-        label: "Tour Categories",
-        icon: "🗂️",
+        label: "Categories",
+        icon: <FiGrid />,
         type: "submenu",
         submenu: [
           {
-            label: "Cultural Tours",
+            label: "Cultural",
             path: "/guides?category=Cultural%20Tours",
             icon: "🏛️",
           },
+          { label: "Food", path: "/guides?category=Food%20Tours", icon: "🍜" },
           {
-            label: "Food Tours",
-            path: "/guides?category=Food%20Tours",
-            icon: "🍜",
-          },
-          {
-            label: "Adventure Tours",
+            label: "Adventure",
             path: "/guides?category=Adventure%20Tours",
             icon: "🏔️",
-          },
-          {
-            label: "Historical Sites",
-            path: "/guides?category=Historical%20Sites",
-            icon: "🏺",
-          },
-          {
-            label: "Photography Tours",
-            path: "/guides?category=Photography%20Tours",
-            icon: "📸",
-          },
-          {
-            label: "Nature Tours",
-            path: "/guides?category=Nature%20Tours",
-            icon: "🌿",
           },
         ],
       },
@@ -94,123 +86,123 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       {
         id: "about",
         label: "About Us",
-        icon: "ℹ️",
+        icon: <FiInfo />,
         path: "/about",
         type: "link",
       },
       {
         id: "help",
         label: "Help",
-        icon: "❓",
+        icon: <FiHelpCircle />,
         path: "/help",
         type: "link",
       },
       {
         id: "careers",
         label: "Careers",
-        icon: "💼",
+        icon: <FiBriefcase />,
         path: "/careers",
         type: "link",
       },
     ];
 
     const touristItems = [
-      ...commonItems,
       {
         id: "dashboard",
         label: "Dashboard",
-        icon: "📊",
+        icon: <FiBarChart2 />,
         path: "/tourist/dashboard",
         type: "link",
       },
       {
         id: "bookings",
         label: "My Bookings",
-        icon: "📅",
+        icon: <FiCalendar />,
         path: "/tourist/dashboard?tab=bookings",
         type: "link",
       },
       {
         id: "favorites",
-        label: "Favorite Guides",
-        icon: "❤️",
+        label: "Favorites",
+        icon: <FiHeart />,
         path: "/tourist/dashboard?tab=favorites",
         type: "link",
       },
       {
         id: "reviews",
         label: "My Reviews",
-        icon: "⭐",
+        icon: <FiStar />,
         path: "/tourist/dashboard?tab=reviews",
         type: "link",
       },
+      ...commonItems,
     ];
 
     const guideItems = [
-      ...commonItems,
       {
         id: "guide-dashboard",
-        label: "Guide Dashboard",
-        icon: "🎯",
+        label: "Dashboard",
+        icon: <FiBarChart2 />,
         path: "/guide/dashboard",
         type: "link",
       },
       {
         id: "my-tours",
         label: "My Tours",
-        icon: "🗺️",
+        icon: <FiCompass />,
         path: "/guide/tours",
         type: "link",
       },
       {
         id: "earnings",
         label: "Earnings",
-        icon: "💰",
+        icon: <FiDollarSign />,
         path: "/guide/earnings",
         type: "link",
       },
       {
         id: "profile",
-        label: "Guide Profile",
-        icon: "👤",
+        label: "My Profile",
+        icon: <FiUser />,
         path: "/guide/profile",
         type: "link",
       },
+      ...commonItems,
     ];
 
     const adminItems = [
       {
         id: "admin-dashboard",
-        label: "Admin Dashboard",
-        icon: "⚙️",
+        label: "Dashboard",
+        icon: <FiBarChart2 />,
         path: "/admin/dashboard",
         type: "link",
       },
       {
         id: "users",
-        label: "User Management",
-        icon: "👥",
+        label: "Users",
+        icon: <FiUsers />,
         path: "/admin/users",
         type: "link",
       },
       {
         id: "guides-management",
-        label: "Guide Management",
-        icon: "🎯",
+        label: "Guides",
+        icon: <FiUser />,
         path: "/admin/guides",
         type: "link",
       },
       {
         id: "bookings-management",
-        label: "Booking Management",
-        icon: "📋",
+        label: "Bookings",
+        icon: <FiClipboard />,
         path: "/admin/bookings",
         type: "link",
       },
       {
         id: "reports",
         label: "Reports",
-        icon: "📊",
+        icon: <FiFileText />,
         path: "/admin/reports",
         type: "link",
       },
@@ -219,30 +211,30 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const supportItems = [
       {
         id: "support-dashboard",
-        label: "Support Dashboard",
-        icon: "🎧",
+        label: "Dashboard",
+        icon: <FiHeadphones />,
         path: "/support/dashboard",
         type: "link",
       },
+      // Corrected the icon below
       {
         id: "tickets",
-        label: "Support Tickets",
-        icon: "🎫",
+        label: "Tickets",
+        icon: <FiTag />,
         path: "/support/tickets",
         type: "link",
       },
       {
         id: "chat",
-        label: "Support Chat",
-        icon: "💬",
+        label: "Chat",
+        icon: <FiMessageSquare />,
         path: "/support/chat",
         type: "link",
       },
     ];
 
     if (!isAuthenticated) return guestItems;
-
-    switch (user?.userType || user?.role) {
+    switch (user?.role) {
       case "tourist":
         return touristItems;
       case "guide":
@@ -256,53 +248,44 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     }
   };
 
+  const menuItems = getMenuItems();
+
   return (
     <>
-      {/* Overlay for mobile */}
       {isOpen && (
         <div className="sidebar-overlay" onClick={toggleSidebar}></div>
       )}
-
-      {/* Sidebar */}
       <aside className={`sidebar ${isOpen ? "sidebar-open" : ""}`}>
-        {/* Sidebar Header */}
         <div className="sidebar-header">
           <Link to="/" className="sidebar-logo" onClick={handleLinkClick}>
-            <span className="logo-icon">🌟</span>
+            <span className="logo-icon">🌍</span>
             <span className="logo-text">TourConnect</span>
           </Link>
-          <button className="sidebar-close" onClick={toggleSidebar}>
-            ✕
-          </button>
         </div>
 
-        {/* User Profile Section */}
-        {isAuthenticated && (
+        {isAuthenticated && user && (
           <div className="sidebar-profile">
             <div className="profile-avatar">
               <img
-                src="/api/placeholder/60/60"
-                alt={user?.name || "User"}
-                className="avatar-image"
+                src={
+                  user.avatar ||
+                  `https://ui-avatars.com/api/?name=${
+                    user.name || user.email
+                  }&background=6366f1&color=fff`
+                }
+                alt={user.name || "User"}
               />
-              <div className="profile-status online"></div>
             </div>
             <div className="profile-info">
-              <h3 className="profile-name">{user?.name || user?.email}</h3>
-              <p className="profile-role">
-                {user?.userType === "tourist" && "Tourist"}
-                {user?.userType === "guide" && "Tour Guide"}
-                {user?.userType === "admin" && "Administrator"}
-                {user?.userType === "support" && "Support"}
-              </p>
+              <span className="profile-name">{user.name || user.email}</span>
+              <span className="profile-role">{user.role}</span>
             </div>
           </div>
         )}
 
-        {/* Navigation Menu */}
         <nav className="sidebar-nav">
-          <ul className="nav-list">
-            {getMenuItems().map((item) => (
+          <ul>
+            {menuItems.map((item) => (
               <li key={item.id} className="nav-item">
                 {item.type === "link" ? (
                   <Link
@@ -330,25 +313,23 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                           activeSubmenu === item.id ? "rotated" : ""
                         }`}
                       >
-                        ▼
+                        <FiChevronDown />
                       </span>
                     </button>
                     <ul
                       className={`submenu ${
-                        activeSubmenu === item.id ? "submenu-open" : ""
+                        activeSubmenu === item.id ? "open" : ""
                       }`}
                     >
-                      {item.submenu.map((subItem, index) => (
-                        <li key={index} className="submenu-item">
+                      {item.submenu.map((sub, i) => (
+                        <li key={i}>
                           <Link
-                            to={subItem.path}
+                            to={sub.path}
                             className="submenu-link"
                             onClick={handleLinkClick}
                           >
-                            <span className="submenu-icon">{subItem.icon}</span>
-                            <span className="submenu-text">
-                              {subItem.label}
-                            </span>
+                            <span className="submenu-icon">{sub.icon}</span>
+                            <span className="submenu-text">{sub.label}</span>
                           </Link>
                         </li>
                       ))}
@@ -360,23 +341,26 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </ul>
         </nav>
 
-        {/* Sidebar Footer */}
         <div className="sidebar-footer">
           {isAuthenticated ? (
-            <div className="footer-actions">
+            <>
               <Link
                 to="/settings"
                 className="footer-link"
                 onClick={handleLinkClick}
               >
-                <span className="footer-icon">⚙️</span>
+                <span className="footer-icon">
+                  <FiSettings />
+                </span>
                 <span className="footer-text">Settings</span>
               </Link>
-              <button className="logout-button" onClick={handleLogout}>
-                <span className="footer-icon">🚪</span>
+              <button onClick={handleLogout} className="footer-button logout">
+                <span className="footer-icon">
+                  <FiLogOut />
+                </span>
                 <span className="footer-text">Logout</span>
               </button>
-            </div>
+            </>
           ) : (
             <div className="auth-actions">
               <Link
@@ -384,45 +368,18 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 className="auth-button login"
                 onClick={handleLinkClick}
               >
-                <span className="auth-icon">🔑</span>
-                <span className="auth-text">Login</span>
+                <FiLogIn /> Login
               </Link>
               <Link
                 to="/register"
                 className="auth-button register"
                 onClick={handleLinkClick}
               >
-                <span className="auth-icon">📝</span>
-                <span className="auth-text">Register</span>
+                <FiEdit3 /> Register
               </Link>
             </div>
           )}
         </div>
-
-        {/* Quick Actions */}
-        {isAuthenticated && user?.userType === "tourist" && (
-          <div className="quick-actions">
-            <h4 className="quick-title">Hành động nhanh</h4>
-            <div className="quick-buttons">
-              <Link
-                to="/guides"
-                className="quick-btn"
-                onClick={handleLinkClick}
-              >
-                <span>🔍</span>
-                <span>Find Guides</span>
-              </Link>
-              <Link
-                to="/tourist/dashboard?tab=bookings"
-                className="quick-btn"
-                onClick={handleLinkClick}
-              >
-                <span>📅</span>
-                <span>Book Tours</span>
-              </Link>
-            </div>
-          </div>
-        )}
       </aside>
     </>
   );

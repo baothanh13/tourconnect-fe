@@ -5,7 +5,6 @@ import "./App.css";
 // Import your components and pages
 import { AuthProvider } from "./contexts/AuthContext";
 import PublicLayout from "./components/PublicLayout";
-import DashboardLayout from "./components/DashboardLayout";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -55,56 +54,46 @@ function App() {
             <Route path="partnerships" element={<PartnershipsPage />} />
           </Route>
 
-          {/* --- Protected Dashboard Routes with Dashboard Layout --- */}
+          {/* --- Protected Dashboard Routes --- */}
+          {/* Tourist Dashboard */}
           <Route
+            path="/tourist/dashboard"
             element={
-              <ProtectedRoute
-                allowedRoles={["tourist", "guide", "admin", "support"]}
-              />
+              <ProtectedRoute allowedRoles={["tourist"]}>
+                <TouristDashboard />
+              </ProtectedRoute>
             }
-          >
-            <Route element={<DashboardLayout />}>
-              {/* Tourist Dashboard */}
-              <Route
-                path="/tourist/dashboard"
-                element={
-                  <ProtectedRoute allowedRoles={["tourist"]}>
-                    <TouristDashboard />
-                  </ProtectedRoute>
-                }
-              />
+          />
 
-              {/* Guide Dashboard */}
-              <Route
-                path="/guide/dashboard"
-                element={
-                  <ProtectedRoute allowedRoles={["guide"]}>
-                    <GuideDashboard />
-                  </ProtectedRoute>
-                }
-              />
+          {/* Guide Dashboard */}
+          <Route
+            path="/guide/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <GuideDashboard />
+              </ProtectedRoute>
+            }
+          />
 
-              {/* Admin Dashboard */}
-              <Route
-                path="/admin/dashboard"
-                element={
-                  <ProtectedRoute allowedRoles={["admin"]}>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
+          {/* Admin Dashboard */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
 
-              {/* Support Dashboard */}
-              <Route
-                path="/support/dashboard"
-                element={
-                  <ProtectedRoute allowedRoles={["support"]}>
-                    <SupportDashboard />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
-          </Route>
+          {/* Support Dashboard */}
+          <Route
+            path="/support/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["support"]}>
+                <SupportDashboard />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>

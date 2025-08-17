@@ -6,6 +6,7 @@ const authRoutes = require("./routes/auth.Routes");
 const bookingRoutes = require("./routes/bookings.Routes");
 const guideRoutes = require("./routes/guides.Routes");
 const adminRoutes = require("./routes/admin.Routes");
+const userRoutes = require("./routes/user.Routes"); 
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swaggerOptions");
 const cors = require("cors");
@@ -43,9 +44,10 @@ connectToDB().then((connection) => {
     app.use('/api/guides', (req, res, next) => { req.db = app.locals.db; next(); }, guideRoutes);
     app.use('/api/bookings', (req, res, next) => { req.db = app.locals.db; next(); }, bookingRoutes);
     app.use('/api/admin', (req, res, next) => { req.db = app.locals.db; next(); }, adminRoutes);
+    app.use('/api/users', (req, res, next) => { req.db = app.locals.db; next(); }, userRoutes);
     // ✅ Chỉ listen một lần
     app.listen(PORT, () => {
-        console.log(`🚀 Server running at http://localhost:${PORT}`);
+        console.log(`🚀 Server running at http://localhost:${PORT}`); 
         console.log(`📚 Swagger: http://localhost:${PORT}/api-docs`);
     });
 }).catch(err => {

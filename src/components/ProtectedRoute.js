@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import Loading from "./Loading"; // Assuming you have a loading component
 
-const ProtectedRoute = ({ allowedRoles }) => {
+const ProtectedRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, user, loading } = useAuth();
 
   if (loading) {
@@ -23,7 +23,8 @@ const ProtectedRoute = ({ allowedRoles }) => {
   }
 
   // If everything is fine, render the component for the route
-  return <Outlet />;
+  // Support both Outlet (for route wrapping) and children (for component wrapping)
+  return children ? children : <Outlet />;
 };
 
 export default ProtectedRoute;

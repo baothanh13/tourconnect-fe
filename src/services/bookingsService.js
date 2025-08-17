@@ -1,394 +1,276 @@
-import apiService from "./api";
+import axios from "axios";
+
+const API_BASE_URL = "http://localhost:5000/api/bookings";
+
+// Create axios instance with default config
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Add token to requests automatically
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem("tourconnect_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export const bookingsService = {
-  // Get all bookings (admin function)
-  async getAllBookings(options = {}) {
-    try {
-      // Mock bookings data
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve([
-            {
-              id: 1,
-              touristName: "Sarah Johnson",
-              guideName: "Phạm Thị Lan",
-              location: "Hoi An, Vietnam",
-              date: "2024-01-25",
-              status: "confirmed",
-              amount: 45,
-              createdAt: "2024-01-20T09:15:00Z",
-              duration: "4 hours",
-              tourType: "Cultural Tour",
-            },
-            {
-              id: 2,
-              touristName: "Michael Chen",
-              guideName: "Kenji Tanaka",
-              location: "Tokyo, Japan",
-              date: "2024-01-28",
-              status: "pending",
-              amount: 85,
-              createdAt: "2024-01-19T14:30:00Z",
-              duration: "6 hours",
-              tourType: "City Tour",
-            },
-            {
-              id: 3,
-              touristName: "Emma Wilson",
-              guideName: "Marie Dubois",
-              location: "Paris, France",
-              date: "2024-01-30",
-              status: "completed",
-              amount: 75,
-              createdAt: "2024-01-18T11:45:00Z",
-              duration: "5 hours",
-              tourType: "Art & Culture",
-            },
-            {
-              id: 4,
-              touristName: "David Kim",
-              guideName: "Carlos Rodriguez",
-              location: "Barcelona, Spain",
-              date: "2024-01-22",
-              status: "cancelled",
-              amount: 65,
-              createdAt: "2024-01-17T16:20:00Z",
-              duration: "3 hours",
-              tourType: "Food Tour",
-            },
-          ]);
-        }, 500);
-      });
-
-      // Uncomment when backend is ready:
-      // return await apiService.get('/admin/bookings', options);
-    } catch (error) {
-      throw new Error(error.message || "Failed to fetch bookings");
-    }
-  },
-
-  // Get user bookings (for tourists)
-  async getUserBookings(userId) {
-    try {
-      // Mock user bookings
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve([
-            {
-              id: 1,
-              guideId: 1,
-              guideName: "Phạm Thị Lan",
-              guideImage:
-                "https://images.unsplash.com/photo-1494790108755-2616b612b1d4?w=400&h=400&fit=crop&crop=face",
-              location: "Hoi An, Vietnam",
-              date: "2024-01-25",
-              time: "09:00",
-              status: "confirmed",
-              amount: 45,
-              duration: "4 hours",
-              tourType: "Cultural Tour",
-              specialRequests: "Vegetarian lunch preferred",
-              bookingCode: "TC-2024-001",
-            },
-            {
-              id: 2,
-              guideId: 2,
-              guideName: "Kenji Tanaka",
-              guideImage:
-                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-              location: "Tokyo, Japan",
-              date: "2024-02-15",
-              time: "10:00",
-              status: "pending",
-              amount: 85,
-              duration: "6 hours",
-              tourType: "City Tour",
-              specialRequests: "Photography focused tour",
-              bookingCode: "TC-2024-002",
-            },
-          ]);
-        }, 400);
-      });
-
-      // Uncomment when backend is ready:
-      // return await apiService.get(`/bookings/user/${userId}`);
-    } catch (error) {
-      throw new Error(error.message || "Failed to fetch user bookings");
-    }
-  },
-
-  // Get guide bookings (for guides)
-  async getGuideBookings(guideId) {
-    try {
-      // Mock guide bookings
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve([
-            {
-              id: 1,
-              touristId: 1,
-              touristName: "Sarah Johnson",
-              touristEmail: "sarah@email.com",
-              date: "2024-01-25",
-              time: "09:00",
-              status: "confirmed",
-              amount: 45,
-              duration: "4 hours",
-              tourType: "Cultural Tour",
-              specialRequests: "Vegetarian lunch preferred",
-              bookingCode: "TC-2024-001",
-              groupSize: 2,
-            },
-          ]);
-        }, 400);
-      });
-
-      // Uncomment when backend is ready:
-      // return await apiService.get(`/bookings/guide/${guideId}`);
-    } catch (error) {
-      throw new Error(error.message || "Failed to fetch guide bookings");
-    }
-  },
-
   // Create new booking
   async createBooking(bookingData) {
     try {
-      // Mock booking creation
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            success: true,
-            message: "Booking created successfully",
-            bookingId: Date.now(),
-            bookingCode: `TC-2024-${String(Date.now()).slice(-3)}`,
-            ...bookingData,
-            status: "pending",
-          });
-        }, 1000);
-      });
+      // Transform frontend data to match backend API structure
+      const backendBookingData = {
+        guideId: bookingData.guideId,
+        touristId: bookingData.touristId || "default-tourist", // Add default if not provided
+        date: bookingData.date,
+        timeSlot: bookingData.time || bookingData.timeSlot,
+        duration: bookingData.duration || 8, // Default 8 hours
+        numberOfTourists:
+          bookingData.participants || bookingData.numberOfTourists || 1,
+        specialRequests: bookingData.specialRequests || "",
+        totalPrice: bookingData.totalPrice || 0,
+      };
 
-      // Uncomment when backend is ready:
-      // return await apiService.post('/bookings', bookingData);
+      console.log("Sending booking data to backend:", backendBookingData);
+
+      const response = await apiClient.post("/", backendBookingData);
+      return response.data;
     } catch (error) {
-      throw new Error(error.message || "Failed to create booking");
+      console.error("Error creating booking:", error);
+      console.error("Error response:", error.response?.data);
+      throw new Error(
+        error.response?.data?.message || "Failed to create booking."
+      );
     }
   },
 
+  // Get all bookings with filters (for admin and users)
+  async getBookings(filters = {}) {
+    try {
+      const params = new URLSearchParams();
+      if (filters.status) params.append("status", filters.status);
+      if (filters.guideId) params.append("guideId", filters.guideId);
+      if (filters.touristId) params.append("touristId", filters.touristId);
+      if (filters.dateFrom) params.append("dateFrom", filters.dateFrom);
+      if (filters.dateTo) params.append("dateTo", filters.dateTo);
+      if (filters.page) params.append("page", filters.page);
+      if (filters.limit) params.append("limit", filters.limit);
+
+      const queryString = params.toString();
+      const url = queryString ? `/?${queryString}` : "/";
+
+      const response = await apiClient.get(url);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch bookings."
+      );
+    }
+  },
   // Get booking by ID
   async getBookingById(bookingId) {
     try {
-      // Mock booking details
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            id: parseInt(bookingId),
-            touristId: 1,
-            touristName: "Sarah Johnson",
-            touristEmail: "sarah@email.com",
-            guideId: 1,
-            guideName: "Phạm Thị Lan",
-            guideImage:
-              "https://images.unsplash.com/photo-1494790108755-2616b612b1d4?w=400&h=400&fit=crop&crop=face",
-            location: "Hoi An, Vietnam",
-            date: "2024-01-25",
-            time: "09:00",
-            status: "confirmed",
-            amount: 45,
-            duration: "4 hours",
-            tourType: "Cultural Tour",
-            specialRequests: "Vegetarian lunch preferred",
-            bookingCode: "TC-2024-001",
-            groupSize: 2,
-            createdAt: "2024-01-20T09:15:00Z",
-            paymentStatus: "paid",
-            notes: "Looking forward to exploring Hoi An's culture!",
-          });
-        }, 300);
-      });
-
-      // Uncomment when backend is ready:
-      // return await apiService.get(`/bookings/${bookingId}`);
+      const response = await apiClient.get(`/${bookingId}`);
+      return response.data;
     } catch (error) {
-      throw new Error(error.message || "Failed to fetch booking details");
+      console.error("Error fetching booking by ID:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch booking details."
+      );
+    }
+  },
+  // Update booking
+  async updateBooking(bookingId, updateData) {
+    try {
+      const response = await apiClient.put(`/${bookingId}`, updateData);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating booking:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to update booking."
+      );
     }
   },
 
-  // Update booking status
-  async updateBookingStatus(bookingId, status, reason = "") {
+  // Update booking status (for guides - accept/decline)
+  async updateBookingStatus(bookingId, status, response_message = "") {
     try {
-      // Mock status update
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            success: true,
-            message: `Booking ${status} successfully`,
-            bookingId,
-            status,
-            updatedAt: new Date().toISOString(),
-          });
-        }, 500);
+      const response = await apiClient.put(`/${bookingId}/status`, {
+        status,
+        response_message,
       });
-
-      // Uncomment when backend is ready:
-      // return await apiService.put(`/bookings/${bookingId}/status`, { status, reason });
+      return response.data;
     } catch (error) {
-      throw new Error(error.message || "Failed to update booking status");
+      console.error("Error updating booking status:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to update booking status."
+      );
     }
   },
 
   // Cancel booking
-  async cancelBooking(bookingId, reason) {
+  async cancelBooking(bookingId, reason = "") {
     try {
-      // Mock booking cancellation
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            success: true,
-            message: "Booking cancelled successfully",
-            bookingId,
-            status: "cancelled",
-            reason,
-            refundAmount: 40.5, // 90% refund
-            refundProcessingTime: "3-5 business days",
-          });
-        }, 600);
+      const response = await apiClient.put(`/${bookingId}/cancel`, {
+        cancellation_reason: reason,
       });
-
-      // Uncomment when backend is ready:
-      // return await apiService.post(`/bookings/${bookingId}/cancel`, { reason });
+      return response.data;
     } catch (error) {
-      throw new Error(error.message || "Failed to cancel booking");
+      console.error("Error cancelling booking:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to cancel booking."
+      );
     }
   },
 
-  // Confirm booking (for guides)
-  async confirmBooking(bookingId, guideNotes = "") {
+  // Get user's bookings (tourist's bookings)
+  async getTouristBookings(touristId, filters = {}) {
     try {
-      // Mock booking confirmation
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            success: true,
-            message: "Booking confirmed successfully",
-            bookingId,
-            status: "confirmed",
-            guideNotes,
-            confirmedAt: new Date().toISOString(),
-          });
-        }, 500);
-      });
+      const params = new URLSearchParams();
 
-      // Uncomment when backend is ready:
-      // return await apiService.post(`/bookings/${bookingId}/confirm`, { guideNotes });
+      if (filters.status) params.append("status", filters.status);
+      if (filters.page) params.append("page", filters.page);
+      if (filters.limit) params.append("limit", filters.limit);
+
+      const queryString = params.toString();
+      const url = queryString
+        ? `/tourist/${touristId}?${queryString}`
+        : `/tourist/${touristId}`;
+
+      const response = await apiClient.get(url);
+      return response.data;
     } catch (error) {
-      throw new Error(error.message || "Failed to confirm booking");
+      console.error("Error fetching tourist bookings:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch your bookings."
+      );
     }
   },
 
-  // Complete booking
-  async completeBooking(bookingId, completionData) {
+  // Get guide's bookings
+  async getGuideBookings(guideId, filters = {}) {
     try {
-      // Mock booking completion
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            success: true,
-            message: "Booking completed successfully",
-            bookingId,
-            status: "completed",
-            completedAt: new Date().toISOString(),
-            ...completionData,
-          });
-        }, 600);
-      });
+      const params = new URLSearchParams();
 
-      // Uncomment when backend is ready:
-      // return await apiService.post(`/bookings/${bookingId}/complete`, completionData);
+      if (filters.status) params.append("status", filters.status);
+      if (filters.page) params.append("page", filters.page);
+      if (filters.limit) params.append("limit", filters.limit);
+
+      const queryString = params.toString();
+      const url = queryString
+        ? `/guide/${guideId}?${queryString}`
+        : `/guide/${guideId}`;
+
+      const response = await apiClient.get(url);
+      return response.data;
     } catch (error) {
-      throw new Error(error.message || "Failed to complete booking");
+      console.error("Error fetching guide bookings:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch guide bookings."
+      );
     }
   },
 
-  // Add review to booking
-  async addBookingReview(bookingId, reviewData) {
+  // Get all bookings (admin function)
+  async getAllBookings(options = {}) {
     try {
-      // Mock review addition
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            success: true,
-            message: "Review added successfully",
-            bookingId,
-            reviewId: Date.now(),
-            ...reviewData,
-            createdAt: new Date().toISOString(),
-          });
-        }, 700);
-      });
+      const params = new URLSearchParams();
 
-      // Uncomment when backend is ready:
-      // return await apiService.post(`/bookings/${bookingId}/review`, reviewData);
+      if (options.status) params.append("status", options.status);
+      if (options.page) params.append("page", options.page);
+      if (options.limit) params.append("limit", options.limit);
+      if (options.sortBy) params.append("sortBy", options.sortBy);
+      if (options.sortOrder) params.append("sortOrder", options.sortOrder);
+
+      const queryString = params.toString();
+      const url = queryString ? `/admin/all?${queryString}` : "/admin/all";
+
+      const response = await apiClient.get(url);
+      return response.data;
     } catch (error) {
-      throw new Error(error.message || "Failed to add review");
+      console.error("Error fetching all bookings:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch all bookings."
+      );
     }
   },
 
-  // Get booking statistics
-  async getBookingStats(dateRange = {}) {
+  // Get booking statistics (admin function)
+  async getBookingStats() {
     try {
-      // Mock booking statistics
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            totalBookings: 1250,
-            confirmedBookings: 980,
-            pendingBookings: 85,
-            cancelledBookings: 185,
-            completedBookings: 950,
-            totalRevenue: 78500,
-            averageBookingValue: 65.5,
-            popularLocations: [
-              { location: "Paris, France", bookings: 245 },
-              { location: "Tokyo, Japan", bookings: 198 },
-              { location: "Hoi An, Vietnam", bookings: 156 },
-            ],
-            monthlyGrowth: 12.5,
-          });
-        }, 400);
-      });
-
-      // Uncomment when backend is ready:
-      // return await apiService.get('/bookings/stats', dateRange);
+      const response = await apiClient.get("/admin/stats");
+      return response.data;
     } catch (error) {
-      throw new Error(error.message || "Failed to fetch booking statistics");
+      console.error("Error fetching booking statistics:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch booking statistics."
+      );
     }
   },
 
-  // Search bookings
-  async searchBookings(searchParams) {
+  // Rate tourist (for guides)
+  async rateTourist(bookingId, rating, comment = "") {
     try {
-      // Mock search results
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve([
-            {
-              id: 1,
-              touristName: "Sarah Johnson",
-              guideName: "Phạm Thị Lan",
-              location: "Hoi An, Vietnam",
-              date: "2024-01-25",
-              status: "confirmed",
-              amount: 45,
-              bookingCode: "TC-2024-001",
-            },
-          ]);
-        }, 500);
+      const response = await apiClient.post(`/${bookingId}/rate-tourist`, {
+        rating,
+        comment,
       });
-
-      // Uncomment when backend is ready:
-      // return await apiService.get('/bookings/search', searchParams);
+      return response.data;
     } catch (error) {
-      throw new Error(error.message || "Search failed");
+      console.error("Error rating tourist:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to rate tourist."
+      );
+    }
+  },
+
+  // Rate guide (for tourists)
+  async rateGuide(bookingId, rating, comment = "") {
+    try {
+      const response = await apiClient.post(`/${bookingId}/rate-guide`, {
+        rating,
+        comment,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error rating guide:", error);
+      throw new Error(error.response?.data?.message || "Failed to rate guide.");
+    }
+  },
+
+  // Get booking reviews
+  async getBookingReviews(bookingId) {
+    try {
+      const response = await apiClient.get(`/${bookingId}/reviews`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching booking reviews:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch reviews."
+      );
+    }
+  },
+
+  // Mark booking as completed
+  async markBookingCompleted(bookingId, completion_notes = "") {
+    try {
+      const response = await apiClient.put(`/${bookingId}/complete`, {
+        completion_notes,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error marking booking as completed:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to mark booking as completed."
+      );
     }
   },
 };
+
+export default bookingsService;

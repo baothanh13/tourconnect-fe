@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import PaymentForm from '../components/payment/PaymentForm';
-import ChatInterface from '../components/communication/ChatInterface';
-import { mockGuides } from '../data/mockData';
-import './BookingPage.css';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { guidesService } from "../services/guidesService";
+import { bookingsService } from "../services/bookingsService";
+import PaymentForm from "../components/payment/PaymentForm";
+import ChatInterface from "../components/communication/ChatInterface";
+import "./BookingPage.css";
 
 const BookingPage = () => {
   const { id } = useParams();
@@ -12,51 +13,62 @@ const BookingPage = () => {
   const { user, isAuthenticated } = useAuth();
   const [guide, setGuide] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [bookingStep, setBookingStep] = useState(1); // 1: Details, 2: Payment, 3: Confirmation
   const [bookingData, setBookingData] = useState({
-    date: '',
-    time: '',
+    date: "",
+    time: "",
     participants: 1,
-    specialRequests: '',
+    specialRequests: "",
     contactInfo: {
-      phone: '',
-      emergencyContact: ''
-    }
+      phone: "",
+      emergencyContact: "",
+    },
   });
   const [showPayment, setShowPayment] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
   const [paymentResult, setPaymentResult] = useState(null);
-
-  useEffect(() => {
-    // Load guide data
-    const guideData = mockGuides.find(g => g.id === parseInt(id));
-    if (guideData) {
-      setGuide(guideData);
-    }
-    setLoading(false);
-  }, [id]);
+  const [bookingResult, setBookingResult] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate("/login");
+      return;
     }
-  }, [isAuthenticated, navigate]);
+
+    const loadGuideData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const guideData = await guidesService.getGuideById(id);
+        setGuide(guideData);
+      } catch (error) {
+        console.error("Error loading guide:", error);
+        setError("Failed to load guide information. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadGuideData();
+  }, [id, isAuthenticated, navigate]);
 
   const handleInputChange = (field, value) => {
-    setBookingData(prev => ({
+    setBookingData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleContactInfoChange = (field, value) => {
-    setBookingData(prev => ({
+    setBookingData((prev) => ({
       ...prev,
       contactInfo: {
         ...prev.contactInfo,
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   };
 
@@ -69,13 +81,50 @@ const BookingPage = () => {
 
   const validateBookingDetails = () => {
     const errors = {};
-    
-    if (!bookingData.date) errors.date = 'Date is required';
-    if (!bookingData.time) errors.time = 'Time is required';
-    if (bookingData.participants < 1) errors.participants = 'At least 1 participant required';
-    if (!bookingData.contactInfo.phone) errors.phone = 'Phone number is required';
+
+    if (!bookingData.date) errors.date = "Date is required";
+    if (!bookingData.time) errors.time = "Time is required";
+    if (bookingData.participants < 1)
+      errors.participants = "At least 1 participant required";
+    if (!bookingData.contactInfo.phone)
+      errors.phone = "Phone number is required";
 
     return errors;
+  };
+
+  const submitBooking = async () => {
+    const errors = validateBookingDetails();
+    if (Object.keys(errors).length > 0) {
+      alert("Please fill in all required fields before booking.");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setError(null);
+
+      const bookingRequest = {
+        guideId: guide.id,
+        date: bookingData.date,
+        time: bookingData.time,
+        participants: bookingData.participants,
+        specialRequests: bookingData.specialRequests,
+        contactInfo: bookingData.contactInfo,
+        totalPrice: calculateTotalPrice(),
+      };
+
+      const result = await bookingsService.createBooking(bookingRequest);
+      setBookingResult(result);
+      setBookingStep(3);
+
+      alert(`Booking created successfully! Booking ID: ${result.id}`);
+    } catch (error) {
+      console.error("Error creating booking:", error);
+      setError(error.message);
+      alert(`Booking failed: ${error.message}`);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleNextStep = () => {
@@ -84,17 +133,15 @@ const BookingPage = () => {
       setBookingStep(2);
       setShowPayment(true);
     } else {
-      alert('Please fill in all required fields');
+      alert("Please fill in all required fields");
     }
   };
 
   const handlePaymentSuccess = (result) => {
     setPaymentResult(result);
     setShowPayment(false);
-    setBookingStep(3);
-    
-    // Send confirmation notification
-    alert(`Payment successful! Booking confirmed.\nTransaction ID: ${result.transactionId}`);
+    // Submit booking after successful payment
+    submitBooking();
   };
 
   const handlePaymentError = (error) => {
@@ -110,21 +157,27 @@ const BookingPage = () => {
       id: `chat_${guide.id}_${user.id}`,
       participants: [guide.id, user.id],
       title: `Chat with ${guide.name}`,
-      type: 'direct'
+      type: "direct",
     });
   };
 
   const getAvailableTimes = () => {
     return [
-      '08:00', '09:00', '10:00', '11:00', 
-      '13:00', '14:00', '15:00', '16:00'
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
     ];
   };
 
   const getMinDate = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split('T')[0];
+    return tomorrow.toISOString().split("T")[0];
   };
 
   if (loading) {
@@ -136,11 +189,23 @@ const BookingPage = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="error-container">
+        <h2>Error</h2>
+        <p>{error}</p>
+        <button onClick={() => navigate("/guides")} className="btn-primary">
+          Back to Guides
+        </button>
+      </div>
+    );
+  }
+
   if (!guide) {
     return (
       <div className="error-container">
         <h2>Guide not found</h2>
-        <button onClick={() => navigate('/guides')} className="btn-primary">
+        <button onClick={() => navigate("/guides")} className="btn-primary">
           Back to Guides
         </button>
       </div>
@@ -150,7 +215,7 @@ const BookingPage = () => {
   const renderBookingDetails = () => (
     <div className="booking-details">
       <h3>Booking Details</h3>
-      
+
       <div className="guide-summary">
         <img src={guide.avatar} alt={guide.name} className="guide-avatar" />
         <div className="guide-info">
@@ -169,7 +234,7 @@ const BookingPage = () => {
           <input
             type="date"
             value={bookingData.date}
-            onChange={(e) => handleInputChange('date', e.target.value)}
+            onChange={(e) => handleInputChange("date", e.target.value)}
             min={getMinDate()}
             className="form-input"
           />
@@ -179,12 +244,14 @@ const BookingPage = () => {
           <label>Select Time *</label>
           <select
             value={bookingData.time}
-            onChange={(e) => handleInputChange('time', e.target.value)}
+            onChange={(e) => handleInputChange("time", e.target.value)}
             className="form-input"
           >
             <option value="">Choose time</option>
-            {getAvailableTimes().map(time => (
-              <option key={time} value={time}>{time}</option>
+            {getAvailableTimes().map((time) => (
+              <option key={time} value={time}>
+                {time}
+              </option>
             ))}
           </select>
         </div>
@@ -192,17 +259,26 @@ const BookingPage = () => {
         <div className="form-group">
           <label>Number of Participants *</label>
           <div className="participants-selector">
-            <button 
+            <button
               type="button"
-              onClick={() => handleInputChange('participants', Math.max(1, bookingData.participants - 1))}
+              onClick={() =>
+                handleInputChange(
+                  "participants",
+                  Math.max(1, bookingData.participants - 1)
+                )
+              }
               className="participant-btn"
             >
               -
             </button>
-            <span className="participant-count">{bookingData.participants}</span>
-            <button 
+            <span className="participant-count">
+              {bookingData.participants}
+            </span>
+            <button
               type="button"
-              onClick={() => handleInputChange('participants', bookingData.participants + 1)}
+              onClick={() =>
+                handleInputChange("participants", bookingData.participants + 1)
+              }
               className="participant-btn"
             >
               +
@@ -215,7 +291,7 @@ const BookingPage = () => {
           <input
             type="tel"
             value={bookingData.contactInfo.phone}
-            onChange={(e) => handleContactInfoChange('phone', e.target.value)}
+            onChange={(e) => handleContactInfoChange("phone", e.target.value)}
             placeholder="+84 123 456 789"
             className="form-input"
           />
@@ -226,7 +302,9 @@ const BookingPage = () => {
           <input
             type="tel"
             value={bookingData.contactInfo.emergencyContact}
-            onChange={(e) => handleContactInfoChange('emergencyContact', e.target.value)}
+            onChange={(e) =>
+              handleContactInfoChange("emergencyContact", e.target.value)
+            }
             placeholder="Emergency contact number"
             className="form-input"
           />
@@ -236,7 +314,9 @@ const BookingPage = () => {
           <label>Special Requests</label>
           <textarea
             value={bookingData.specialRequests}
-            onChange={(e) => handleInputChange('specialRequests', e.target.value)}
+            onChange={(e) =>
+              handleInputChange("specialRequests", e.target.value)
+            }
             placeholder="Any special requirements or preferences..."
             className="form-textarea"
             rows="3"
@@ -315,15 +395,12 @@ const BookingPage = () => {
         )}
 
         <div className="confirmation-actions">
-          <button 
-            className="btn-secondary"
-            onClick={handleChatWithGuide}
-          >
+          <button className="btn-secondary" onClick={handleChatWithGuide}>
             💬 Chat with Guide
           </button>
-          <button 
+          <button
             className="btn-primary"
-            onClick={() => navigate('/tourist/dashboard')}
+            onClick={() => navigate("/tourist/dashboard")}
           >
             View My Bookings
           </button>
@@ -336,7 +413,7 @@ const BookingPage = () => {
     <div className="booking-page">
       <div className="container">
         <div className="booking-header">
-          <button 
+          <button
             className="back-btn"
             onClick={() => navigate(`/guides/${id}`)}
           >
@@ -346,15 +423,23 @@ const BookingPage = () => {
         </div>
 
         <div className="booking-steps">
-          <div className={`step ${bookingStep >= 1 ? 'active' : ''} ${bookingStep > 1 ? 'completed' : ''}`}>
+          <div
+            className={`step ${bookingStep >= 1 ? "active" : ""} ${
+              bookingStep > 1 ? "completed" : ""
+            }`}
+          >
             <span>1</span>
             <label>Details</label>
           </div>
-          <div className={`step ${bookingStep >= 2 ? 'active' : ''} ${bookingStep > 2 ? 'completed' : ''}`}>
+          <div
+            className={`step ${bookingStep >= 2 ? "active" : ""} ${
+              bookingStep > 2 ? "completed" : ""
+            }`}
+          >
             <span>2</span>
             <label>Payment</label>
           </div>
-          <div className={`step ${bookingStep >= 3 ? 'active' : ''}`}>
+          <div className={`step ${bookingStep >= 3 ? "active" : ""}`}>
             <span>3</span>
             <label>Confirmation</label>
           </div>
@@ -367,17 +452,18 @@ const BookingPage = () => {
 
         {bookingStep === 1 && (
           <div className="booking-actions">
-            <button 
-              className="btn-secondary"
-              onClick={handleChatWithGuide}
-            >
+            <button className="btn-secondary" onClick={handleChatWithGuide}>
               💬 Chat with Guide
             </button>
-            <button 
-              className="btn-primary"
-              onClick={handleNextStep}
-            >
+            <button className="btn-primary" onClick={handleNextStep}>
               Continue to Payment
+            </button>
+            <button
+              className="btn-outline"
+              onClick={submitBooking}
+              disabled={submitting}
+            >
+              {submitting ? "Booking..." : "📋 Book Now (Skip Payment)"}
             </button>
           </div>
         )}
@@ -394,7 +480,7 @@ const BookingPage = () => {
               participants: bookingData.participants,
               pricePerPerson: guide.pricePerDay,
               totalPrice: calculateTotalPrice(),
-              customerEmail: user.email
+              customerEmail: user.email,
             }}
             onPaymentSuccess={handlePaymentSuccess}
             onPaymentError={handlePaymentError}

@@ -11,19 +11,21 @@ export default function VerifyOtpPage() {
 
   const handleVerifyOtp = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
+      const res = await fetch("http://localhost:5000/api/auth/confirmOTP", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${otpToken}`,
         },
-        body: JSON.stringify({ user_id, otp }),
+        body: JSON.stringify({ otp, token: otpToken }), // This matches backend
       });
 
-      if (!res.ok) throw new Error("OTP verification failed");
-      const data = await res.json();
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.message || "OTP verification failed");
+      }
+      await res.json();
       alert("OTP verified successfully!");
-      navigate("/login"); // redirect after success
+      navigate("/login");
     } catch (err) {
       alert(err.message);
     }

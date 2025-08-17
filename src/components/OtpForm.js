@@ -1,57 +1,59 @@
 import React, { useState } from "react";
 
-const OtpForm = ({ otpToken, userId, onVerifySuccess }) => {
+const OtpForm = ({ email, onSubmit, isLoading }) => {
   const [otp, setOtp] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
 
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${otpToken}`, // optional if required
-        },
-        body: JSON.stringify({ user_id: userId, otp }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        onVerifySuccess();
-      } else {
-        setError(data.message || "OTP verification failed.");
-      }
-    } catch (err) {
-      setError("Something went wrong.");
+    if (otp.length !== 6) {
+      setError("OTP must be 6 digits");
+      return;
     }
-    setLoading(false);
+
+    setError("");
+    onSubmit(otp);
   };
 
   return (
-    <div
-      style={{ padding: "20px", border: "1px solid #ccc", borderRadius: "8px" }}
-    >
+    <div className="otp-form-container">
       <h3>Verify Your Email</h3>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter OTP"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          required
-          style={{ padding: "8px", marginBottom: "10px", width: "100%" }}
-        />
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit" disabled={loading}>
-          {loading ? "Verifying..." : "Verify OTP"}
+      <p>
+        We've sent a 6-digit code to <strong>{email}</strong>
+      </p>
+
+      <form onSubmit={handleSubmit} className="otp-form">
+        <div className="form-group">
+          <label>Enter OTP Code:</label>
+          <input
+            type="text"
+            placeholder="Enter 6-digit code"
+            value={otp}
+            onChange={(e) =>
+              setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+            }
+            maxLength="6"
+            required
+            disabled={isLoading}
+            className="otp-input"
+          />
+        </div>
+
+        {error && <div className="error-message">{error}</div>}
+
+        <button
+          type="submit"
+          className="verify-button"
+          disabled={isLoading || otp.length !== 6}
+        >
+          {isLoading ? "Verifying..." : "Verify OTP"}
         </button>
       </form>
+
+      <div className="otp-help">
+        <p>Didn't receive the code? Check your spam folder or try again.</p>
+      </div>
     </div>
   );
 };

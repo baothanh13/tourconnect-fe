@@ -1,210 +1,226 @@
-/* Registration Page Styles */
+/* --- Google Font Import & CSS Variables --- */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --primary-color: #4f46e5; /* A professional Indigo */
+  --primary-hover: #4338ca;
+  --text-dark: #111827;
+  --text-medium: #6b7280;
+  --bg-page: #f3f4f6; /* Light gray background */
+  --bg-card: #ffffff;
+  --border-color: #d1d5db;
+  --transition: 0.2s ease-in-out;
+}
+
+/* --- Base Page Layout --- */
 .register-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  background-color: var(--bg-page);
+  padding: 2rem;
+  font-family: "Inter", sans-serif;
 }
 
+/* --- Form Container --- */
 .register-container {
-  background: white;
-  padding: 40px;
+  background: var(--bg-card);
+  padding: 2.5rem 3rem;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e5e7eb;
   width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-width: 500px;
 }
 
+/* --- Typography --- */
 .register-title {
   text-align: center;
-  color: #333;
-  margin-bottom: 30px;
-  font-size: 28px;
-  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  font-weight: 700;
 }
 
+/* --- Form Elements --- */
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.25rem;
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 1.25rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .form-group label {
   font-weight: 500;
-  color: #555;
-  font-size: 14px;
+  color: var(--text-dark);
+  font-size: 0.875rem;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-  padding: 12px 16px;
-  border: 2px solid #e1e5e9;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.3s ease;
+  font-size: 1rem;
+  transition: all var(--transition);
   font-family: inherit;
+  background: #f9fafb;
+  color: var(--text-dark);
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  background: var(--bg-card);
 }
 
-.form-group input:disabled,
-.form-group select:disabled,
-.form-group textarea:disabled {
-  background-color: #f8f9fa;
-  cursor: not-allowed;
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
+/* --- Specialties Grid --- */
 .specialties-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
-  margin-top: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
 }
-
 .specialties-grid label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background-color: #f8f9fa;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #f9fafb;
   border-radius: 6px;
+  font-size: 0.8rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 14px;
+  border: 1px solid var(--border-color);
+  transition: all var(--transition);
 }
-
 .specialties-grid label:hover {
-  background-color: #e9ecef;
+  border-color: var(--primary-color);
+}
+.specialties-grid input[type="checkbox"]:checked + span {
+  /* This is a conceptual selector, you might need to adjust your React component if the span is not a direct sibling */
+}
+/* A simpler visual for checked state if the above doesn't work */
+.specialties-grid input[type="checkbox"]:checked ~ span, /* For sibling span */
+.specialties-grid input[type="checkbox"]:checked {
+  /* If your label wraps the input, this will need component changes */
 }
 
-.specialties-grid input[type="checkbox"] {
-  width: auto;
-  margin: 0;
-  padding: 0;
-}
-
+/* --- Buttons --- */
 .register-button {
-  padding: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0.85rem 1rem;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease;
-  margin-top: 20px;
+  transition: all var(--transition);
 }
-
 .register-button:hover:not(:disabled) {
-  transform: translateY(-1px);
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.2);
 }
-
 .register-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
 }
 
+/* --- Alerts & Links --- */
 .alert {
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  border-left: 4px solid;
 }
-
 .alert-error {
-  background-color: #fee;
-  color: #c33;
-  border-left: 4px solid #c33;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-left-color: #ef4444;
 }
-
 .alert-success {
-  background-color: #efe;
-  color: #363;
-  border-left: 4px solid #363;
+  background-color: #dcfce7;
+  color: #166534;
+  border-left-color: #22c55e;
 }
 
 .register-links {
-  margin-top: 20px;
+  margin-top: 1.5rem;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 1rem;
 }
-
 .register-links a {
-  color: #667eea;
+  color: var(--primary-color);
   text-decoration: none;
-  font-size: 14px;
-  transition: color 0.3s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
-
 .register-links a:hover {
-  color: #764ba2;
   text-decoration: underline;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .register-page {
-    padding: 10px;
-  }
-
-  .register-container {
-    padding: 30px 20px;
-    max-width: 100%;
-  }
-
-  .register-title {
-    font-size: 24px;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  .specialties-grid {
-    grid-template-columns: 1fr;
-  }
+/* --- Multi-Step Form Styles --- */
+.step-indicator {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--text-medium);
+  font-weight: 500;
+  background-color: var(--bg-page);
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+.form-navigation {
+  display: flex;
+  gap: 1rem;
+}
+.form-navigation .register-button {
+  flex-grow: 1;
+}
+.back-button {
+  padding: 0.85rem 1.5rem;
+  background: var(--bg-card);
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.back-button:hover {
+  background-color: var(--bg-page);
+  border-color: var(--text-medium);
 }
 
-@media (max-width: 480px) {
-  .register-container {
-    padding: 20px 15px;
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+  .register-page {
+    padding: 1rem;
   }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    font-size: 16px; /* Prevent zoom on iOS */
+  .register-container {
+    padding: 2rem;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 }

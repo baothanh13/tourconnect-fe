@@ -59,8 +59,10 @@ export const adminService = {
 
   async updateUserStatus(userId, status) {
     try {
-      const response = await apiClient.put(`/admin/users/${userId}/status`, {
-        status,
+      // Convert status string to boolean for is_active field
+      const isActive = status === "active" ? 1 : 0;
+      const response = await apiClient.put(`/users/${userId}/status`, {
+        status: isActive,
       });
       return response.data;
     } catch (error) {
@@ -125,9 +127,12 @@ export const adminService = {
 
   async verifyGuide(guideId, verification_status) {
     try {
-      const response = await apiClient.put(`/admin/guides/${guideId}/verify`, {
-        verification_status,
-      });
+      const response = await apiClient.put(
+        `/admin/guides/${guideId}/verification`,
+        {
+          status: verification_status,
+        }
+      );
       return response.data;
     } catch (error) {
       console.error("Error verifying guide:", error);
@@ -140,12 +145,36 @@ export const adminService = {
   // Dashboard Statistics
   async getDashboardStats() {
     try {
-      const response = await apiClient.get("/admin/stats/dashboard");
+      const response = await apiClient.get("/admin/stats");
       return response.data;
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch dashboard statistics."
+      );
+    }
+  },
+
+  // Get all bookings
+  async getAllBookings(filters = {}) {
+    try {
+      const params = new URLSearchParams();
+
+      if (filters.status) params.append("status", filters.status);
+      if (filters.page) params.append("page", filters.page);
+      if (filters.limit) params.append("limit", filters.limit);
+
+      const queryString = params.toString();
+      const url = queryString
+        ? `/admin/bookings?${queryString}`
+        : "/admin/bookings";
+
+      const response = await apiClient.get(url);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch bookings."
       );
     }
   },

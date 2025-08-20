@@ -3,7 +3,6 @@ const SECRET_KEY = process.env.SECRET_KEY; // Đưa vào .env thực tế
 const { connectToDB } = require("../../config/db");
 const bcrypt = require("bcrypt");
 const generateId = require("../../utils/generateId");
-const { v4: uuidv4 } = require("uuid");
 const confirmOTP = async (req, res) => {
   try {
     const { otp, token } = req.body;
@@ -40,7 +39,7 @@ const confirmOTP = async (req, res) => {
 
     // Insert vào bảng users
     await connection.execute(
-      `INSERT INTO users (id, email, password_hash, role, name, phone, is_verified) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO users (id, email, password_hash, role, name, phone) VALUES (?, ?, ?, ?, ?, ?)`,
       [
         userId,
         decoded.email,
@@ -48,16 +47,15 @@ const confirmOTP = async (req, res) => {
         decoded.role,
         decoded.name || null,
         decoded.phone || null,
-        1,
       ]
     );
 
-        // Nếu là guide, insert vào bảng guides (nếu có thông tin)
-        if (decoded.role === "guide" && decoded.city && decoded.specialties) {
-            const guideId = generateId('guide');
-            const guideSpecialties = Array.isArray(decoded.specialties)
-                ? decoded.specialties
-                : [decoded.specialties];
+    // Nếu là guide, insert vào bảng guides (nếu có thông tin)
+    if (decoded.role === "guide" && decoded.city && decoded.specialties) {
+      const guideId = generateId("guide");
+      const guideSpecialties = Array.isArray(decoded.specialties)
+        ? decoded.specialties
+        : [decoded.specialties];
 
       await connection.execute(
         `INSERT INTO guides (

@@ -7,10 +7,16 @@ const createGuide = async (req, res) => {
     try {
         const connection = await connectToDB();
 
-        const guideId = generateId('guide');
+        const userId = req.user.user_id;  // Lấy user_id từ token đã decode
+        if (!userId) {
+            return res.status(401).json({ message: 'Unauthorized: Missing user ID' });
+        }
+
+        // ✅ Sinh guide_id mới
+         const guideId = generateId('guide');
         await connection.execute(
-            `INSERT INTO guides (id, location, languages, specialties, price_per_hour, experience_years, description, certificates) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [guideId, location, JSON.stringify(languages), JSON.stringify(specialties), price_per_hour, experience_years, description, JSON.stringify(certificates)]
+            `INSERT INTO guides (id, user_id, location, languages, specialties, price_per_hour, experience_years, description, certificates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [guideId, user_id, location, JSON.stringify(languages), JSON.stringify(specialties), price_per_hour, experience_years, description, JSON.stringify(certificates)]
         );
 
         return res.status(201).json({ message: 'Guide profile created successfully', guide_id: guideId });

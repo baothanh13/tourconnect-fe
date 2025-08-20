@@ -7,6 +7,7 @@ const createGuide = require("../api/guides/createGuide.Controller");
 const updateGuide = require("../api/guides/updateGuide.Controller");
 const createGuideProfile = require("../api/guides/createGuideProfile.Controller");
 const getGuideByUserId = require('../api/guides/getGuideByUserId');
+const verifyToken = require('../middleware/verifyToken');  // Import middleware
 
 // GET /api/guides - Danh sách guides với filter query
 /**

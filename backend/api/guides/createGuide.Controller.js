@@ -16,7 +16,7 @@ const createGuide = async (req, res) => {
          const guideId = generateId('guide');
         await connection.execute(
             `INSERT INTO guides (id, user_id, location, languages, specialties, price_per_hour, experience_years, description, certificates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [guideId, user_id, location, JSON.stringify(languages), JSON.stringify(specialties), price_per_hour, experience_years, description, JSON.stringify(certificates)]
+            [guideId, userId, location, JSON.stringify(languages), JSON.stringify(specialties), price_per_hour, experience_years, description, JSON.stringify(certificates)]
         );
 
         return res.status(201).json({ message: 'Guide profile created successfully', guide_id: guideId });

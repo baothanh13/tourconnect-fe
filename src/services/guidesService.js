@@ -114,6 +114,19 @@ export const guidesService = {
     }
   },
 
+  // Delete guide profile
+  async deleteGuide(guideId) {
+    try {
+      const response = await apiClient.delete(`/${guideId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting guide:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to delete guide profile."
+      );
+    }
+  },
+
   // Search guides
   async searchGuides(searchParams) {
     try {

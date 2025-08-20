@@ -103,7 +103,7 @@ const RegisterPage = () => {
     setIsLoading(true);
     setError("");
     try {
-      const result = await confirmOTP(otp, otpToken);
+      const result = await confirmOTP({ otp, token: otpToken });
       if (result.success) {
         setSuccess("Account verified successfully! Redirecting to login...");
         setTimeout(() => navigate("/login"), 2000);

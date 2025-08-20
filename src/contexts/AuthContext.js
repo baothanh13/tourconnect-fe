@@ -21,7 +21,15 @@ export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem("tourconnect_token");
 
     if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+
+      // --- FIX #1: Correct the user object on page load ---
+      const userWithId = {
+        ...parsedUser,
+        id: parsedUser.user_id, // Add the 'id' property
+      };
+
+      setUser(userWithId);
       setToken(storedToken);
     }
     setLoading(false);
@@ -32,13 +40,19 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       const data = await usersService.login({ email, password });
 
-      setUser(data.user);
+      // --- FIX #2: Correct the user object on login ---
+      const userWithId = {
+        ...data.user,
+        id: data.user.user_id, // Add the 'id' property
+      };
+
+      setUser(userWithId);
       setToken(data.token);
 
-      localStorage.setItem("tourconnect_user", JSON.stringify(data.user));
+      localStorage.setItem("tourconnect_user", JSON.stringify(userWithId));
       localStorage.setItem("tourconnect_token", data.token);
 
-      return { success: true, user: data.user };
+      return { success: true, user: userWithId };
     } catch (error) {
       return { success: false, error: error.message };
     } finally {
@@ -50,9 +64,6 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const data = await usersService.register(userData);
-
-      // Registration returns OTP token, not user login
-      // User needs to verify OTP before being logged in
       return {
         success: true,
         message: data.message,
@@ -66,11 +77,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const confirmOTP = async (otp, otpToken) => {
+  const confirmOTP = async (otpData) => {
     try {
       setLoading(true);
-      const data = await usersService.confirmOTP({ otp, token: otpToken });
-
+      const data = await usersService.confirmOTP(otpData);
       return {
         success: true,
         message: data.message,
@@ -85,32 +95,33 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      // Call logout API to invalidate token on server
       await usersService.logout();
     } catch (error) {
       console.error("Logout API error:", error);
     } finally {
-      // Clear local state regardless of API response
       setUser(null);
       setToken(null);
       localStorage.removeItem("tourconnect_user");
       localStorage.removeItem("tourconnect_token");
     }
   };
+
   const updateUser = (updatedData) => {
-    const updatedUser = { ...user, ...updatedData };
-    setUser(updatedUser);
-    localStorage.setItem("tourconnect_user", JSON.stringify(updatedUser));
+    // Ensure the updated data also has a consistent 'id'
+    const updatedUserWithId = {
+      ...user,
+      ...updatedData,
+      id: updatedData.user_id || user.id, // Prioritize new user_id, fallback to existing id
+    };
+    setUser(updatedUserWithId);
+    localStorage.setItem("tourconnect_user", JSON.stringify(updatedUserWithId));
   };
 
   const updateProfile = async (profileData) => {
     try {
       setLoading(true);
       const data = await usersService.updateProfile(profileData);
-
-      // Update local user data
       updateUser(data.user);
-
       return { success: true, user: data.user };
     } catch (error) {
       return { success: false, error: error.message };
@@ -122,10 +133,7 @@ export const AuthProvider = ({ children }) => {
   const getProfile = async () => {
     try {
       const data = await usersService.getProfile();
-
-      // Update local user data
       updateUser(data.user);
-
       return { success: true, user: data.user };
     } catch (error) {
       return { success: false, error: error.message };

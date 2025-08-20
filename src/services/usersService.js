@@ -49,10 +49,9 @@ const usersService = {
     }
   },
 
-  // Confirm OTP
   confirmOTP: async ({ otp, token }) => {
     try {
-      const response = await apiClient.post("/confirmOTP", {
+      const response = await apiClient.post("/confirm-otp", {
         otp,
         token,
       });
@@ -63,6 +62,8 @@ const usersService = {
       );
     }
   },
+
+  // ... (rest of the file is correct)
 
   // Get user profile
   getProfile: async () => {

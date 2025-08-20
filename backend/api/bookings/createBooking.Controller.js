@@ -1,5 +1,5 @@
 const { connectToDB } = require('../../config/db');
-const { v4: uuidv4 } = require('uuid');
+const generateId = require('../../utils/generateId');
 
 const createBooking = async (req, res) => {
   const {
@@ -13,7 +13,7 @@ const createBooking = async (req, res) => {
     totalPrice,
   } = req.body;
 
-  const bookingId = uuidv4();
+  const bookingId = generateId('booking');
 
   try {
     const connection = await connectToDB();

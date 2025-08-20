@@ -7,6 +7,10 @@ const getAllGuides = require("../api/admin/getAllGuidesController");
 const getAllBookings = require("../api/admin/getAllBookingsController");
 const getSystemStats = require("../api/admin/getSystemStatsController");
 const approveGuide = require("../api/admin/approveGuideController");
+const updateUserStatus = require("../api/admin/updateUserStatusController");
+const deleteUserController = require("../api/admin/deleteUserController");
+const updateUserProfile = require("../api/admin/updateUserProfileController");
+const getUserById = require("../api/admin/getUserByIdController");
 
 /**
  * @swagger
@@ -110,4 +114,166 @@ router.get("/stats", getSystemStats);
  */
 router.put("/guides/:id/verification", approveGuide);
 
+/**
+ * @swagger
+ * /api/admin/users/{id}/status:
+ *   put:
+ *     summary: Update user status (active/inactive)
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: User ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [active, inactive]
+ *     responses:
+ *       200:
+ *         description: User status updated
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Error updating status
+ */
+router.put("/users/:id/status", updateUserStatus);
+
+/**
+ * @swagger
+ * /api/admin/users/{id}:
+ *   delete:
+ *     summary: Delete a user by ID
+ *     description: Permanently deletes a user from the system by their unique ID.
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID to delete
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User deleted successfully
+ *       400:
+ *         description: Missing user ID
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+router.delete("/users/:id", deleteUserController);
+
+
+/**
+ * @swagger
+ * /api/admin/users/{id}/profile:
+ *   put:
+ *     summary: Update user profile by ID
+ *     description: Update the profile information of a specific user by their ID.
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the user to update
+ *         schema:
+ *           type: string
+ *           example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *               phone:
+ *                 type: string
+ *                 example: "0123456789"
+ *               avatar_url:
+ *                 type: string
+ *                 example: "https://example.com/avatar.jpg"
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Profile updated successfully
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+router.put("/users/:id/profile", updateUserProfile);
+
+
+/**
+ * @swagger
+ * /api/admin/users/{id}:
+ *   get:
+ *     summary: Get user by ID
+ *     description: Retrieve user information by user ID.
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 role:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 phone:
+ *                   type: string
+ *                 avatar_url:
+ *                   type: string
+ *                 is_verified:
+ *                   type: boolean
+ *                 created_at:
+ *                   type: string
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/users/:id", getUserById);
 module.exports = router;

@@ -11,7 +11,7 @@ const updateUserStatus = async (req, res) => {
 
         const connection = await connectToDB();
         await connection.execute(
-            "UPDATE users SET is_active = ? WHERE id = ?",
+            "UPDATE users SET users_status = ? WHERE id = ?",
             [status, id]
         );
 

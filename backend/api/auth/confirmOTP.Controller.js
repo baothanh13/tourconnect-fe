@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.SECRET_KEY;  // Đưa vào .env thực tế
 const { connectToDB } = require('../../config/db');
 const bcrypt = require('bcrypt');
-const { v4: uuidv4 } = require('uuid');
+const generateId = require('../../utils/generateId');
 
 const confirmOTP = async (req, res) => {
     try {
@@ -36,7 +36,7 @@ const confirmOTP = async (req, res) => {
         }
 
         // Tạo user_id
-        const userId = uuidv4();
+        const userId = generateId('user');
 
         // Insert vào bảng users
         await connection.execute(

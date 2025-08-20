@@ -1,5 +1,5 @@
 const { connectToDB } = require('../../config/db');
-const { v4: uuidv4 } = require('uuid');
+const generateId = require('../../utils/generateId');
 
 const createGuide = async (req, res) => {
     const { user_id, location, languages, specialties, price_per_hour, experience_years, description, certificates } = req.body;
@@ -7,8 +7,7 @@ const createGuide = async (req, res) => {
     try {
         const connection = await connectToDB();
 
-        const guideId = uuidv4();
-
+        const guideId = generateId('guide');
         await connection.execute(
             `INSERT INTO guides (id, user_id, location, languages, specialties, price_per_hour, experience_years, description, certificates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [guideId, user_id, location, JSON.stringify(languages), JSON.stringify(specialties), price_per_hour, experience_years, description, JSON.stringify(certificates)]

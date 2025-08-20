@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-// Import controllers
+// Import controllers (Admin)
 const getAllUsers = require("../api/admin/getAllUsersController");
 const getAllGuides = require("../api/admin/getAllGuidesController");
 const getAllBookings = require("../api/admin/getAllBookingsController");
@@ -10,12 +10,18 @@ const approveGuide = require("../api/admin/approveGuideController");
 const deleteUserController = require("../api/admin/deleteUserController");
 const updateUserProfile = require("../api/admin/updateUserProfileController");
 const getUserById = require("../api/admin/getUserByIdController");
+const createUserController = require("../api/admin/createUserController");
+
+// Nếu có auth middleware, bật khi cần bảo vệ Admin APIs
+// const verifyToken = require("../middleware/verifyToken");
+// const requireAdmin = (req, res, next) =>
+//   req.user?.role === "admin" ? next() : res.status(403).json({ message: "Forbidden" });
 
 /**
  * @swagger
  * tags:
- *   name: Admin
- *   description: Admin management APIs
+ *   - name: Admin
+ *     description: Admin management APIs
  */
 
 /**
@@ -32,6 +38,52 @@ const getUserById = require("../api/admin/getUserByIdController");
  */
 router.get("/users", getAllUsers);
 
+/**
+ * @swagger
+ * /api/admin/users:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Admin]
+ *     # security:
+ *     #   - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, password, role, name]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "jane@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "secret123"
+ *               role:
+ *                 type: string
+ *                 enum: [tourist, guide, admin, support]
+ *                 example: "tourist"
+ *               name:
+ *                 type: string
+ *                 example: "Jane Doe"
+ *               phone:
+ *                 type: string
+ *                 example: "0912345678"
+ *               avatar_url:
+ *                 type: string
+ *                 example: "https://example.com/avatar.jpg"
+ *     responses:
+ *       201:
+ *         description: User created
+ *       409:
+ *         description: Email already exists
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/users", /* verifyToken, requireAdmin, */ createUserController);
 
 /**
  * @swagger
@@ -75,8 +127,6 @@ router.get("/bookings", getAllBookings);
  */
 router.get("/stats", getSystemStats);
 
-
-
 /**
  * @swagger
  * /api/admin/guides/{id}/verification:
@@ -114,7 +164,6 @@ router.get("/stats", getSystemStats);
  */
 router.put("/guides/:id/verification", approveGuide);
 
-
 /**
  * @swagger
  * /api/admin/users/{id}:
@@ -132,14 +181,6 @@ router.put("/guides/:id/verification", approveGuide);
  *     responses:
  *       200:
  *         description: User deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: User deleted successfully
  *       400:
  *         description: Missing user ID
  *       404:
@@ -148,7 +189,6 @@ router.put("/guides/:id/verification", approveGuide);
  *         description: Internal server error
  */
 router.delete("/users/:id", deleteUserController);
-
 
 /**
  * @swagger
@@ -164,7 +204,7 @@ router.delete("/users/:id", deleteUserController);
  *         description: The ID of the user to update
  *         schema:
  *           type: string
- *           example: 1
+ *           example: "0f3baa94-1610-4e20-820e-5ba3e8a3e12e"
  *     requestBody:
  *       required: true
  *       content:
@@ -174,7 +214,7 @@ router.delete("/users/:id", deleteUserController);
  *             properties:
  *               name:
  *                 type: string
- *                 example: John Doe
+ *                 example: "John Doe"
  *               phone:
  *                 type: string
  *                 example: "0123456789"
@@ -184,21 +224,12 @@ router.delete("/users/:id", deleteUserController);
  *     responses:
  *       200:
  *         description: Profile updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Profile updated successfully
  *       404:
  *         description: User not found
  *       500:
  *         description: Internal server error
  */
 router.put("/users/:id/profile", updateUserProfile);
-
 
 /**
  * @swagger
@@ -217,31 +248,11 @@ router.put("/users/:id/profile", updateUserProfile);
  *     responses:
  *       200:
  *         description: Successfully retrieved user
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 email:
- *                   type: string
- *                 role:
- *                   type: string
- *                 name:
- *                   type: string
- *                 phone:
- *                   type: string
- *                 avatar_url:
- *                   type: string
- *                 is_verified:
- *                   type: boolean
- *                 created_at:
- *                   type: string
  *       404:
  *         description: User not found
  *       500:
  *         description: Internal server error
  */
 router.get("/users/:id", getUserById);
+
 module.exports = router;

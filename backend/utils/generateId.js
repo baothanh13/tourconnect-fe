@@ -5,7 +5,8 @@ function generateId(type) {
     guide: "G",
     booking: "B",
     payment: "P",
-    ticket: "T"
+    ticket: "ST",
+    tour: "T",
   };
 
   // Lấy prefix theo type

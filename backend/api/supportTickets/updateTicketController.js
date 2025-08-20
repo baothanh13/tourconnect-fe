@@ -8,14 +8,14 @@ module.exports = async function updateTicket(req, res) {
     const set = [];
     const params = [];
 
-    const allowedStatus = ["open", "pending", "closed"];
+    const allowedStatus = ["open", "pending", "closed", "resolved"];
     const allowedTypes = ["user", "guide"];
 
     if (subject !== undefined) { set.push("subject = ?"); params.push(subject); }
     if (message !== undefined) { set.push("message = ?"); params.push(message); }
     if (status !== undefined) {
       if (!allowedStatus.includes(status)) {
-        return res.status(400).json({ message: "status must be 'open' | 'pending' | 'closed'" });
+        return res.status(400).json({ message: "status must be 'open' | 'pending' | 'closed' | 'resolved" });
       }
       set.push("status = ?");
       params.push(status);

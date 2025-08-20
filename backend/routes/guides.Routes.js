@@ -3,7 +3,6 @@ const router = express.Router();
 
 const getGuides = require("../api/guides/getGuides.Controller");
 const getGuideById = require("../api/guides/getGuideById.Controller");
-const getGuideByUserId = require("../api/guides/getGuideByUserId.Controller");
 const createGuide = require("../api/guides/createGuide.Controller");
 const updateGuide = require("../api/guides/updateGuide.Controller");
 const createGuideProfile = require("../api/guides/createGuideProfile.Controller");
@@ -85,28 +84,6 @@ router.get("/", getGuides);
 
 router.get("/:id", getGuideById);
 
-// GET /api/guides/user/:userId - Get guide profile by user ID
-/**
- * @swagger
- * /api/guides/user/{userId}:
- *   get:
- *     summary: Get guide profile by user ID
- *     tags: [Guides]
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *         description: User ID
- *     responses:
- *       200:
- *         description: Guide profile found
- *       404:
- *         description: Guide not found
- */
-router.get("/user/:userId", getGuideByUserId);
-
 // POST /api/guides - Tạo guide profile
 /**
  * @swagger
@@ -121,8 +98,6 @@ router.get("/user/:userId", getGuideByUserId);
  *           schema:
  *             type: object
  *             properties:
- *               user_id:
- *                 type: string
  *               location:
  *                 type: string
  *               languages:
@@ -163,8 +138,6 @@ router.post("/", createGuide);
  *           schema:
  *             type: object
  *             properties:
- *               userId:
- *                 type: string
  *               location:
  *                 type: string
  *               specialties:

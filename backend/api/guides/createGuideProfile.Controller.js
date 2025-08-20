@@ -1,9 +1,8 @@
 const { connectToDB } = require("../../config/db");
-const { v4: uuidv4 } = require("uuid");
+const generateId = require("../../utils/generateId");
 
 const createGuideProfile = async (req, res) => {
   const {
-    userId,
     location,
     specialties,
     bio,
@@ -25,29 +24,20 @@ const createGuideProfile = async (req, res) => {
       return res.status(404).json({ message: "Guide user not found" });
     }
 
-    // Check if guide profile already exists
-    const [existingGuides] = await connection.execute(
-      `SELECT * FROM guides WHERE user_id = ?`,
-      [userId]
-    );
 
-    if (existingGuides.length > 0) {
-      return res.status(400).json({ message: "Guide profile already exists" });
-    }
 
     // Generate UUID for guide
-    const guideId = uuidv4();
+    const guideId = generateId("guide");
 
     // Insert into guides table
     await connection.execute(
       `INSERT INTO guides (
-                id, user_id, location, languages, specialties, 
+                id, location, languages, specialties, 
                 price_per_hour, experience_years, description, 
                 rating, total_reviews, is_available, verification_status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         guideId,
-        userId,
         location,
         JSON.stringify(languages),
         JSON.stringify(specialties),

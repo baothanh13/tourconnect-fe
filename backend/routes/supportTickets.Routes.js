@@ -16,8 +16,6 @@ const getSupportStats = require("../api/supportTickets/getSupportStatsController
  *     summary: Create a new support ticket
  *     description: Allows an authenticated user or guide to create a support ticket.
  *     tags: [Support Tickets]
- *     security:
- *       - bearerAuth: []   # cần JWT token để xác thực
  *     requestBody:
  *       required: true
  *       content:
@@ -44,18 +42,16 @@ const getSupportStats = require("../api/supportTickets/getSupportStatsController
  *                 example: "user@gmail.com"
  *               phone:
  *                 type: string
- *                 example: "+84987654321"
+ *                 example: "0987654321"
  *     responses:
  *       201:
  *         description: Support ticket created successfully
  *       400:
  *         description: Missing required fields
- *       401:
- *         description: Unauthorized (no or invalid token)
  *       500:
  *         description: Internal server error
  */
-router.post("/", verifyToken, createTicket);
+router.post("/", createTicket);
 
 
 /**

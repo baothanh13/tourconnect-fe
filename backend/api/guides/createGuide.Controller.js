@@ -2,15 +2,15 @@ const { connectToDB } = require('../../config/db');
 const generateId = require('../../utils/generateId');
 
 const createGuide = async (req, res) => {
-    const { user_id, location, languages, specialties, price_per_hour, experience_years, description, certificates } = req.body;
+    const {location, languages, specialties, price_per_hour, experience_years, description, certificates } = req.body;
 
     try {
         const connection = await connectToDB();
 
         const guideId = generateId('guide');
         await connection.execute(
-            `INSERT INTO guides (id, user_id, location, languages, specialties, price_per_hour, experience_years, description, certificates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [guideId, user_id, location, JSON.stringify(languages), JSON.stringify(specialties), price_per_hour, experience_years, description, JSON.stringify(certificates)]
+            `INSERT INTO guides (id, location, languages, specialties, price_per_hour, experience_years, description, certificates) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [guideId, location, JSON.stringify(languages), JSON.stringify(specialties), price_per_hour, experience_years, description, JSON.stringify(certificates)]
         );
 
         return res.status(201).json({ message: 'Guide profile created successfully', guide_id: guideId });

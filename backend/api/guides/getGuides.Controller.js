@@ -14,10 +14,8 @@ const getGuides = async (req, res) => {
     try {
         const connection = req.db;
         let query = `
-            SELECT g.*, u.name, u.avatar_url
+            SELECT g.*
             FROM guides g
-            JOIN users u ON g.user_id = u.id
-            WHERE 1=1
         `;
         const params = [];
 

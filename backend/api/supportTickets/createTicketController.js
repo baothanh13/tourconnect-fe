@@ -6,11 +6,9 @@ const ALLOWED_TYPES = ["user", "guide"];
 
 module.exports = async function createTicket(req, res) {
   try {
-    // user_id lấy từ middleware auth (vd: req.user.id)
-    const user_id = req.user.user_id; 
     const { subject, message, support_type, email, phone } = req.body;
 
-    if (!user_id || !subject || !message || !support_type) {
+    if (!subject || !message || !support_type) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -30,9 +28,9 @@ module.exports = async function createTicket(req, res) {
 
     await connection.execute(
       `INSERT INTO support_tickets
-        (id, user_id, subject, message, status, support_type, email, phone)
-       VALUES (?, ?, ?, ?, 'open', ?, ?, ?)`,
-      [id, user_id, subject, message, support_type, email || null, phone || null]
+        (id, subject, message, status, support_type, email, phone)
+       VALUES (?, ?, ?, 'open', ?, ?, ?)`,
+      [id, subject, message, support_type, email || null, phone || null]
     );
 
     const [rows] = await connection.execute(

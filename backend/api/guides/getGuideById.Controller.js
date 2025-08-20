@@ -7,7 +7,7 @@ const getGuideById = async (req, res) => {
         const connection = await connectToDB();
 
         const [guides] = await connection.execute(
-            `SELECT g.*, u.name, u.avatar_url FROM guides g JOIN users u ON g.user_id = u.id WHERE g.id = ?`,
+            `SELECT g.*, u.name, u.avatar_url FROM guides g WHERE g.id = ?`,
             [id]
         );
 

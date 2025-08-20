@@ -54,7 +54,7 @@ const confirmOTP = async (req, res) => {
 
         // Nếu là guide, insert vào bảng guides (nếu có thông tin)
         if (decoded.role === "guide" && decoded.city && decoded.specialties) {
-            const guideId = uuidv4();
+            const guideId = generateId('guide');
             const guideSpecialties = Array.isArray(decoded.specialties)
                 ? decoded.specialties
                 : [decoded.specialties];

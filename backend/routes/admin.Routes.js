@@ -7,7 +7,6 @@ const getAllGuides = require("../api/admin/getAllGuidesController");
 const getAllBookings = require("../api/admin/getAllBookingsController");
 const getSystemStats = require("../api/admin/getSystemStatsController");
 const approveGuide = require("../api/admin/approveGuideController");
-const updateUserStatus = require("../api/admin/updateUserStatusController");
 const deleteUserController = require("../api/admin/deleteUserController");
 const updateUserProfile = require("../api/admin/updateUserProfileController");
 const getUserById = require("../api/admin/getUserByIdController");
@@ -32,6 +31,7 @@ const getUserById = require("../api/admin/getUserByIdController");
  *         description: Error fetching users
  */
 router.get("/users", getAllUsers);
+
 
 /**
  * @swagger
@@ -114,38 +114,6 @@ router.get("/stats", getSystemStats);
  */
 router.put("/guides/:id/verification", approveGuide);
 
-/**
- * @swagger
- * /api/admin/users/{id}/status:
- *   put:
- *     summary: Update user status (active/inactive)
- *     tags: [Admin]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: User ID
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               status:
- *                 type: string
- *                 enum: [active, inactive]
- *     responses:
- *       200:
- *         description: User status updated
- *       404:
- *         description: User not found
- *       500:
- *         description: Error updating status
- */
-router.put("/users/:id/status", updateUserStatus);
 
 /**
  * @swagger

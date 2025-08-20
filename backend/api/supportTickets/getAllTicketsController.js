@@ -12,15 +12,15 @@ module.exports = async function getAllTickets(req, res) {
     const params = [];
 
     if (status && allowedStatus.includes(status)) {
-      where.push(`t.status = ?`);
+      where.push(`status = ?`);
       params.push(status);
     }
     if (support_type && allowedTypes.includes(support_type)) {
-      where.push(`t.support_type = ?`);
+      where.push(`support_type = ?`);
       params.push(support_type);
     }
     if (q && q.trim()) {
-      where.push(`(t.subject LIKE ? OR t.message LIKE ? OR t.email LIKE ? OR t.phone LIKE ?)`);
+      where.push(`(subject LIKE ? OR message LIKE ? OR email LIKE ? OR phone LIKE ?)`);
       const like = `%${q.trim()}%`;
       params.push(like, like, like, like);
     }
@@ -36,19 +36,19 @@ module.exports = async function getAllTickets(req, res) {
 
     // total count
     const [countRows] = await connection.execute(
-      `SELECT COUNT(*) AS total FROM support_tickets t ${whereSQL}`,
+      `SELECT COUNT(*) AS total FROM support_tickets ${whereSQL}`,
       params
     );
     const total = countRows[0]?.total || 0;
 
     // page data
     const [rows] = await connection.execute(
-      `SELECT t.*
-       FROM support_tickets t
-       ${whereSQL}
-       ORDER BY ${sortCol} ${sortOrder}
-       LIMIT ? OFFSET ?`,
-      [...params, Number(limit), Number(offset)]
+      `SELECT *
+      FROM support_tickets 
+      ${whereSQL}
+      ORDER BY ${sortCol} ${sortOrder}
+      LIMIT ${Number(limit)} OFFSET ${Number(offset)}`,
+      params
     );
 
     return res.json({
@@ -56,7 +56,7 @@ module.exports = async function getAllTickets(req, res) {
       page: Number(page),
       limit: Number(limit),
       total,
-      totalPages: Math.ceil(total / Number(limit) || 1),
+      totalPages: limit > 0 ? Math.ceil(total / limit) : 1,
     });
   } catch (err) {
     console.error("getAllTickets error:", err);

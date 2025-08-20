@@ -1,21 +1,23 @@
 const express = require("express");
 const router = express.Router();
-
+const verifyToken = require('../middleware/verifyToken');  // Import middleware
 const createTicket = require("../api/supportTickets/createTicketController");
 const getAllTickets = require("../api/supportTickets/getAllTicketsController");
 const getTicketById = require("../api/supportTickets/getTicketByIdController");
-const updateTicket = require("../apisupportTickets/updateTicketController");
+const updateTicket = require("../api/supportTickets/updateTicketController");
 const deleteTicket = require("../api/supportTickets/deleteTicketController");
 const getSupportStats = require("../api/supportTickets/getSupportStatsController");
 
 
 /**
  * @swagger
- * /api/support-tickets:
+ * /api/supportTickets:
  *   post:
  *     summary: Create a new support ticket
- *     description: Allows a user or guide to create a support ticket with subject, message, email, phone, and type.
+ *     description: Allows an authenticated user or guide to create a support ticket.
  *     tags: [Support Tickets]
+ *     security:
+ *       - bearerAuth: []   # cần JWT token để xác thực
  *     requestBody:
  *       required: true
  *       content:
@@ -23,25 +25,17 @@ const getSupportStats = require("../api/supportTickets/getSupportStatsController
  *           schema:
  *             type: object
  *             required:
- *               - id
- *               - user_id
  *               - subject
  *               - message
- *               - type
+ *               - support_type
  *             properties:
- *               id:
- *                 type: string
- *                 example: "tick_001"
- *               user_id:
- *                 type: string
- *                 example: "usr_123"
  *               subject:
  *                 type: string
  *                 example: "Issue with booking"
  *               message:
  *                 type: string
  *                 example: "I cannot confirm my booking properly."
- *               type:
+ *               support_type:
  *                 type: string
  *                 enum: [user, guide]
  *                 example: "user"
@@ -56,14 +50,17 @@ const getSupportStats = require("../api/supportTickets/getSupportStatsController
  *         description: Support ticket created successfully
  *       400:
  *         description: Missing required fields
+ *       401:
+ *         description: Unauthorized (no or invalid token)
  *       500:
  *         description: Internal server error
  */
-router.post("/support", createTicket);
+router.post("/", verifyToken, createTicket);
+
 
 /**
  * @swagger
- * /api/support-tickets:
+ * /api/supportTickets:
  *   get:
  *     summary: Get all support tickets
  *     description: Fetch all support tickets from the database (Admin only).
@@ -74,11 +71,12 @@ router.post("/support", createTicket);
  *       500:
  *         description: Internal server error
  */
-router.get("/support", getAllTickets);
+router.get("/", getAllTickets);
+
 
 /**
  * @swagger
- * /api/support/stats:
+ * /api/supportTickets/stats:
  *   get:
  *     summary: Get support tickets and users statistics
  *     description: Retrieve aggregated statistics including open tickets, resolved tickets, total users, and total guides.
@@ -107,11 +105,11 @@ router.get("/support", getAllTickets);
  *       500:
  *         description: Server error
  */
-router.get("/support/stats", getSupportStats);
+router.get("/stats", getSupportStats);
 
 /**
  * @swagger
- * /api/support-tickets/{id}:
+ * /api/supportTickets/{id}:
  *   get:
  *     summary: Get a support ticket by ID
  *     description: Fetch details of a specific support ticket using its ID.
@@ -131,11 +129,11 @@ router.get("/support/stats", getSupportStats);
  *       500:
  *         description: Internal server error
  */
-router.get("/support/:id", getTicketById);
+router.get("/:id", getTicketById);
 
 /**
  * @swagger
- * /api/support-tickets/{id}:
+ * /api/supportTickets/{id}:
  *   put:
  *     summary: Update a support ticket
  *     description: Allows staff to update the status, response, or assigned staff of a support ticket.
@@ -172,11 +170,12 @@ router.get("/support/:id", getTicketById);
  *       500:
  *         description: Internal server error
  */
-router.put("/support/:id", updateTicket);
+router.put("/:id", updateTicket);
+
 
 /**
  * @swagger
- * /api/support-tickets/{id}:
+ * /api/supportTickets/{id}:
  *   delete:
  *     summary: Delete a support ticket
  *     description: Allows staff to delete a specific support ticket.
@@ -196,6 +195,6 @@ router.put("/support/:id", updateTicket);
  *       500:
  *         description: Internal server error
  */
-router.delete("/support/:id", deleteTicket);
+router.delete("/:id", deleteTicket);
 
 module.exports = router;

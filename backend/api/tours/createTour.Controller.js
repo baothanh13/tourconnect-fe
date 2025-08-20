@@ -1,5 +1,5 @@
 const { connectToDB } = require('../../config/db');
-const { v4: uuidv4 } = require('uuid');
+const generateId = require('../../utils/generateId');
 
 // POST /api/tours
 // body: { guide_id, title, description?, duration_hours?, max_people?, price, image_url?, category? }
@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
     const [g] = await conn.execute(`SELECT id FROM guides WHERE id = ?`, [guide_id]);
     if (g.length === 0) return res.status(400).json({ message: 'Guide does not exist' });
 
-    const id = uuidv4();
+    const id = generateId('tour');
 
     await conn.execute(
       `INSERT INTO tours

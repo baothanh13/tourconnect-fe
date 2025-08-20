@@ -45,7 +45,7 @@ CREATE TABLE `bookings` (
 
 LOCK TABLES `bookings` WRITE;
 /*!40000 ALTER TABLE `bookings` DISABLE KEYS */;
-INSERT INTO `bookings` VALUES ('44af3e43-53f9-443e-b1f0-54ef0d5bc4b7','71ab5530-a5d3-46b9-9f03-374dc96e0221','a4bcb60a-62da-4da8-a465-174075eb3bfe','2025-08-09','08:00:00',5,20,200.00,'pending','pending','I hope you can singing while guide us','2025-08-09 11:58:56');
+INSERT INTO `bookings` VALUES ('44af3e43-53f9-443e-b1f0-54ef0d5bc4b7','71ab5530-a5d3-46b9-9f03-374dc96e0221','a4bcb60a-62da-4da8-a465-174075eb3bfe','2025-08-09','08:00:00',5,20,200.00,'pending','pending','I hope you can singing while guide us','2025-08-09 04:58:56');
 /*!40000 ALTER TABLE `bookings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,8 +81,55 @@ CREATE TABLE `guides` (
 
 LOCK TABLES `guides` WRITE;
 /*!40000 ALTER TABLE `guides` DISABLE KEYS */;
-INSERT INTO `guides` VALUES ('49be27bf-2aad-443c-8afd-2fc596a0eaed','71ab5530-a5d3-46b9-9f03-374dc96e0221','Ho Chi Minh City','[\"English\", \"Vietnamese\", \"Japanese\"]','[\"singing\", \"dancing\"]',10.00,2,'I really like to guide people','[\"string\"]',0.00,0,1,NULL,'pending'),('64643690-5b99-4ac9-99d1-ea163230bcdb','string','Da Nang City','[\"string\"]','[\"string\"]',0.00,0,'string','[\"string\"]',0.00,0,1,NULL,'pending'),('6da03ad3-0d81-48a8-b671-1eadc2bc1811','string','string','[\"English\"]','[\"string\"]',100.00,4,'string','[\"string\"]',0.00,0,1,NULL,'pending'),('c92b7a82-54a9-4243-96ba-846461a1353d','string','string','[\"string\"]','[\"string\"]',0.00,0,'string','[\"string\"]',0.00,0,1,NULL,'pending');
+INSERT INTO `guides` VALUES ('49be27bf-2aad-443c-8afd-2fc596a0eaed','71ab5530-a5d3-46b9-9f03-374dc96e0221','Ho Chi Minh City','[\"English\", \"Vietnamese\", \"Japanese\"]','[\"singing\", \"dancing\"]',10.00,2,'I really like to guide people','[\"string\"]',0.00,0,1,NULL,'verified'),('64643690-5b99-4ac9-99d1-ea163230bcdb','string','Da Nang City','[\"string\"]','[\"string\"]',0.00,0,'string','[\"string\"]',0.00,0,1,NULL,'verified'),('6da03ad3-0d81-48a8-b671-1eadc2bc1811','string','string','[\"English\"]','[\"string\"]',100.00,4,'string','[\"string\"]',0.00,0,1,NULL,'rejected'),('c92b7a82-54a9-4243-96ba-846461a1353d','string','string','[\"string\"]','[\"string\"]',0.00,0,'string','[\"string\"]',0.00,0,1,NULL,'pending'),('G25082003635','string','string','[\"string\"]','[\"string\"]',0.00,0,'string','[\"string\"]',0.00,0,1,NULL,'pending');
 /*!40000 ALTER TABLE `guides` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `payments`
+--
+
+DROP TABLE IF EXISTS `payments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `payments` (
+  `id` varchar(50) NOT NULL,
+  `booking_id` varchar(50) NOT NULL,
+  `payer_id` varchar(50) NOT NULL,
+  `payee_guide_id` varchar(50) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `currency` varchar(10) NOT NULL DEFAULT 'USD',
+  `method` enum('momo','card','cash') NOT NULL,
+  `status` enum('pending','requires_action','authorized','captured','failed','refunded','cancelled') NOT NULL DEFAULT 'pending',
+  `platform_fee` decimal(10,2) DEFAULT '0.00',
+  `net_amount` decimal(10,2) GENERATED ALWAYS AS ((`amount` - ifnull(`platform_fee`,0.00))) STORED,
+  `provider_transaction_id` varchar(100) DEFAULT NULL,
+  `provider_order_id` varchar(100) DEFAULT NULL,
+  `provider_payload` json DEFAULT NULL,
+  `receipt_url` text,
+  `note` text,
+  `paid_at` timestamp NULL DEFAULT NULL,
+  `refunded_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_provider_tx` (`provider_transaction_id`),
+  KEY `idx_booking_id` (`booking_id`),
+  KEY `idx_payer_id` (`payer_id`),
+  KEY `idx_payee_id` (`payee_guide_id`),
+  CONSTRAINT `payments_ibfk_booking` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`),
+  CONSTRAINT `payments_ibfk_payee` FOREIGN KEY (`payee_guide_id`) REFERENCES `guides` (`id`),
+  CONSTRAINT `payments_ibfk_payer` FOREIGN KEY (`payer_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `payments`
+--
+
+LOCK TABLES `payments` WRITE;
+/*!40000 ALTER TABLE `payments` DISABLE KEYS */;
+/*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -124,6 +171,39 @@ LOCK TABLES `reviews` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `support_tickets`
+--
+
+DROP TABLE IF EXISTS `support_tickets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `support_tickets` (
+  `id` varchar(50) NOT NULL,
+  `user_id` varchar(50) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `support_type` enum('user','guide') NOT NULL,
+  `status` enum('open','pending','closed','resolved') DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `support_tickets_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `support_tickets`
+--
+
+LOCK TABLES `support_tickets` WRITE;
+/*!40000 ALTER TABLE `support_tickets` DISABLE KEYS */;
+/*!40000 ALTER TABLE `support_tickets` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `tours`
 --
 
@@ -154,6 +234,7 @@ CREATE TABLE `tours` (
 
 LOCK TABLES `tours` WRITE;
 /*!40000 ALTER TABLE `tours` DISABLE KEYS */;
+INSERT INTO `tours` VALUES ('T25082005602','49be27bf-2aad-443c-8afd-2fc596a0eaed','Hanoi Old Quarter Walking Tour','Explore historical streets...',3,10,25.00,'https://example.com/tour.jpg','cultural','2025-08-20 05:22:49','2025-08-20 05:22:49');
 /*!40000 ALTER TABLE `tours` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -173,7 +254,7 @@ CREATE TABLE `users` (
   `phone` varchar(20) DEFAULT NULL,
   `avatar_url` text,
   `is_verified` tinyint(1) DEFAULT '0',
-  `is_active` tinyint(1) DEFAULT '1',
+  `users_status` enum('active','inactive') NOT NULL DEFAULT 'active',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -187,7 +268,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('082c56d8-005b-44a5-a0bd-bff4e8cb40a0','tienbi63543@gmail.com','$2b$10$0mP3rqHCtynb/EHcQ.9.VuTzI3y26L7KmI3CWWcbf24p89S5fSSy6','tourist','Tien Dang','0123456789',NULL,1,1,'2025-08-06 02:22:44','2025-08-06 03:09:20'),('19d6dc48-ea00-4868-b4e8-75a61346b4ce','doe@example.com','$2b$10$.FDmORZCpGDZ1hv5UIpwA.SMZRrBbdpeDqQ/Cn0aB3q4pn5oRFrri','tourist','johndoe','0123456789',NULL,0,1,'2025-08-08 13:00:30','2025-08-08 13:00:30'),('4039966a-6e80-47f6-8e6c-cd28b1f62f21','john@example.com','$2b$10$/z2GHzk7lRUtD9hprDhCzOhq8B/zQpNNfTYyVU4zb8rxneTDSk/ha','tourist','johndoe','0123456789',NULL,0,1,'2025-08-08 09:07:07','2025-08-08 09:07:07'),('71ab5530-a5d3-46b9-9f03-374dc96e0221','2251120124@ut.edu.vn','$2b$10$OLpwXMNr4IH2soB13OLJ7O8kyYZm7CeEPfgf.01WxJMCrs4hrgUcC','guide','Pham Cong Tru','0123456789',NULL,1,1,'2025-08-06 08:03:38','2025-08-06 08:04:17'),('a4bcb60a-62da-4da8-a465-174075eb3bfe','kiritanitaiyo@gmail.com','$2b$10$wYf0fws0.Ii4ad/Nh1DAhud3Y0..QWmRBejhKTk5qi6aqTD1vOPr2','tourist','johndoe','0123456789',NULL,1,1,'2025-08-06 02:54:57','2025-08-06 02:56:57'),('b824db17-f9a1-400d-b304-7cae61e58a6d','j2251120124@ut.edu.vn','$2b$10$ZYMYjmkaeOOBbNdh.oiVRO24QmmA9nngOQK/e952m3OXon5/DjFSK','guide','Pham Cong Tru','0123456789',NULL,0,1,'2025-08-06 08:01:52','2025-08-06 08:01:52'),('e7ab7661-51cc-4e7d-8fc0-74a78cadcd4f','2251120118@ut.edu.vn','$2b$10$pJ92Ydme.KxfQlRILUAlSuHCr8r7pnTYZ0Zq4KublxmsyUVUlVgFq','tourist','Dang Minh Tien','0123456789',NULL,1,1,'2025-08-06 05:28:58','2025-08-06 05:29:54');
+INSERT INTO `users` VALUES ('082c56d8-005b-44a5-a0bd-bff4e8cb40a0','tienbi63543@gmail.com','$2b$10$0mP3rqHCtynb/EHcQ.9.VuTzI3y26L7KmI3CWWcbf24p89S5fSSy6','tourist','Tien Dang','0123456789',NULL,1,'inactive','2025-08-05 19:22:44','2025-08-20 02:39:06'),('0f3baa94-1610-4e20-820e-5ba3e8a3e12e','2251120118@ut.edu.vn','$2b$10$k5yZhBfu4lKhwwBng0lK1.H4iAIdF.5VY2RygAV3WgA/AaICUJa5i','support','support1','0123456789',NULL,1,'active','2025-08-14 06:47:13','2025-08-16 12:49:08'),('71ab5530-a5d3-46b9-9f03-374dc96e0221','2251120124@ut.edu.vn','$2b$10$OLpwXMNr4IH2soB13OLJ7O8kyYZm7CeEPfgf.01WxJMCrs4hrgUcC','guide','Pham Cong Tru','0123456789',NULL,1,'active','2025-08-06 01:03:38','2025-08-16 12:49:08'),('76a9100a-1aef-457f-bc6e-c595fa06d889','tien632004@gmail.com','$2b$10$ipcyA/aSsIFXVq4nvTvxeuJ3wYTgTz/2oUp/XZJ/Kc73W1e3fGZDe','admin','Admin','0123456789',NULL,1,'active','2025-08-14 06:42:06','2025-08-16 12:49:08'),('U25082003795','kiritanitaiyo@gmail.com','$2b$10$ugDl4xbC9We6S0WOU7Vt8e5.4LLu0UPOYOW.yyMUiwKYJ7lBq1OEC','tourist','Taiyou Dang','0123456789',NULL,1,'active','2025-08-20 03:35:04','2025-08-20 03:35:04');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -200,4 +281,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-11  8:47:24
+-- Dump completed on 2025-08-20 12:23:33

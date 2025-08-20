@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
-
-const getTours = require('../api/tourManagement/getTours.Controller');
-const getTourById = require('../api/tourManagement/getTourById.Controller');
-const createTour = require('../api/tourManagement/createTour.Controller');
-const updateTour = require('../api/tourManagement/updateTour.Controller');
-const deleteTour = require('../api/tourManagement/deleteTour.Controller');
-const getToursByGuide = require('../api/tourManagement/getToursByGuide.Controller');
+const getTours = require('../api/tours/getTours.Controller');
+const getTourById = require('../api/tours/getTourById.Controller');
+const createTour = require('../api/tours/createTour.Controller');
+const updateTour = require('../api/tours/updateTour.Controller');
+const deleteTour = require('../api/tours/deleteTour.Controller');
+const getToursByGuide = require('../api/tours/getToursByGuide.Controller');
 
 // Nếu có auth/role guard thì bật:
 // const verifyToken = require('../middleware/verifyToken');
@@ -51,7 +50,30 @@ const getToursByGuide = require('../api/tourManagement/getToursByGuide.Controlle
  *       200:
  *         description: OK
  */
-router.get('/tours', getTours);
+router.get('/', getTours);
+
+/**
+ * @swagger
+ * /api/tours/guide/{guideId}:
+ *   get:
+ *     summary: Get tours by guide
+ *     tags: [Tours]
+ *     parameters:
+ *       - in: path
+ *         name: guideId
+ *         required: true
+ *         schema: { type: string }
+ *       - in: query
+ *         name: page
+ *         schema: { type: integer, example: 1 }
+ *       - in: query
+ *         name: limit
+ *         schema: { type: integer, example: 20 }
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+router.get('/guide/:guideId', getToursByGuide);
 
 /**
  * @swagger
@@ -70,7 +92,7 @@ router.get('/tours', getTours);
  *       404:
  *         description: Tour not found
  */
-router.get('/tours/:id', getTourById);
+router.get('/:id', getTourById);
 
 /**
  * @swagger
@@ -78,8 +100,8 @@ router.get('/tours/:id', getTourById);
  *   post:
  *     summary: Create a new tour
  *     tags: [Tours]
- *     # security:
- *     #   - bearerAuth: []
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -102,7 +124,7 @@ router.get('/tours/:id', getTourById);
  *       400:
  *         description: Validation error
  */
-router.post('/tours', /* verifyToken, requireGuideOrAdmin, */ createTour);
+router.post('/', /* verifyToken, requireGuideOrAdmin, */ createTour);
 
 /**
  * @swagger
@@ -110,8 +132,8 @@ router.post('/tours', /* verifyToken, requireGuideOrAdmin, */ createTour);
  *   put:
  *     summary: Update a tour
  *     tags: [Tours]
- *     # security:
- *     #   - bearerAuth: []
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -138,7 +160,7 @@ router.post('/tours', /* verifyToken, requireGuideOrAdmin, */ createTour);
  *       404:
  *         description: Tour not found
  */
-router.put('/tours/:id', /* verifyToken, requireGuideOrAdmin, */ updateTour);
+router.put('/:id', /* verifyToken, requireGuideOrAdmin, */ updateTour);
 
 /**
  * @swagger
@@ -146,8 +168,8 @@ router.put('/tours/:id', /* verifyToken, requireGuideOrAdmin, */ updateTour);
  *   delete:
  *     summary: Delete a tour
  *     tags: [Tours]
- *     # security:
- *     #   - bearerAuth: []
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -161,29 +183,6 @@ router.put('/tours/:id', /* verifyToken, requireGuideOrAdmin, */ updateTour);
  *       409:
  *         description: FK constraint prevents deletion
  */
-router.delete('/tours/:id', /* verifyToken, requireGuideOrAdmin, */ deleteTour);
-
-/**
- * @swagger
- * /api/tours/guide/{guideId}:
- *   get:
- *     summary: Get tours by guide
- *     tags: [Tours]
- *     parameters:
- *       - in: path
- *         name: guideId
- *         required: true
- *         schema: { type: string }
- *       - in: query
- *         name: page
- *         schema: { type: integer, example: 1 }
- *       - in: query
- *         name: limit
- *         schema: { type: integer, example: 20 }
- *     responses:
- *       200:
- *         description: OK
- */
-router.get('/tours/guide/:guideId', getToursByGuide);
+router.delete('/:id', /* verifyToken, requireGuideOrAdmin, */ deleteTour);
 
 module.exports = router;

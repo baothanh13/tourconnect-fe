@@ -1,25 +1,32 @@
-const { v4: uuidv4 } = require("uuid");
+const generateId = require("../../utils/generateId");
 const { connectToDB } = require("../../config/db");
 
+// Chỉ chấp nhận 2 loại support_type
 const ALLOWED_TYPES = ["user", "guide"];
 
 module.exports = async function createTicket(req, res) {
   try {
-    const { user_id, subject, message, support_type, email, phone } = req.body;
+    // user_id lấy từ middleware auth (vd: req.user.id)
+    const user_id = req.user.user_id; 
+    const { subject, message, support_type, email, phone } = req.body;
 
     if (!user_id || !subject || !message || !support_type) {
       return res.status(400).json({ message: "Missing required fields" });
     }
+
     if (!ALLOWED_TYPES.includes(support_type)) {
-      return res.status(400).json({ message: "support_type must be 'user' or 'guide'" });
+      return res
+        .status(400)
+        .json({ message: "support_type must be 'user' or 'guide'" });
     }
-    // optional: simple email check
+
+    // optional: check email format
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
     }
 
     const connection = await connectToDB();
-    const id = uuidv4();
+    const id = generateId('ticket');
 
     await connection.execute(
       `INSERT INTO support_tickets

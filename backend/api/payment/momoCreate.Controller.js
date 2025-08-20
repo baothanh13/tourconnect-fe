@@ -2,6 +2,7 @@ const { connectToDB } = require('../../config/db');
 const axios = require('axios');
 const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
+const generateId = require('../../utils/generateId'); // Import utility to generate IDs
 
 /**
  * POST /api/payments/momo/create
@@ -48,8 +49,8 @@ module.exports = async (req, res) => {
     //   return res.status(400).json({ message: 'Amount mismatch with booking total_price' });
     // }
 
-    const orderId   = `momo_${uuidv4()}`;   // của bạn
-    const requestId = uuidv4();             // của bạn
+    const orderId   = `momo_${generateId('payment')}`;   // của bạn
+    const requestId =  generateId('payment')           // của bạn
     const orderInfo = `Payment for booking ${bookingId}`;
     const redirectUrl = returnUrl || process.env.BASE_RETURN_URL;
     const ipnUrl      = notifyUrl || process.env.BASE_NOTIFY_URL;

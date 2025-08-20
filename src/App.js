@@ -28,6 +28,17 @@ import AdminDashboard from "./pages/AdminDashboard";
 import SupportDashboard from "./pages/SupportDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+// Guide components
+import GuideTours from "./components/guide/GuideTours";
+import GuideBookings from "./components/guide/GuideBookings";
+import GuideEarnings from "./components/guide/GuideEarnings";
+import GuideProfile from "./components/guide/GuideProfile";
+import GuideProfileForm from "./components/guide/GuideProfileForm";
+import GuideManagement from "./components/guide/GuideManagement";
+import GuideAPIDemo from "./components/guide/GuideAPIDemo";
+import FindGuideByUser from "./components/guide/FindGuideByUser";
+import GuideProfileEditor from "./components/guide/GuideProfileEditor";
+import FAQ from "./pages/FAQ";
 function App() {
   return (
     <AuthProvider>
@@ -41,6 +52,7 @@ function App() {
             <Route path="verify-otp" element={<VerifyOtpPage />} />
             <Route path="guides" element={<GuidesListPage />} />
             <Route path="blog" element={<BlogPage />} />
+            <Route path="faq" element={<FAQ />} />
             <Route path="help" element={<HelpCenterPage />} />
             <Route path="careers" element={<CareersPage />} />
             <Route path="book-tour" element={<BookTourPage />} />
@@ -71,6 +83,113 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["guide"]}>
                 <GuideDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Guide Routes */}
+          <Route
+            path="/guide/tours"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <GuideTours />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/bookings"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <GuideBookings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/earnings"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <GuideEarnings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/profile"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <GuideProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/profile/create"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <GuideProfileForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/tours/new"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <div>Create New Tour - Coming Soon</div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/reviews"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <div>Reviews - Coming Soon</div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/activities"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <div>Activities - Coming Soon</div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/bookings/:id"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <div>Booking Details - Coming Soon</div>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/guide/api-demo"
+            element={
+              <ProtectedRoute allowedRoles={["guide", "admin"]}>
+                <GuideAPIDemo />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/management"
+            element={
+              <ProtectedRoute allowedRoles={["guide", "admin"]}>
+                <GuideManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/find-by-user"
+            element={
+              <ProtectedRoute allowedRoles={["guide", "admin"]}>
+                <FindGuideByUser />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/profile-editor"
+            element={
+              <ProtectedRoute allowedRoles={["guide", "admin"]}>
+                <GuideProfileEditor />
               </ProtectedRoute>
             }
           />

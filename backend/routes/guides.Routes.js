@@ -5,7 +5,7 @@ const getGuides = require("../api/guides/getGuides.Controller");
 const getGuideById = require("../api/guides/getGuideById.Controller");
 const createGuide = require("../api/guides/createGuide.Controller");
 const updateGuide = require("../api/guides/updateGuide.Controller");
-const createGuideProfile = require("../api/guides/createGuideProfile.Controller");
+// const createGuideProfile = require("../api/guides/createGuideProfile.Controller"); 
 const getGuideByUserId = require('../api/guides/getGuideByUserId');
 const verifyToken = require('../middleware/verifyToken');  // Import middleware
 
@@ -175,41 +175,7 @@ router.get("/:id", getGuideById);
  */
 router.post("/", verifyToken, createGuide);
 
-// POST /api/guides/profile - Create guide profile from registration
-/**
- * @swagger
- * /api/guides/profile:
- *   post:
- *     summary: Create guide profile for existing user
- *     tags: [Guides]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               location:
- *                 type: string
- *               specialties:
- *                 type: array
- *                 items:
- *                   type: string
- *               bio:
- *                 type: string
- *               pricePerHour:
- *                 type: number
- *               experienceYears:
- *                 type: number
- *               languages:
- *                 type: array
- *                 items:
- *                   type: string
- *     responses:
- *       201:
- *         description: Guide profile created successfully
- */
-router.post("/profile", createGuideProfile);
+// router.post("/profile", createGuideProfile);
 
 // PUT /api/guides/:id - Cập nhật guide profile
 /**

@@ -39,7 +39,7 @@ const register = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     // Tạo Token chứa OTP + email, sống 5 phút
-    const otpToken = jwt.sign({ email, otp, role, ...req.body }, SECRET_KEY, { expiresIn: "5m" });
+    const otpToken = jwt.sign({ email, otp, role, ...req.body }, SECRET_KEY, { expiresIn: "60m" });
 
     // Gửi Email OTP ngay sau khi đăng ký
     await sendOTPEmail(email, otp);

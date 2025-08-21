@@ -29,20 +29,20 @@ const RegisterPage = () => {
   const [otpToken, setOtpToken] = useState("");
   const [registeredEmail, setRegisteredEmail] = useState("");
 
-  const specialtiesList = [
-    "Cultural Tours",
-    "Food Tours",
-    "Historical Sites",
-    "Beach Tours",
-    "Mountain Hiking",
-    "Photography Tours",
-    "War History",
-    "Architecture",
-    "Nightlife Tours",
-    "Shopping Tours",
-    "Adventure Tours",
-    "Eco Tours",
-  ];
+  // const specialtiesList = [
+  //   "Cultural Tours",
+  //   "Food Tours",
+  //   "Historical Sites",
+  //   "Beach Tours",
+  //   "Mountain Hiking",
+  //   "Photography Tours",
+  //   "War History",
+  //   "Architecture",
+  //   "Nightlife Tours",
+  //   "Shopping Tours",
+  //   "Adventure Tours",
+  //   "Eco Tours",
+  // ];
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -225,7 +225,7 @@ const RegisterPage = () => {
                 </select>
               </div>
 
-              {formData.role === "guide" && (
+              {/* {formData.role === "guide" && (
                 <>
                   <div className="form-group">
                     <label htmlFor="city">City:</label>
@@ -240,7 +240,6 @@ const RegisterPage = () => {
                       <option value="Ha Noi">Ha Noi</option>
                       <option value="Da Nang">Da Nang</option>
                       <option value="Ho Chi Minh">Ho Chi Minh</option>
-                      {/* Add other cities as needed */}
                     </select>
                   </div>
                   <div className="form-group">
@@ -271,7 +270,7 @@ const RegisterPage = () => {
                     />
                   </div>
                 </>
-              )}
+              )}  */}
               <div className="form-navigation">
                 <button
                   type="button"

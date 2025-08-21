@@ -2,7 +2,7 @@ const { connectToDB } = require('../../config/db');
 
 // GET /api/tours/guide/:guideId?page=1&limit=20
 module.exports = async (req, res) => {
-  const { guideId } = req.params;
+  const guideId = req.params.guideId; // varchar, giữ nguyên string
   const page  = Math.max(parseInt(req.query.page || '1', 10), 1);
   const limit = Math.max(parseInt(req.query.limit || '20', 10), 1);
   const offset = (page - 1) * limit;
@@ -10,23 +10,23 @@ module.exports = async (req, res) => {
   try {
     const conn = await connectToDB();
 
+    // Đếm tổng số tour của guide này
     const [countRows] = await conn.execute(
       `SELECT COUNT(*) AS total FROM tours WHERE guide_id = ?`,
       [guideId]
     );
     const total = countRows[0]?.total || 0;
 
+    // Lấy danh sách tour (chèn trực tiếp limit/offset vì MySQL2 strict với placeholder ở LIMIT/OFFSET)
     const [rows] = await conn.execute(
       `
-      SELECT
-        t.id, t.guide_id, t.title, t.description, t.duration_hours, t.max_people,
-        t.price, t.image_url, t.category, t.created_at, t.updated_at
-      FROM tours t
-      WHERE t.guide_id = ?
-      ORDER BY t.created_at DESC
-      LIMIT ? OFFSET ?
+      SELECT *
+      FROM tours
+      WHERE guide_id = ?
+      ORDER BY created_at DESC
+      LIMIT ${limit} OFFSET ${offset}
       `,
-      [guideId, limit, offset]
+      [guideId] // chỉ bind guideId thôi
     );
 
     return res.json({ tours: rows, total, page, limit });

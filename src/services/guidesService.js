@@ -102,9 +102,9 @@ export const guidesService = {
   },
 
   // Create guide profile (additional endpoint)
-  async createGuideProfile(profileData) {
+  async createGuideProfile(guideData) {
     try {
-      const response = await apiClient.post("/profile", profileData);
+      const response = await apiClient.post("/", guideData);
       return response.data;
     } catch (error) {
       console.error("Error creating guide profile:", error);

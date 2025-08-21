@@ -25,24 +25,41 @@ const verifyToken = require('../middleware/verifyToken');
  *             properties:
  *               guideId:
  *                 type: string
- *               touristId:
- *                 type: string
+ *                 description: ID của hướng dẫn viên
  *               date:
  *                 type: string
  *                 format: date
+ *                 description: Ngày đặt tour (YYYY-MM-DD)
  *               timeSlot:
  *                 type: string
+ *                 description: Giờ bắt đầu (HH:mm:ss)
  *               duration:
  *                 type: integer
+ *                 description: Thời lượng tour (giờ)
  *               numberOfTourists:
  *                 type: integer
+ *                 description: Số lượng khách du lịch
  *               specialRequests:
  *                 type: string
+ *                 description: Yêu cầu đặc biệt
  *               totalPrice:
  *                 type: number
+ *                 format: float
+ *                 description: Tổng giá tiền
  *     responses:
  *       201:
  *         description: Booking created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Booking created
+ *                 bookingId:
+ *                   type: string
+ *                   description: ID của booking vừa tạo
  */
 router.post('/', verifyToken, createBooking);
 

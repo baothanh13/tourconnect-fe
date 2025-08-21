@@ -10,13 +10,10 @@ module.exports = async (req, res) => {
     const [rows] = await conn.execute(
       `
       SELECT
-        t.id, t.guide_id, t.title, t.description, t.duration_hours, t.max_people,
-        t.price, t.image_url, t.category, t.created_at, t.updated_at,
+        t.*
         g.user_id,
-        u.name AS guide_name, u.avatar_url AS guide_avatar
       FROM tours t
       JOIN guides g ON g.id = t.guide_id
-      JOIN users  u ON u.id = g.user_id
       WHERE t.id = ?
       LIMIT 1
       `,

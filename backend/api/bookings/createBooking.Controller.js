@@ -4,7 +4,6 @@ const generateId = require('../../utils/generateId');
 const createBooking = async (req, res) => {
   const {
     guideId,
-    touristId,
     date,
     timeSlot,
     duration,
@@ -17,6 +16,9 @@ const createBooking = async (req, res) => {
 
   try {
     const connection = await connectToDB();
+
+    // Lấy tourist_id từ token (middleware auth đã gắn vào req.user)
+    const touristId = req.user.user_id;  // Lấy user_id từ token đã decode
     await connection.execute(
       `INSERT INTO bookings (id, guide_id, tourist_id, booking_date, time_slot, duration_hours, number_of_tourists, special_requests, total_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [

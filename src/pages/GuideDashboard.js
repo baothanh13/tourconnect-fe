@@ -265,7 +265,7 @@ const GuideDashboard = () => {
               onClick={() => navigate("/guide/profile")}
             >
               <FaEdit />
-              <span>Update Profile</span>
+              <span>Guide Profile</span>
             </button>
             <button
               className="action-btn"

@@ -1,6 +1,5 @@
 const { connectToDB } = require('../../config/db');
 
-// GET /api/tours?page=1&limit=20&category=food&minPrice=10&maxPrice=100&q=old quarter
 module.exports = async (req, res) => {
   const page  = Math.max(parseInt(req.query.page || '1', 10), 1);
   const limit = Math.max(parseInt(req.query.limit || '20', 10), 1);

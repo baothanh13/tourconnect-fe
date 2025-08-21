@@ -1,6 +1,6 @@
 const { connectToDB } = require("../../config/db");
 const bcrypt = require("bcrypt");
-const { v4: uuidv4 } = require("uuid");
+const generateId = require("../../utils/generateId");
 
 // Danh sách role hợp lệ theo schema DB
 const ALLOWED_ROLES = ["tourist", "guide", "admin", "support"];
@@ -45,7 +45,7 @@ const createUserController = async (req, res) => {
     const password_hash = await bcrypt.hash(password, 10);
 
     // 4) Tạo user ID (UUID v4)
-    const id = uuidv4();
+    const id = generateId("user");
 
     // 5) Insert
     await conn.execute(

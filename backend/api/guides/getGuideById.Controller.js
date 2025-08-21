@@ -1,14 +1,14 @@
 const { connectToDB } = require('../../config/db');
 
 const getGuideById = async (req, res) => {
-    const { guideId } = req.params;
+    const { id } = req.params;
 
     try {
         const connection = await connectToDB();
 
         const [guides] = await connection.execute(
             `SELECT * FROM guides WHERE id = ?`,
-            [guideId]
+            [id]
         );
 
         if (guides.length === 0) {

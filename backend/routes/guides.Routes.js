@@ -1,121 +1,15 @@
 const express = require("express");
 const router = express.Router();
 
-/**
- * Helper: nhận module (có thể export default là function, hoặc export named)
- * và trả về đúng handler là function, nếu không có thì trả undefined.
- */
-function pickHandler(mod, name) {
-  if (typeof mod === "function") return mod;
-  if (mod && typeof mod[name] === "function") return mod[name];
-  return undefined;
-}
+const getGuides = require("../api/guides/getGuides.Controller");
+const getGuideById = require("../api/guides/getGuideById.Controller");
+const createGuide = require("../api/guides/createGuide.Controller");
+const updateGuide = require("../api/guides/updateGuide.Controller");
+const createGuideProfile = require("../api/guides/createGuideProfile.Controller");
+const getGuideByUserId = require('../api/guides/getGuideByUserId');
+const verifyToken = require('../middleware/verifyToken');  // Import middleware
 
-/**
- * @swagger
- * tags:
- *   - name: Guides
- *     description: APIs quản lý hướng dẫn viên (guides)
- *
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- *   schemas:
- *     Guide:
- *       type: object
- *       properties:
- *         id: { type: string, example: guide_123abc }
- *         user_id: { type: string, example: user_456xyz }
- *         location: { type: string, example: Hanoi }
- *         languages:
- *           type: array
- *           items: { type: string }
- *           example: ["English", "Vietnamese"]
- *         specialties:
- *           type: array
- *           items: { type: string }
- *           example: ["History", "Food tours"]
- *         price_per_hour: { type: number, example: 20 }
- *         experience_years: { type: integer, example: 5 }
- *         description: { type: string, example: "Experienced tour guide..." }
- *         certificates:
- *           type: array
- *           items: { type: string }
- *           example: ["Tourism Certificate A", "Language Certificate B"]
- *     GuideInput:
- *       type: object
- *       properties:
- *         location: { type: string, example: Hanoi }
- *         languages:
- *           type: array
- *           items: { type: string }
- *           example: ["English", "Vietnamese"]
- *         specialties:
- *           type: array
- *           items: { type: string }
- *           example: ["History", "Food tours"]
- *         price_per_hour: { type: number, example: 20 }
- *         experience_years: { type: integer, example: 5 }
- *         description: { type: string, example: "Experienced tour guide..." }
- *         certificates:
- *           type: array
- *           items: { type: string }
- *           example: ["Tourism Certificate A", "Language Certificate B"]
- */
-
-// ===== Import middleware & controllers an toàn (hỗ trợ default hoặc named export) =====
-const verifyTokenMod = require("../middleware/verifyToken");
-const verifyToken = pickHandler(verifyTokenMod, "verifyToken");
-
-const getGuidesMod = require("../api/guides/getGuides.Controller");
-const getGuides = pickHandler(getGuidesMod, "getGuides");
-
-const getGuideByIdMod = require("../api/guides/getGuideById.Controller");
-const getGuideById = pickHandler(getGuideByIdMod, "getGuideById");
-
-const createGuideMod = require("../api/guides/createGuide.Controller");
-const createGuide = pickHandler(createGuideMod, "createGuide");
-
-const updateGuideMod = require("../api/guides/updateGuide.Controller");
-const updateGuide = pickHandler(updateGuideMod, "updateGuide");
-
-const createGuideProfileMod = require("../api/guides/createGuideProfile.Controller");
-const createGuideProfile = pickHandler(createGuideProfileMod, "createGuideProfile");
-
-const getGuideByUserIdMod = require("../api/guides/getGuideByUserId");
-const getGuideByUserId = pickHandler(getGuideByUserIdMod, "getGuideByUserId");
-
-// ===== Assert sớm: nếu thiếu function, throw lỗi đọc được =====
-function assertFn(fn, name, path) {
-  if (typeof fn !== "function") {
-    const how = (m) =>
-      (typeof m === "function")
-        ? "module.exports = function ..."
-        : (m && typeof m === "object")
-          ? "module.exports = { " + name + " }"
-          : "module.exports = ?";
-    throw new Error(
-      `[Routes] "${name}" is not a function. Kiểm tra export tại ${path}.
-- Nếu file dùng: module.exports = ${name};  => import: const ${name} = require("${path}");
-- Nếu file dùng: module.exports = { ${name} }; hoặc exports.${name} = ...  => import: const { ${name} } = require("${path}");
-Hiện tại module dạng: ${how(require(path))}`
-    );
-  }
-}
-
-assertFn(getGuides, "getGuides", "../api/guides/getGuides.Controller");
-assertFn(getGuideById, "getGuideById", "../api/guides/getGuideById.Controller");
-assertFn(createGuide, "createGuide", "../api/guides/createGuide.Controller");
-assertFn(updateGuide, "updateGuide", "../api/guides/updateGuide.Controller");
-assertFn(createGuideProfile, "createGuideProfile", "../api/guides/createGuideProfile.Controller");
-assertFn(getGuideByUserId, "getGuideByUserId", "../api/guides/getGuideByUserId");
-assertFn(verifyToken, "verifyToken", "../middleware/verifyToken");
-
-// ===== Routes =====
-
+// GET /api/guides - Danh sách guides với filter query
 /**
  * @swagger
  * /api/guides:
@@ -125,61 +19,93 @@ assertFn(verifyToken, "verifyToken", "../middleware/verifyToken");
  *     parameters:
  *       - in: query
  *         name: location
- *         schema: { type: string }
+ *         schema:
+ *           type: string
+ *         description: Filter by location
  *       - in: query
  *         name: language
- *         schema: { type: string }
+ *         schema:
+ *           type: string
+ *         description: Filter by language
  *       - in: query
  *         name: category
- *         schema: { type: string }
+ *         schema:
+ *           type: string
+ *         description: Filter by specialty category
  *       - in: query
  *         name: minRating
- *         schema: { type: number }
+ *         schema:
+ *           type: number
+ *         description: Minimum rating
  *       - in: query
  *         name: priceRange
- *         schema: { type: string }
+ *         schema:
+ *           type: string
+ *         description: Price range (e.g. "10-50")
  *       - in: query
  *         name: available
- *         schema: { type: boolean }
+ *         schema:
+ *           type: boolean
+ *         description: Availability status
  *       - in: query
  *         name: page
- *         schema: { type: integer }
+ *         schema:
+ *           type: integer
+ *         description: Page number
  *       - in: query
  *         name: limit
- *         schema: { type: integer }
+ *         schema:
+ *           type: integer
+ *         description: Items per page
  *     responses:
  *       200:
  *         description: List of guides
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Guide'
  */
 router.get("/", getGuides);
 
 /**
  * @swagger
- * /api/guides/{id}:
+ * /api/guides/{guideId}:
  *   get:
  *     summary: Get guide by ID
+ *     description: Lấy thông tin chi tiết của 1 guide bằng guideId
  *     tags: [Guides]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: guideId
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
+ *         description: ID của guide
  *     responses:
  *       200:
  *         description: Guide found
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Guide'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: "123"
+ *                 guide_id:
+ *                   type: string
+ *                   example: "123"
+ *                 name:
+ *                   type: string
+ *                   example: "Nguyen Van A"
+ *                 email:
+ *                   type: string
+ *                   example: "guide@example.com"
+ *                 phone:
+ *                   type: string
+ *                   example: "0901234567"
  *       404:
  *         description: Guide not found
+ *       500:
+ *         description: Server error
  */
+
 router.get("/:id", getGuideById);
 
 /**
@@ -187,26 +113,69 @@ router.get("/:id", getGuideById);
  * /api/guides:
  *   post:
  *     summary: Create a new guide profile
- *     description: Người dùng phải đăng nhập và gửi kèm JWT token. user_id lấy từ token.
+ *     description: Tạo mới guide profile. Người dùng phải đăng nhập và gửi kèm JWT token. user_id sẽ được lấy từ token, không cần nhập thủ công.
  *     tags: [Guides]
  *     security:
- *       - bearerAuth: []
+ *       - bearerAuth: []   # 🔑 Bảo mật bằng JWT
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/GuideInput'
+ *             type: object
+ *             properties:
+ *               location:
+ *                 type: string
+ *                 example: "Hanoi"
+ *               languages:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["English", "Vietnamese"]
+ *               specialties:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["History", "Food tours"]
+ *               price_per_hour:
+ *                 type: number
+ *                 example: 20
+ *               experience_years:
+ *                 type: integer
+ *                 example: 5
+ *               description:
+ *                 type: string
+ *                 example: "Experienced tour guide with deep knowledge of Hanoi history."
+ *               certificates:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["Tourism Certificate A", "Language Certificate B"]
  *     responses:
  *       201:
  *         description: Guide profile created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Guide profile created successfully"
+ *                 guide_id:
+ *                   type: string
+ *                   example: "guide_123abc"
+ *                 user_id:
+ *                   type: string
+ *                   example: "user_456xyz"
  *       401:
- *         description: Unauthorized
+ *         description: Unauthorized (Missing or invalid token)
  *       500:
  *         description: Server error
  */
 router.post("/", verifyToken, createGuide);
 
+// POST /api/guides/profile - Create guide profile from registration
 /**
  * @swagger
  * /api/guides/profile:
@@ -218,40 +187,81 @@ router.post("/", verifyToken, createGuide);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/GuideInput'
+ *             type: object
+ *             properties:
+ *               location:
+ *                 type: string
+ *               specialties:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               bio:
+ *                 type: string
+ *               pricePerHour:
+ *                 type: number
+ *               experienceYears:
+ *                 type: number
+ *               languages:
+ *                 type: array
+ *                 items:
+ *                   type: string
  *     responses:
  *       201:
  *         description: Guide profile created successfully
  */
 router.post("/profile", createGuideProfile);
 
+// PUT /api/guides/:id - Cập nhật guide profile
 /**
  * @swagger
  * /api/guides/{id}:
  *   put:
  *     summary: Update guide profile by ID
  *     tags: [Guides]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
+ *         description: Guide ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/GuideInput'
+ *             type: object
+ *             properties:
+ *               location:
+ *                 type: string
+ *               languages:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               specialties:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               price_per_hour:
+ *                 type: number
+ *               experience_years:
+ *                 type: number
+ *               description:
+ *                 type: string
+ *               certificates:
+ *                 type: array
+ *                 items:
+ *                   type: string
  *     responses:
  *       200:
  *         description: Guide profile updated successfully
  *       404:
  *         description: Guide not found
  */
-router.put("/:id", verifyToken, updateGuide);
+router.put("/:id", updateGuide);
 
+
+// GET /api/guides/user/:userId - Get guide profile by user ID
 /**
  * @swagger
  * /api/guides/user/{userId}:
@@ -262,7 +272,9 @@ router.put("/:id", verifyToken, updateGuide);
  *       - in: path
  *         name: userId
  *         required: true
- *         schema: { type: string }
+ *         schema:
+ *           type: string
+ *         description: User ID
  *     responses:
  *       200:
  *         description: Guide profile found
@@ -270,5 +282,4 @@ router.put("/:id", verifyToken, updateGuide);
  *         description: Guide not found
  */
 router.get("/user/:userId", getGuideByUserId);
-
 module.exports = router;

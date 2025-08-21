@@ -58,6 +58,7 @@ DROP TABLE IF EXISTS `guides`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `guides` (
   `id` varchar(50) NOT NULL,
+  `user_id` varchar(50) DEFAULT NULL,
   `location` varchar(255) DEFAULT NULL,
   `languages` json DEFAULT NULL,
   `specialties` json DEFAULT NULL,
@@ -70,7 +71,9 @@ CREATE TABLE `guides` (
   `is_available` tinyint(1) DEFAULT '1',
   `current_location` point DEFAULT NULL,
   `verification_status` enum('pending','verified','rejected') DEFAULT 'pending',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_guides_user` (`user_id`),
+  CONSTRAINT `fk_guides_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -80,7 +83,7 @@ CREATE TABLE `guides` (
 
 LOCK TABLES `guides` WRITE;
 /*!40000 ALTER TABLE `guides` DISABLE KEYS */;
-INSERT INTO `guides` VALUES ('49be27bf-2aad-443c-8afd-2fc596a0eaed','Ho Chi Minh City','[\"English\", \"Vietnamese\", \"Japanese\"]','[\"singing\", \"dancing\"]',10.00,2,'I really like to guide people','[\"string\"]',0.00,0,1,NULL,'verified'),('64643690-5b99-4ac9-99d1-ea163230bcdb','Da Nang City','[\"string\"]','[\"string\"]',0.00,0,'string','[\"string\"]',0.00,0,1,NULL,'verified'),('6da03ad3-0d81-48a8-b671-1eadc2bc1811','string','[\"English\"]','[\"string\"]',100.00,4,'string','[\"string\"]',0.00,0,1,NULL,'verified'),('c92b7a82-54a9-4243-96ba-846461a1353d','string','[\"string\"]','[\"string\"]',0.00,0,'string','[\"string\"]',0.00,0,1,NULL,'verified'),('G25082003635','string','[\"string\"]','[\"string\"]',0.00,0,'string','[\"string\"]',0.00,0,1,NULL,'verified');
+INSERT INTO `guides` VALUES ('G25082017264','U25082016650','Da Nang','[\"English\", \"Vietnamese\"]','[\"History\", \"Food tours\"]',500.00,10,'Experienced tour guide with deep knowledge of Da Nang history.','[\"Tourism Certificate A\", \"Language Certificate B\"]',0.00,0,1,NULL,'pending'),('G25082017739','U25082016650','Hanoi','[\"English\", \"Vietnamese\"]','[\"Art Tours\"]',25.00,1,'Hello hẹ hẹ hẹ','[\"Ielts 8.0\"]',0.00,0,1,NULL,'pending');
 /*!40000 ALTER TABLE `guides` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -230,7 +233,6 @@ CREATE TABLE `tours` (
 
 LOCK TABLES `tours` WRITE;
 /*!40000 ALTER TABLE `tours` DISABLE KEYS */;
-INSERT INTO `tours` VALUES ('T25082005602','49be27bf-2aad-443c-8afd-2fc596a0eaed','Hanoi Old Quarter Walking Tour','Explore historical streets...',3,10,25.00,'https://example.com/tour.jpg','cultural','2025-08-20 05:22:49','2025-08-20 05:22:49');
 /*!40000 ALTER TABLE `tours` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -262,7 +264,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('0f3baa94-1610-4e20-820e-5ba3e8a3e12e','2251120118@ut.edu.vn','$2b$10$k5yZhBfu4lKhwwBng0lK1.H4iAIdF.5VY2RygAV3WgA/AaICUJa5i','support','support1','0123456789',NULL,'2025-08-14 06:47:13','2025-08-16 12:49:08'),('71ab5530-a5d3-46b9-9f03-374dc96e0221','2251120124@ut.edu.vn','$2b$10$OLpwXMNr4IH2soB13OLJ7O8kyYZm7CeEPfgf.01WxJMCrs4hrgUcC','guide','Pham Cong Tru','0123456789',NULL,'2025-08-06 01:03:38','2025-08-16 12:49:08'),('76a9100a-1aef-457f-bc6e-c595fa06d889','tien632004@gmail.com','$2b$10$d/OAwpKgmprvD9ywKu9Qxez2J/fBscPJxN8MhAlVqNhRnlh9i7Md.','admin','Admin','0123456789',NULL,'2025-08-14 06:42:06','2025-08-20 09:06:21'),('U25082003795','kiritanitaiyo@gmail.com','$2b$10$ugDl4xbC9We6S0WOU7Vt8e5.4LLu0UPOYOW.yyMUiwKYJ7lBq1OEC','tourist','Dang Anh Tien','0913295410','https://example.com/avatar.jpg','2025-08-20 03:35:04','2025-08-20 10:21:19');
+INSERT INTO `users` VALUES ('0f3baa94-1610-4e20-820e-5ba3e8a3e12e','2251120118@ut.edu.vn','$2b$10$k5yZhBfu4lKhwwBng0lK1.H4iAIdF.5VY2RygAV3WgA/AaICUJa5i','support','support1','0123456789',NULL,'2025-08-14 06:47:13','2025-08-16 12:49:08'),('71ab5530-a5d3-46b9-9f03-374dc96e0221','2251120124@ut.edu.vn','$2b$10$OLpwXMNr4IH2soB13OLJ7O8kyYZm7CeEPfgf.01WxJMCrs4hrgUcC','guide','Pham Cong Tru','0123456789',NULL,'2025-08-06 01:03:38','2025-08-16 12:49:08'),('76a9100a-1aef-457f-bc6e-c595fa06d889','tien632004@gmail.com','$2b$10$d/OAwpKgmprvD9ywKu9Qxez2J/fBscPJxN8MhAlVqNhRnlh9i7Md.','admin','Admin','0123456789',NULL,'2025-08-14 06:42:06','2025-08-20 09:06:21'),('U25082003795','kiritanitaiyo@gmail.com','$2b$10$ugDl4xbC9We6S0WOU7Vt8e5.4LLu0UPOYOW.yyMUiwKYJ7lBq1OEC','tourist','Dang Anh Tien','0913295410','https://example.com/avatar.jpg','2025-08-20 03:35:04','2025-08-20 10:21:19'),('U25082016650','tienbi63543@gmail.com','$2b$10$9ge7ueij1DaU/E1ZE1QwK.2hnXgkzULtLZR7YVi3HJSxuzpaMcFmS','guide','Thomas','0886485440',NULL,'2025-08-20 16:49:54','2025-08-20 16:49:54');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -275,4 +277,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-20 19:50:58
+-- Dump completed on 2025-08-21  0:31:27

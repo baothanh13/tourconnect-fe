@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const verifyToken = require('../middleware/verifyToken');  // Import middleware
 const createTicket = require("../api/supportTickets/createTicketController");
 const getAllTickets = require("../api/supportTickets/getAllTicketsController");
 const getTicketById = require("../api/supportTickets/getTicketByIdController");

@@ -40,12 +40,6 @@ const getToursByGuide = require('../api/tours/getToursByGuide.Controller');
  *       - in: query
  *         name: maxPrice
  *         schema: { type: number, example: 200 }
- *       - in: query
- *         name: guide_id
- *         schema: { type: string, example: "guide-uuid" }
- *       - in: query
- *         name: q
- *         schema: { type: string, example: "old quarter" }
  *     responses:
  *       200:
  *         description: OK

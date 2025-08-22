@@ -1,5 +1,5 @@
 const { connectToDB } = require('../../config/db');
-const { v4: uuidv4 } = require('uuid');
+const generateId = require('../../utils/generateId');
 
 // POST /api/reviews
 // body: { booking_id, tour_id, rating (1..5), comment? }
@@ -58,7 +58,7 @@ module.exports = async (req, res) => {
     }
 
     // Tạo review
-    const id = uuidv4();
+    const id = generateId('review');
     await conn.execute(
       `INSERT INTO reviews
         (id, booking_id, tourist_id, guide_id, tour_id, rating, comment)

@@ -7,6 +7,7 @@ function generateId(type) {
     payment: "P",
     ticket: "ST",
     tour: "T",
+    review: "R",
   };
 
   // Lấy prefix theo type

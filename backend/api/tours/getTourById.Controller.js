@@ -11,9 +11,7 @@ module.exports = async (req, res) => {
       `
       SELECT
         t.*
-        g.user_id,
       FROM tours t
-      JOIN guides g ON g.id = t.guide_id
       WHERE t.id = ?
       LIMIT 1
       `,

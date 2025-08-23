@@ -62,6 +62,21 @@ const GuideProfile = () => {
       <div className="profile-content">
         <div className="profile-info">
           <h3>{profile.name}</h3>
+          {/* Name */}
+          <p>
+          <strong>Name:</strong> {profile.user_name}
+          </p>
+
+          {/* Email */}
+          <p>
+          <strong>Email:</strong> {profile.user_email}
+          </p>
+
+          {/* Phone */}
+          <p>
+          <strong>Phone:</strong> {profile.phone}
+          </p>
+          
           <p>
             <strong>Location:</strong> {profile.location}
           </p>

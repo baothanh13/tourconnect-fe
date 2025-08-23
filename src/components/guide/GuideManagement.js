@@ -40,7 +40,7 @@ const GuideManagement = () => {
       setError(null);
       // This assumes you have a getGuides method that gets all guides
       const response = await guidesService.getGuides();
-      setGuides(response.data || response);
+      setGuides(response.data.guides ?? response);
     } catch (error) {
       console.error("Error loading guides:", error);
       setError("Failed to load guides");

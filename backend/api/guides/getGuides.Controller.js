@@ -14,8 +14,25 @@ const getGuides = async (req, res) => {
     try {
         const connection = req.db;
         let query = `
-            SELECT g.*
+            SELECT 
+                g.id,
+                u.name AS user_name, 
+                u.email AS user_email,
+                u.phone,
+                g.location,
+                g.languages,
+                g.specialties,
+                g.price_per_hour,
+                g.experience_years,
+                g.description,
+                g.certificates,
+                g.rating,
+                g.total_reviews,
+                g.is_available,
+                g.current_location,
+                g.verification_status
             FROM guides g
+            JOIN users u ON g.user_id = u.id
         `;
         const params = [];
 

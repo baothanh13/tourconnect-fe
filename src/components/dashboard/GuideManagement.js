@@ -16,17 +16,17 @@ const GuideManagement = () => {
   const [showModal, setShowModal] = useState(false);
 
   const fetchGuides = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await adminService.getAllGuides(filters);
-      setGuides(data.guides || data);
-    } catch (error) {
-      console.error("Error fetching guides:", error);
-      alert("Failed to fetch guides");
-    } finally {
-      setLoading(false);
-    }
-  }, [filters]);
+  try {
+    setLoading(true);
+    const data = await adminService.getAllGuides(filters); // gọi API
+    setGuides(data.guides || data); // set vào state
+  } catch (error) {
+    console.error("Error fetching guides:", error);
+    alert("Failed to fetch guides");
+  } finally {
+    setLoading(false);
+  }
+}, [filters]);
 
   useEffect(() => {
     fetchGuides();
@@ -101,11 +101,11 @@ const GuideManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {guides.map((guide) => (
+            {guides && guides.map((guide) => (
               <tr key={guide.id}>
                 <td>{guide.id}</td>
-                <td>{guide.name || guide.full_name}</td>
-                <td>{guide.email}</td>
+                <td>{guide.user_name}</td>
+                <td>{guide.user_email}</td>
                 <td>{guide.location}</td>
                 <td>{guide.languages}</td>
                 <td>
@@ -190,10 +190,10 @@ const GuideManagement = () => {
               </div>
               <div className="guide-detail-item">
                 <strong>Name:</strong>{" "}
-                {selectedGuide.name || selectedGuide.full_name}
+                {selectedGuide.user_name}
               </div>
               <div className="guide-detail-item">
-                <strong>Email:</strong> {selectedGuide.email}
+                <strong>Email:</strong> {selectedGuide.user_email}
               </div>
               <div className="guide-detail-item">
                 <strong>Phone:</strong> {selectedGuide.phone || "N/A"}

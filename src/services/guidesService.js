@@ -237,26 +237,26 @@ export const guidesService = {
 
   // Get guide reviews
   async getGuideReviews(guideId, options = {}) {
-    try {
-      const params = new URLSearchParams();
+  try {
+    const params = new URLSearchParams();
 
-      if (options.page) params.append("page", options.page);
-      if (options.limit) params.append("limit", options.limit);
+    if (options.page) params.append("page", options.page);
+    if (options.limit) params.append("limit", options.limit);
 
-      const queryString = params.toString();
-      const url = queryString
-        ? `/${guideId}/reviews?${queryString}`
-        : `/${guideId}/reviews`;
+    const queryString = params.toString();
+    const url = queryString
+      ? `/reviews/${guideId}?${queryString}`
+      : `/reviews/${guideId}`;
 
-      const response = await apiClient.get(url);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching guide reviews:", error);
-      throw new Error(
-        error.response?.data?.message || "Failed to fetch reviews."
-      );
-    }
-  },
+    const response = await apiClient.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching guide reviews:", error);
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch reviews."
+    );
+  }
+}
 };
 
 export default guidesService;

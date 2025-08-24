@@ -334,7 +334,7 @@ const GuideDashboard = () => {
               <h3>Upcoming Bookings</h3>
               <button
                 className="view-all-btn"
-                onClick={() => navigate("/guide/bookings")}
+                onClick={() => navigate("/bookings")}
               >
                 View All
               </button>

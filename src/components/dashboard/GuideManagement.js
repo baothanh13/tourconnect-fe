@@ -16,17 +16,30 @@ const GuideManagement = () => {
   const [showModal, setShowModal] = useState(false);
 
   const fetchGuides = useCallback(async () => {
-  try {
-    setLoading(true);
-    const data = await adminService.getAllGuides(filters); // gọi API
-    setGuides(data.guides || data); // set vào state
-  } catch (error) {
-    console.error("Error fetching guides:", error);
-    alert("Failed to fetch guides");
-  } finally {
-    setLoading(false);
-  }
-}, [filters]);
+    try {
+      setLoading(true);
+      const data = await adminService.getAllGuides(filters);
+      // Handle different response formats
+      if (Array.isArray(data)) {
+        setGuides(data);
+      } else if (data.guides && Array.isArray(data.guides)) {
+        setGuides(data.guides);
+      } else if (data.data && Array.isArray(data.data)) {
+        setGuides(data.data);
+      } else {
+        console.warn("Unexpected response format:", data);
+        setGuides([]);
+      }
+    } catch (error) {
+      console.error("Error fetching guides:", error);
+      alert(
+        "Failed to fetch guides. Please check your connection and try again."
+      );
+      setGuides([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [filters]);
 
   useEffect(() => {
     fetchGuides();
@@ -39,7 +52,11 @@ const GuideManagement = () => {
       fetchGuides(); // Refresh the list
     } catch (error) {
       console.error("Error updating guide verification:", error);
-      alert("Failed to update guide verification");
+      alert(
+        `Failed to update guide verification: ${
+          error.message || "Unknown error"
+        }`
+      );
     }
   };
 
@@ -101,40 +118,62 @@ const GuideManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {guides && guides.map((guide) => (
-              <tr key={guide.id}>
-                <td>{guide.id}</td>
-                <td>{guide.user_name}</td>
-                <td>{guide.user_email}</td>
-                <td>{guide.location}</td>
-                <td>{guide.languages}</td>
-                <td>
-                  {guide.experience_years
-                    ? `${guide.experience_years} years`
-                    : "N/A"}
-                </td>
-                <td>
-                  <span
-                    className={`status-badge ${getStatusColor(
-                      guide.verification_status
-                    )}`}
-                  >
-                    {guide.verification_status}
-                  </span>
-                </td>
-                <td>{guide.rating ? `${guide.rating}/5` : "N/A"}</td>
-                <td>{new Date(guide.created_at).toLocaleDateString()}</td>
-                <td>
-                  <div className="action-buttons">
-                    <button
-                      onClick={() => handleViewGuide(guide)}
-                      className="btn-view"
-                      title="View Details"
+            {guides &&
+              guides.map((guide) => (
+                <tr key={guide.id}>
+                  <td>{guide.id}</td>
+                  <td>{guide.user_name}</td>
+                  <td>{guide.user_email}</td>
+                  <td>{guide.location}</td>
+                  <td>{guide.languages}</td>
+                  <td>
+                    {guide.experience_years
+                      ? `${guide.experience_years} years`
+                      : "N/A"}
+                  </td>
+                  <td>
+                    <span
+                      className={`status-badge ${getStatusColor(
+                        guide.verification_status
+                      )}`}
                     >
-                      <FaEye />
-                    </button>
-                    {guide.verification_status === "pending" && (
-                      <>
+                      {guide.verification_status}
+                    </span>
+                  </td>
+                  <td>{guide.rating ? `${guide.rating}/5` : "N/A"}</td>
+                  <td>{new Date(guide.created_at).toLocaleDateString()}</td>
+                  <td>
+                    <div className="action-buttons">
+                      <button
+                        onClick={() => handleViewGuide(guide)}
+                        className="btn-view"
+                        title="View Details"
+                      >
+                        <FaEye />
+                      </button>
+                      {guide.verification_status === "pending" && (
+                        <>
+                          <button
+                            onClick={() =>
+                              handleVerificationUpdate(guide.id, "verified")
+                            }
+                            className="btn-approve"
+                            title="Approve Guide"
+                          >
+                            <FaCheck />
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleVerificationUpdate(guide.id, "rejected")
+                            }
+                            className="btn-reject"
+                            title="Reject Guide"
+                          >
+                            <FaTimes />
+                          </button>
+                        </>
+                      )}
+                      {guide.verification_status === "rejected" && (
                         <button
                           onClick={() =>
                             handleVerificationUpdate(guide.id, "verified")
@@ -142,34 +181,13 @@ const GuideManagement = () => {
                           className="btn-approve"
                           title="Approve Guide"
                         >
-                          <FaCheck />
+                          <FaUserCheck />
                         </button>
-                        <button
-                          onClick={() =>
-                            handleVerificationUpdate(guide.id, "rejected")
-                          }
-                          className="btn-reject"
-                          title="Reject Guide"
-                        >
-                          <FaTimes />
-                        </button>
-                      </>
-                    )}
-                    {guide.verification_status === "rejected" && (
-                      <button
-                        onClick={() =>
-                          handleVerificationUpdate(guide.id, "verified")
-                        }
-                        className="btn-approve"
-                        title="Approve Guide"
-                      >
-                        <FaUserCheck />
-                      </button>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
@@ -189,8 +207,7 @@ const GuideManagement = () => {
                 <strong>ID:</strong> {selectedGuide.id}
               </div>
               <div className="guide-detail-item">
-                <strong>Name:</strong>{" "}
-                {selectedGuide.user_name}
+                <strong>Name:</strong> {selectedGuide.user_name}
               </div>
               <div className="guide-detail-item">
                 <strong>Email:</strong> {selectedGuide.user_email}

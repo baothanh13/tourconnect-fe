@@ -1,12 +1,12 @@
-const { connectToDB } = require('../../config/db');
+const { pool } = require("../../config/db");
+
 const getGuideByUserId = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const connection = await connectToDB();
-
-    const [guides] = await connection.execute(
+    const [guides] = await pool.execute(
       `SELECT g.id,
+              g.user_id,
               u.name AS user_name, 
               u.email AS user_email,
               u.phone,
@@ -29,13 +29,17 @@ const getGuideByUserId = async (req, res) => {
     );
 
     if (guides.length === 0) {
-      return res.status(404).json({ message: 'Guide not found' });
+      return res.status(404).json({ message: "Guide not found" });
     }
 
-    return res.json(guides[0]);
+    // Add guide_id field for frontend compatibility
+    const guide = guides[0];
+    guide.guide_id = guide.id;
+
+    return res.json(guide);
   } catch (err) {
-    console.error('Error fetching guide by userId:', err);
-    return res.status(500).json({ message: 'Server error' });
+    console.error("Error fetching guide by userId:", err);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 

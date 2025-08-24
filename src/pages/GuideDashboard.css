@@ -1,0 +1,511 @@
+/* Guide Dashboard Specific Styles */
+:root {
+  --guide-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --guide-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  --guide-warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --guide-danger: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+  --guide-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --guide-earnings: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --guide-tours: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  --guide-rating: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+/* Header Enhancements */
+.modern-dashboard-header .verification-status {
+  margin-right: 1rem;
+}
+
+.verification-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.verification-badge.success {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border: 1px solid #34d399;
+}
+
+.verification-badge.warning {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  border: 1px solid #f59e0b;
+}
+
+.verification-badge.danger {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+/* Stat Cards Specific Styling */
+.tours-card {
+  background: var(--guide-tours);
+  color: white;
+}
+
+.tours-card .stat-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.completed-card {
+  background: var(--guide-success);
+  color: white;
+}
+
+.completed-card .stat-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.earnings-card {
+  background: var(--guide-earnings);
+  color: white;
+}
+
+.earnings-card .stat-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.rating-card {
+  background: var(--guide-rating);
+  color: #8b5cf6;
+}
+
+.rating-card .stat-icon {
+  background: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6;
+}
+
+.pending-card {
+  background: var(--guide-warning);
+  color: white;
+}
+
+.pending-card .stat-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.customers-card {
+  background: var(--guide-info);
+  color: white;
+}
+
+.customers-card .stat-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+/* Quick Actions Grid */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.quick-action-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-color, #667eea);
+}
+
+.quick-action-card .action-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-size: 1.25rem;
+  color: white;
+}
+
+.action-create .action-icon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.action-profile .action-icon {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.action-schedule .action-icon {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.action-analytics .action-icon {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.action-photos .action-icon {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.action-support .action-icon {
+  background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+}
+
+.quick-action-card .action-content {
+  flex: 1;
+}
+
+.quick-action-card h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.quick-action-card p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* Dashboard Grid */
+.dashboard-grid-modern {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.dashboard-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.dashboard-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.dashboard-card .card-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dashboard-card .card-content {
+  padding: 1.5rem;
+}
+
+/* Activities List */
+.activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activity-item-modern {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  transition: all 0.2s ease;
+}
+
+.activity-item-modern:hover {
+  background: #f8fafc;
+  transform: translateX(4px);
+}
+
+.activity-item-modern .activity-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: white;
+}
+
+.activity-icon.booking {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.activity-icon.review {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.activity-icon.payment {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.activity-item-modern .activity-content {
+  flex: 1;
+}
+
+.activity-item-modern .activity-title {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.activity-item-modern .activity-description {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.activity-item-modern .activity-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.activity-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.activity-status.completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.activity-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.activity-status.confirmed {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+/* Bookings List */
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.booking-item-modern {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  transition: all 0.2s ease;
+}
+
+.booking-item-modern:hover {
+  background: #f8fafc;
+  border-color: #667eea;
+  box-shadow: var(--shadow-sm);
+}
+
+.booking-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: var(--radius-md);
+  min-width: 80px;
+}
+
+.booking-date .date {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.booking-date .time {
+  font-size: 0.675rem;
+  opacity: 0.9;
+}
+
+.booking-details {
+  flex: 1;
+}
+
+.booking-details h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.booking-details .booking-info {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.btn-view-modern {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-view-modern:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.empty-state svg {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.4;
+}
+
+.empty-state p {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.empty-state span {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Section Container */
+.section-container {
+  margin-bottom: 2rem;
+}
+
+.section-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.section-header p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* View All Button */
+.view-all-btn {
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-all-btn:hover {
+  background: var(--primary-gradient);
+  color: white;
+  border-color: transparent;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .dashboard-grid-modern {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .modern-dashboard-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .header-navigation {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .header-actions {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .stats-grid-modern {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .dashboard-main {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-button span {
+    display: none;
+  }
+
+  .quick-action-card {
+    padding: 1rem;
+  }
+
+  .dashboard-card .card-header,
+  .dashboard-card .card-content {
+    padding: 1rem;
+  }
+}

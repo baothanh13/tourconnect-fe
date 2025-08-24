@@ -5,9 +5,14 @@ const getGuides = require("../api/guides/getGuides.Controller");
 const getGuideById = require("../api/guides/getGuideById.Controller");
 const createGuide = require("../api/guides/createGuide.Controller");
 const updateGuide = require("../api/guides/updateGuide.Controller");
-// const createGuideProfile = require("../api/guides/createGuideProfile.Controller"); 
-const getGuideByUserId = require('../api/guides/getGuideByUserId');
-const verifyToken = require('../middleware/verifyToken');  // Import middleware
+// const createGuideProfile = require("../api/guides/createGuideProfile.Controller");
+const getGuideByUserId = require("../api/guides/getGuideByUserId");
+const {
+  getGuideDashboardStats,
+  getGuideRecentActivities,
+  getGuideUpcomingBookings,
+} = require("../api/guides/guideDashboard.Controller");
+const verifyToken = require("../middleware/verifyToken"); // Import middleware
 
 // GET /api/guides - Danh sách guides với filter query
 /**
@@ -226,6 +231,54 @@ router.post("/", verifyToken, createGuide);
  */
 router.put("/:id", updateGuide);
 
+// PUT /api/guides/profile/:id - Update guide profile (alternative endpoint)
+/**
+ * @swagger
+ * /api/guides/profile/{id}:
+ *   put:
+ *     summary: Update guide profile (alternative endpoint)
+ *     tags: [Guides]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Guide ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               location:
+ *                 type: string
+ *               languages:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               specialties:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               price_per_hour:
+ *                 type: number
+ *               experience_years:
+ *                 type: integer
+ *               description:
+ *                 type: string
+ *               certificates:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Guide profile updated successfully
+ *       404:
+ *         description: Guide not found
+ */
+router.put("/profile/:id", updateGuide);
 
 // GET /api/guides/user/:userId - Get guide profile by user ID
 /**
@@ -248,4 +301,102 @@ router.put("/:id", updateGuide);
  *         description: Guide not found
  */
 router.get("/user/:userId", getGuideByUserId);
+
+// Guide Dashboard Routes
+
+/**
+ * @swagger
+ * /api/guides/dashboard/{userId}/stats:
+ *   get:
+ *     summary: Get guide dashboard statistics
+ *     tags: [Guides]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID of the guide
+ *     responses:
+ *       200:
+ *         description: Dashboard statistics retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Guide not found
+ */
+router.get("/dashboard/:user_id/stats", verifyToken, getGuideDashboardStats);
+
+/**
+ * @swagger
+ * /api/guides/dashboard/{userId}/activities:
+ *   get:
+ *     summary: Get guide recent activities
+ *     tags: [Guides]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID of the guide
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 5
+ *         description: Number of activities to return
+ *     responses:
+ *       200:
+ *         description: Recent activities retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Guide not found
+ */
+router.get(
+  "/dashboard/:user_id/activities",
+  verifyToken,
+  getGuideRecentActivities
+);
+
+/**
+ * @swagger
+ * /api/guides/dashboard/{userId}/bookings:
+ *   get:
+ *     summary: Get guide upcoming bookings
+ *     tags: [Guides]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID of the guide
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 5
+ *         description: Number of bookings to return
+ *     responses:
+ *       200:
+ *         description: Upcoming bookings retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Guide not found
+ */
+router.get(
+  "/dashboard/:user_id/bookings",
+  verifyToken,
+  getGuideUpcomingBookings
+);
+
 module.exports = router;

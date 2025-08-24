@@ -14,6 +14,12 @@ const createGuideProfile = async (req, res) => {
   try {
     const connection = await connectToDB();
 
+    // Lấy user_id từ token đã decode
+    const userId = req.user.user_id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized: Missing user ID' });
+    }
+
     // Check if user exists and is a guide
     const [users] = await connection.execute(
       `SELECT * FROM users WHERE id = ? AND role = 'guide'`,

@@ -6,7 +6,7 @@ const getGuides = async (req, res) => {
         minRating,
         priceRange,
         available,
-        date,
+        date, // TODO: Sử dụng để filter guides theo ngày có sẵn
         page = 1,
         limit = 20
     } = req.query;
@@ -90,6 +90,18 @@ const getGuides = async (req, res) => {
 
         if (available === 'true') {
             query += ` AND g.is_available = true`;
+        }
+
+        // TODO: Filter theo ngày có sẵn (cần implement logic kiểm tra lịch của guide)
+        if (date) {
+            // Ví dụ: Kiểm tra xem guide có sẵn vào ngày cụ thể không
+            // query += ` AND g.id NOT IN (
+            //     SELECT DISTINCT g2.id FROM guides g2 
+            //     JOIN bookings b ON g2.id = b.guide_id 
+            //     WHERE DATE(b.tour_date) = ? AND b.status IN ('confirmed', 'pending')
+            // )`;
+            // params.push(date);
+            console.log('📅 Date filter requested:', date, '(chưa implement)');
         }
 
         // Parse and validate limit & offset

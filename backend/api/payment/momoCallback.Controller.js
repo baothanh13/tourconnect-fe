@@ -53,12 +53,12 @@ module.exports = async (req, res) => {
       return res.status(400).json({ message: 'Invalid signature' });
     }
 
-    // Giải bookingId từ extraData
-    let bookingIdFromExtra = null;
-    try {
-      const decoded = JSON.parse(Buffer.from(extraData || '', 'base64').toString('utf8'));
-      bookingIdFromExtra = decoded?.bookingId || null;
-    } catch {}
+    // Giải bookingId từ extraData (có thể sử dụng trong tương lai)
+    // let bookingIdFromExtra = null;
+    // try {
+    //   const decoded = JSON.parse(Buffer.from(extraData || '', 'base64').toString('utf8'));
+    //   bookingIdFromExtra = decoded?.bookingId || null;
+    // } catch {}
 
     const conn = await connectToDB();
 

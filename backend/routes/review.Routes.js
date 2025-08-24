@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 
 const createReview = require('../api/reviews/createReview.Controller');
-const getGuideReviews = require('../api/reviews/getGuideReviews.Controller');
 const getTouristReviews = require('../api/reviews/getTouristReviews.Controller');
 const updateReview = require('../api/reviews/updateReview.Controller');
 const deleteReview = require('../api/reviews/deleteReview.Controller');
@@ -56,59 +55,7 @@ const deleteReview = require('../api/reviews/deleteReview.Controller');
  *       409:
  *         description: Duplicate review
  */
-router.post('/reviews', createReview);
-
-/**
- * @swagger
- * /api/reviews/guide/{guideId}:
- *   get:
- *     summary: Get reviews of a guide
- *     tags: [Reviews]
- *     parameters:
- *       - in: path
- *         name: guideId
- *         required: true
- *         schema:
- *           type: string
- *         description: Guide ID
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           example: 1
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           example: 20
- *     responses:
- *       200:
- *         description: List of guide reviews
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 reviews:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id: { type: string, example: "rev_123" }
- *                       rating: { type: number, format: float, example: 4.5 }
- *                       comment: { type: string, example: "Great tour!" }
- *                       created_at: { type: string, format: date-time }
- *                       booking_id: { type: string }
- *                       tour_id: { type: string }
- *                       tour_title: { type: string, example: "Old Quarter Walking Tour" }
- *                       tourist_id: { type: string }
- *                       tourist_name: { type: string, example: "Tran Minh" }
- *                       tourist_avatar: { type: string, example: "https://..." }
- *                 total: { type: integer, example: 156 }
- *                 page: { type: integer, example: 1 }
- *                 limit: { type: integer, example: 20 }
- */
-router.get('/reviews/guide/:guideId', getGuideReviews);
+router.post('/', createReview);
 
 /**
  * @swagger
@@ -160,7 +107,7 @@ router.get('/reviews/guide/:guideId', getGuideReviews);
  *                 page: { type: integer, example: 1 }
  *                 limit: { type: integer, example: 20 }
  */
-router.get('/reviews/tourist/:touristId', getTouristReviews);
+router.get('/tourist/:touristId', getTouristReviews);
 
 /**
  * @swagger
@@ -200,7 +147,7 @@ router.get('/reviews/tourist/:touristId', getTouristReviews);
  *       404:
  *         description: Review not found
  */
-router.put('/reviews/:id', updateReview);
+router.put('/:id', updateReview);
 
 /**
  * @swagger
@@ -225,6 +172,6 @@ router.put('/reviews/:id', updateReview);
  *       404:
  *         description: Review not found
  */
-router.delete('/reviews/:id', deleteReview);
+router.delete('/:id', deleteReview);
 
 module.exports = router;

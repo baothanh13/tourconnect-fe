@@ -3,8 +3,8 @@ const { connectToDB } = require('../../config/db');
 // GET /api/reviews/tourist/:touristId?page=1&limit=20
 module.exports = async (req, res) => {
   const { touristId } = req.params;
-  const page = Math.max(parseInt(req.query.page || '1', 10), 1);
-  const limit = Math.max(parseInt(req.query.limit || '20', 10), 1);
+  const page  = Math.max(Number.isInteger(parseInt(req.query.page, 10)) ? parseInt(req.query.page, 10) : 1, 1);
+  const limit = Math.max(Number.isInteger(parseInt(req.query.limit, 10)) ? parseInt(req.query.limit, 10) : 20, 1);
   const offset = (page - 1) * limit;
 
   try {
@@ -35,9 +35,9 @@ module.exports = async (req, res) => {
       JOIN users  ug ON ug.id = g.user_id
       WHERE r.tourist_id = ?
       ORDER BY r.created_at DESC
-      LIMIT ? OFFSET ?
-      `,
-      [touristId, limit, offset]
+      LIMIT ${limit} OFFSET ${offset}
+    `,
+      [touristId]
     );
 
     return res.json({

@@ -7,6 +7,7 @@ const createGuide = require("../api/guides/createGuide.Controller");
 const updateGuide = require("../api/guides/updateGuide.Controller");
 // const createGuideProfile = require("../api/guides/createGuideProfile.Controller"); 
 const getGuideByUserId = require('../api/guides/getGuideByUserId');
+const getGuideReviews = require('../api/guides/getGuideReviews.Controller');
 const verifyToken = require('../middleware/verifyToken');  // Import middleware
 
 // GET /api/guides - Danh sách guides với filter query
@@ -248,4 +249,56 @@ router.put("/:id", updateGuide);
  *         description: Guide not found
  */
 router.get("/user/:userId", getGuideByUserId);
+
+/**
+ * @swagger
+ * /api/guides/reviews/{guideId}:
+ *   get:
+ *     summary: Get reviews of a guide
+ *     tags: [Guides]
+ *     parameters:
+ *       - in: path
+ *         name: guideId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Guide ID
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           example: 20
+ *     responses:
+ *       200:
+ *         description: List of guide reviews
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 reviews:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id: { type: string, example: "rev_123" }
+ *                       rating: { type: number, format: float, example: 4.5 }
+ *                       comment: { type: string, example: "Great tour!" }
+ *                       created_at: { type: string, format: date-time }
+ *                       booking_id: { type: string }
+ *                       tour_id: { type: string }
+ *                       tour_title: { type: string, example: "Old Quarter Walking Tour" }
+ *                       tourist_id: { type: string }
+ *                       tourist_name: { type: string, example: "Tran Minh" }
+ *                       tourist_avatar: { type: string, example: "https://..." }
+ *                 total: { type: integer, example: 156 }
+ *                 page: { type: integer, example: 1 }
+ *                 limit: { type: integer, example: 20 }
+ */
+router.get('/reviews/:guideId', getGuideReviews);
 module.exports = router;

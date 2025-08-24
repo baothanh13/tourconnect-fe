@@ -1,6 +1,4 @@
 const { connectToDB } = require('../../config/db');
-
-// GET /api/reviews/guide/:guideId?page=1&limit=20
 module.exports = async (req, res) => {
   const { guideId } = req.params;
   const page  = Math.max(Number.isInteger(parseInt(req.query.page, 10)) ? parseInt(req.query.page, 10) : 1, 1);

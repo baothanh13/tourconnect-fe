@@ -3,6 +3,7 @@ const router = express.Router();
 
 const createBooking = require('../api/bookings/createBooking.Controller');
 const getBookings = require('../api/bookings/getBookings.Controller');
+const getBookingByGuideId = require('../api/bookings/getBookingsByGuideId');
 const getBookingById = require('../api/bookings/getBookingById.Controller');
 const updateBooking = require('../api/bookings/updateBooking.Controller');
 const updateBookingStatus = require('../api/bookings/updateBookingStatus.Controller');
@@ -76,6 +77,25 @@ router.post('/', verifyToken, createBooking);
  *         description: Danh sách booking
  */
 router.get('/', verifyToken, getBookings);
+
+/**
+ * @swagger
+ * /api/bookings/guide/{id}:
+ *   get:
+ *     summary: Lấy danh sách booking của hướng dẫn viên theo ID
+ *     tags: [Bookings]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Guide ID
+ *     responses:
+ *       '200':
+ *         description: Guides' bookings detail
+ */
+router.get('/guide/:id', getBookingByGuideId);
 
 /**
  * @swagger

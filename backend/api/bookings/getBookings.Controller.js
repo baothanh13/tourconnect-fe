@@ -6,7 +6,7 @@ const getBookings = async (req, res) => {
   try {
     const connection = await connectToDB();
     const [bookings] = await connection.execute(
-      `SELECT * FROM bookings WHERE tourist_id = ? OR guide_id = ? ORDER BY created_at DESC`,
+      `SELECT * FROM bookings WHERE tourist_id = ? ORDER BY created_at DESC`,
       [userId, userId]
     );
     return res.status(200).json({ bookings });

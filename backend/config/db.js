@@ -6,6 +6,7 @@ const config = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  waitForConnections: true,
   connectionLimit: 10, // Limit connections
   acquireTimeout: 60000,
   queueLimit: 0,

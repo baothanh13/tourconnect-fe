@@ -1,10 +1,9 @@
 const { pool } = require("../../config/db");
 
-const getGuideByUserId = async (req, res) => {
-  const { userId } = req.params;
-
+async function getGuideByUserId(req, res) {
   try {
-    const [guides] = await pool.execute(
+    const { userId } = req.params;
+    const [rows] = await pool.execute(
       `SELECT g.id,
               g.user_id,
               u.name AS user_name, 
@@ -22,25 +21,21 @@ const getGuideByUserId = async (req, res) => {
               g.is_available,
               g.current_location,
               g.verification_status
-      FROM guides g
-      JOIN users u ON g.user_id = u.id
-      WHERE g.user_id = ?;`,
+       FROM guides g
+       JOIN users u ON g.user_id = u.id
+       WHERE g.user_id = ?;`,
       [userId]
     );
 
-    if (guides.length === 0) {
+    if (rows.length === 0) {
       return res.status(404).json({ message: "Guide not found" });
     }
 
-    // Add guide_id field for frontend compatibility
-    const guide = guides[0];
-    guide.guide_id = guide.id;
-
-    return res.json(guide);
+    res.json(rows[0]);
   } catch (err) {
     console.error("Error fetching guide by userId:", err);
-    return res.status(500).json({ message: "Server error" });
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
-};
+}
 
 module.exports = getGuideByUserId;

@@ -1,12 +1,26 @@
-const { connectToDB } = require("../../config/db");
+const { pool } = require("../../config/db");
 
+// Hàm parse JSON an toàn
+function safeJson(value, fallback = []) {
+  if (!value) return fallback;
+  if (typeof value === "string") {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return fallback;
+    }
+  }
+  if (typeof value === "object") return value;
+  return fallback;
+}
+
+// ================== Dashboard Stats ==================
 const getGuideDashboardStats = async (req, res) => {
   try {
     const { user_id } = req.params;
-    const connection = await connectToDB();
 
     // Get guide profile
-    const [guideRows] = await connection.execute(
+    const [guideRows] = await pool.execute(
       `SELECT * FROM guides WHERE user_id = ?`,
       [user_id]
     );
@@ -17,22 +31,18 @@ const getGuideDashboardStats = async (req, res) => {
 
     const guide = guideRows[0];
 
-    // Get tour statistics
-    const [tourStats] = await connection.execute(
-      `SELECT 
-        COUNT(*) as total_tours,
-        SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_tours,
-        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_tours
-       FROM tours WHERE guide_id = ?`,
+    // Tour stats
+    const [tourStats] = await pool.execute(
+      `SELECT COUNT(*) as total_tours FROM tours WHERE guide_id = ?`,
       [guide.id]
     );
 
-    // Get booking statistics
-    const [bookingStats] = await connection.execute(
+    // Booking stats
+    const [bookingStats] = await pool.execute(
       `SELECT 
         COUNT(*) as total_bookings,
         SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_bookings,
-        SUM(CASE WHEN status = 'confirmed' AND date > CURDATE() THEN 1 ELSE 0 END) as upcoming_bookings,
+        SUM(CASE WHEN status = 'confirmed' AND booking_date > CURDATE() THEN 1 ELSE 0 END) as upcoming_bookings,
         SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_bookings,
         SUM(CASE WHEN status = 'completed' THEN total_price ELSE 0 END) as total_earnings
        FROM bookings 
@@ -40,46 +50,42 @@ const getGuideDashboardStats = async (req, res) => {
       [guide.id]
     );
 
-    // Get monthly earnings (current month)
-    const [monthlyEarnings] = await connection.execute(
+    // Monthly earnings
+    const [monthlyEarnings] = await pool.execute(
       `SELECT 
         COALESCE(SUM(total_price), 0) as monthly_earnings,
         COUNT(*) as monthly_bookings
        FROM bookings 
        WHERE guide_id = ? 
-       AND status = 'completed' 
-       AND MONTH(date) = MONTH(CURDATE()) 
-       AND YEAR(date) = YEAR(CURDATE())`,
+         AND status = 'completed' 
+         AND MONTH(booking_date) = MONTH(CURDATE()) 
+         AND YEAR(booking_date) = YEAR(CURDATE())`,
       [guide.id]
     );
 
-    // Get previous month earnings for growth calculation
-    const [prevMonthEarnings] = await connection.execute(
-      `SELECT 
-        COALESCE(SUM(total_price), 0) as prev_monthly_earnings
+    // Prev month earnings
+    const [prevMonthEarnings] = await pool.execute(
+      `SELECT COALESCE(SUM(total_price), 0) as prev_monthly_earnings
        FROM bookings 
        WHERE guide_id = ? 
-       AND status = 'completed' 
-       AND MONTH(date) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
-       AND YEAR(date) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))`,
+         AND status = 'completed' 
+         AND MONTH(booking_date) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
+         AND YEAR(booking_date) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))`,
       [guide.id]
     );
 
-    // Calculate growth percentage
+    // Growth %
     const currentMonth = monthlyEarnings[0].monthly_earnings || 0;
     const previousMonth = prevMonthEarnings[0].prev_monthly_earnings || 0;
     let growthPercentage = 0;
-
     if (previousMonth > 0) {
-      growthPercentage = Math.round(
-        ((currentMonth - previousMonth) / previousMonth) * 100
-      );
+      growthPercentage = Math.round(((currentMonth - previousMonth) / previousMonth) * 100);
     } else if (currentMonth > 0) {
       growthPercentage = 100;
     }
 
-    // Get review statistics
-    const [reviewStats] = await connection.execute(
+    // Review stats
+    const [reviewStats] = await pool.execute(
       `SELECT 
         COUNT(*) as total_reviews,
         COALESCE(AVG(rating), 0) as average_rating
@@ -88,13 +94,11 @@ const getGuideDashboardStats = async (req, res) => {
       [guide.id]
     );
 
-    // Calculate total customers (estimate based on completed bookings)
-    const totalCustomers = (bookingStats[0].completed_bookings || 0) * 1.5; // Estimate
+    // Total customers (ước lượng)
+    const totalCustomers = (bookingStats[0].completed_bookings || 0) * 1.5;
 
     const stats = {
       totalTours: tourStats[0].total_tours || 0,
-      activeTours: tourStats[0].active_tours || 0,
-      completedTours: tourStats[0].completed_tours || 0,
       upcomingTours: bookingStats[0].upcoming_bookings || 0,
       pendingBookings: bookingStats[0].pending_bookings || 0,
       totalBookings: bookingStats[0].total_bookings || 0,
@@ -109,22 +113,17 @@ const getGuideDashboardStats = async (req, res) => {
       profileData: {
         name: guide.name,
         location: guide.location,
-        specialties: guide.specialties ? JSON.parse(guide.specialties) : [],
-        languages: guide.languages ? JSON.parse(guide.languages) : [],
+        specialties: safeJson(guide.specialties),
+        languages: safeJson(guide.languages),
         pricePerHour: guide.price_per_hour || 0,
         experienceYears: guide.experience_years || 0,
         description: guide.description || "",
         isAvailable: guide.is_available || false,
+        certificates: safeJson(guide.certificates),
       },
     };
 
-    await connection.end();
-
-    return res.status(200).json({
-      success: true,
-      stats,
-      guide: guide,
-    });
+    return res.status(200).json({ success: true, stats, guide });
   } catch (error) {
     console.error("Error fetching guide dashboard stats:", error);
     return res.status(500).json({
@@ -135,14 +134,13 @@ const getGuideDashboardStats = async (req, res) => {
   }
 };
 
+// ================== Recent Activities ==================
 const getGuideRecentActivities = async (req, res) => {
   try {
     const { user_id } = req.params;
     const { limit = 5 } = req.query;
-    const connection = await connectToDB();
 
-    // Get guide ID first
-    const [guideRows] = await connection.execute(
+    const [guideRows] = await pool.execute(
       `SELECT id FROM guides WHERE user_id = ?`,
       [user_id]
     );
@@ -153,14 +151,13 @@ const getGuideRecentActivities = async (req, res) => {
 
     const guideId = guideRows[0].id;
 
-    // Get recent activities from different sources
-    const [activities] = await connection.execute(
+    const [activities] = await pool.execute(
       `(
         SELECT 
           CONCAT('booking_', b.id) as id,
           'booking' as type,
           'New Booking Request' as title,
-          CONCAT('Booking for ', b.number_of_tourists, ' people on ', DATE_FORMAT(b.date, '%M %d, %Y')) as description,
+          CONCAT('Booking for ', b.number_of_tourists, ' people on ', DATE_FORMAT(b.booking_date, '%M %d, %Y')) as description,
           b.status,
           b.created_at as timestamp
         FROM bookings b
@@ -187,8 +184,6 @@ const getGuideRecentActivities = async (req, res) => {
       [guideId, limit, guideId, limit, limit]
     );
 
-    await connection.end();
-
     return res.status(200).json({
       success: true,
       activities: activities || [],
@@ -203,14 +198,13 @@ const getGuideRecentActivities = async (req, res) => {
   }
 };
 
+// ================== Upcoming Bookings ==================
 const getGuideUpcomingBookings = async (req, res) => {
   try {
     const { user_id } = req.params;
     const { limit = 5 } = req.query;
-    const connection = await connectToDB();
 
-    // Get guide ID first
-    const [guideRows] = await connection.execute(
+    const [guideRows] = await pool.execute(
       `SELECT id FROM guides WHERE user_id = ?`,
       [user_id]
     );
@@ -221,25 +215,23 @@ const getGuideUpcomingBookings = async (req, res) => {
 
     const guideId = guideRows[0].id;
 
-    // Get upcoming bookings
-    const [bookings] = await connection.execute(
+    const [bookings] = await pool.execute(
       `SELECT 
-        b.*,
-        u.name as tourist_name,
-        u.email as tourist_email,
-        t.title as tour_title
-       FROM bookings b
-       LEFT JOIN users u ON b.tourist_id = u.id
-       LEFT JOIN tours t ON b.tour_id = t.id
+            b.*,
+            u.name  AS tourist_name,
+            u.email AS tourist_email,
+            g_user.name AS guide_name
+        FROM bookings b
+        LEFT JOIN users u      ON b.tourist_id = u.id
+        LEFT JOIN guides g     ON b.guide_id = g.id
+        LEFT JOIN users g_user ON g.user_id = g_user.id
        WHERE b.guide_id = ? 
-       AND b.date >= CURDATE()
-       AND b.status IN ('confirmed', 'pending')
-       ORDER BY b.date ASC, b.time_slot ASC
+         AND b.booking_date >= CURDATE()
+         AND b.status IN ('confirmed', 'pending')
+       ORDER BY b.booking_date ASC, b.time_slot ASC
        LIMIT ?`,
       [guideId, limit]
     );
-
-    await connection.end();
 
     return res.status(200).json({
       success: true,

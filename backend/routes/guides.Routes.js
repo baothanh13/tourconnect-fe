@@ -364,8 +364,6 @@ router.get('/reviews/:guideId', getGuideReviews);
  *   get:
  *     summary: Get guide dashboard statistics
  *     tags: [Guides]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
@@ -376,12 +374,10 @@ router.get('/reviews/:guideId', getGuideReviews);
  *     responses:
  *       200:
  *         description: Dashboard statistics retrieved successfully
- *       401:
- *         description: Unauthorized
  *       404:
  *         description: Guide not found
  */
-router.get("/dashboard/:user_id/stats", verifyToken, getGuideDashboardStats);
+router.get("/dashboard/:user_id/stats", getGuideDashboardStats);
 
 /**
  * @swagger
@@ -389,8 +385,6 @@ router.get("/dashboard/:user_id/stats", verifyToken, getGuideDashboardStats);
  *   get:
  *     summary: Get guide recent activities
  *     tags: [Guides]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
@@ -414,7 +408,6 @@ router.get("/dashboard/:user_id/stats", verifyToken, getGuideDashboardStats);
  */
 router.get(
   "/dashboard/:user_id/activities",
-  verifyToken,
   getGuideRecentActivities
 );
 
@@ -424,8 +417,6 @@ router.get(
  *   get:
  *     summary: Get guide upcoming bookings
  *     tags: [Guides]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
@@ -449,7 +440,6 @@ router.get(
  */
 router.get(
   "/dashboard/:user_id/bookings",
-  verifyToken,
   getGuideUpcomingBookings
 );
 

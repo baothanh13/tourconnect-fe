@@ -18,9 +18,10 @@ import {
   FaListAlt,
   FaChartBar,
   FaExclamationTriangle,
+  FaCogs,
   FaSignOutAlt,
   FaHome,
-  FaChartLine,
+  FaTrendUp,
   FaBell,
   FaArrowUp,
   FaArrowDown,
@@ -242,7 +243,7 @@ const AdminDashboard = () => {
                 className="success"
               />
               <StatCard
-                icon={<FaChartLine />}
+                icon={<FaTrendUp />}
                 title="Monthly Revenue"
                 value={`$${stats.monthlyRevenue.toLocaleString()}`}
                 subtitle="This month"

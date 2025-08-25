@@ -65,7 +65,9 @@ export const guidesService = {
   // Get guide by user ID (for dashboard)
   async getGuideByUserId(userId) {
     try {
-      const response = await apiClient.get(`/user/${userId}`);
+      // Add cache busting parameter to ensure fresh data
+      const timestamp = Date.now();
+      const response = await apiClient.get(`/user/${userId}?t=${timestamp}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching guide by user ID:", error);

@@ -14,19 +14,34 @@ import {
 } from "react-icons/fa";
 import "./GuideProfileForm.css";
 
-const GuideProfileForm = ({ onProfileCreated }) => {
+const GuideProfileForm = ({ onProfileCreated, initialData, onCancel }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Helper function to parse JSON strings or arrays
+  const parseArrayField = (field) => {
+    if (!field) return [""];
+    if (typeof field === "string") {
+      try {
+        const parsed = JSON.parse(field);
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed : [""];
+      } catch {
+        return [field];
+      }
+    }
+    return Array.isArray(field) && field.length > 0 ? field : [""];
+  };
+
   const [formData, setFormData] = useState({
-    location: "",
-    languages: [""],
-    specialties: [""],
-    price_per_hour: 25,
-    experience_years: 1,
-    description: "",
-    certificates: [""],
+    location: initialData?.location || "",
+    languages: parseArrayField(initialData?.languages),
+    specialties: parseArrayField(initialData?.specialties),
+    price_per_hour: initialData?.price_per_hour || 25,
+    experience_years: initialData?.experience_years || 1,
+    description: initialData?.description || "",
+    certificates: parseArrayField(initialData?.certificates),
   });
 
   const commonLanguages = [
@@ -121,18 +136,35 @@ const GuideProfileForm = ({ onProfileCreated }) => {
         throw new Error("Please fill in all required fields");
       }
 
-      const response = await guidesService.createGuide(cleanedData);
+      let response;
 
-      if (response.guide_id) {
+      if (initialData?.guide_id) {
+        // Update existing guide
+        response = await guidesService.updateGuideProfile(
+          initialData.guide_id,
+          cleanedData
+        );
+        alert("Guide profile updated successfully!");
+      } else {
+        // Create new guide
+        response = await guidesService.createGuide(cleanedData);
         alert("Guide profile created successfully!");
-        if (onProfileCreated) {
+      }
+
+      if (onProfileCreated) {
+        // Fetch fresh data after update to ensure we have the latest
+        try {
+          const freshData = await guidesService.getGuideByUserId(user.id);
+          onProfileCreated(freshData);
+        } catch (fetchError) {
+          console.error("Error fetching fresh profile data:", fetchError);
           onProfileCreated(response);
-        } else {
-          navigate("/guide/dashboard");
         }
+      } else {
+        navigate("/guide/dashboard");
       }
     } catch (error) {
-      console.error("Error creating guide profile:", error);
+      console.error("Error saving guide profile:", error);
       setError(error.message || "Failed to create guide profile");
     } finally {
       setLoading(false);
@@ -146,7 +178,11 @@ const GuideProfileForm = ({ onProfileCreated }) => {
   return (
     <div className="guide-profile-form">
       <div className="form-header">
-        <h2>Create Your Guide Profile</h2>
+        <h2>
+          {initialData
+            ? "Edit Your Guide Profile"
+            : "Create Your Guide Profile"}
+        </h2>
         <p>Complete your profile to start offering tours</p>
       </div>
 
@@ -340,12 +376,18 @@ const GuideProfileForm = ({ onProfileCreated }) => {
 
         <div className="form-actions">
           <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? "Creating Profile..." : "Create Guide Profile"}
+            {loading
+              ? initialData
+                ? "Updating Profile..."
+                : "Creating Profile..."
+              : initialData
+              ? "Update Guide Profile"
+              : "Create Guide Profile"}
           </button>
           <button
             type="button"
             className="cancel-btn"
-            onClick={() => navigate("/")}
+            onClick={() => (onCancel ? onCancel() : navigate("/"))}
           >
             Cancel
           </button>

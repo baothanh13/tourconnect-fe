@@ -1,7 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { adminService } from "../../services/adminService";
 import Loading from "../Loading";
-import { FaEdit, FaTrash, FaCheck, FaTimes, FaEye } from "react-icons/fa";
+import {
+  FaEdit,
+  FaTrash,
+  FaCheck,
+  FaTimes,
+  FaEye,
+  FaToggleOn,
+  FaToggleOff,
+  FaPlus,
+  FaUser,
+} from "react-icons/fa";
 import "./UserManagement.css";
 
 const UserManagement = () => {
@@ -15,15 +25,43 @@ const UserManagement = () => {
   });
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    phone: "",
+  });
+  const [createFormData, setCreateFormData] = useState({
+    email: "",
+    password: "",
+    role: "tourist",
+    name: "",
+    phone: "",
+    avatar_url: "",
+  });
 
   const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const data = await adminService.getAllUsers(filters);
-      setUsers(data.users || data);
+      // Handle different response formats
+      if (Array.isArray(data)) {
+        setUsers(data);
+      } else if (data.users && Array.isArray(data.users)) {
+        setUsers(data.users);
+      } else if (data.data && Array.isArray(data.data)) {
+        setUsers(data.data);
+      } else {
+        console.warn("Unexpected response format:", data);
+        setUsers([]);
+      }
     } catch (error) {
       console.error("Error fetching users:", error);
-      alert("Failed to fetch users");
+      // Show user-friendly error message
+      alert(
+        "Failed to fetch users. Please check your connection and try again."
+      );
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -33,14 +71,138 @@ const UserManagement = () => {
     fetchUsers();
   }, [fetchUsers]);
 
+  const handleCreateUser = () => {
+    setCreateFormData({
+      email: "",
+      password: "",
+      role: "tourist",
+      name: "",
+      phone: "",
+      avatar_url: "",
+    });
+    setShowCreateModal(true);
+  };
+
+  const handleCreateSubmit = async () => {
+    try {
+      // Validate required fields
+      if (
+        !createFormData.email ||
+        !createFormData.password ||
+        !createFormData.name
+      ) {
+        alert("Please fill in all required fields (Email, Password, Name)");
+        return;
+      }
+
+      console.log("Creating new user:", createFormData);
+      const result = await adminService.createUser(createFormData);
+      console.log("Create user result:", result);
+      alert("User created successfully!");
+      setShowCreateModal(false);
+      fetchUsers(); // Refresh the list
+    } catch (error) {
+      console.error("Error creating user:", error);
+      console.error("Error details:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      alert("Failed to create user: " + (error.message || "Unknown error"));
+    }
+  };
+
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
+    setEditFormData({
+      name: user.name || user.full_name || "",
+      phone: user.phone || "",
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateProfile = async () => {
+    try {
+      console.log(`Updating profile for user ${selectedUser.id}`, editFormData);
+      const result = await adminService.updateUserProfile(
+        selectedUser.id,
+        editFormData
+      );
+      console.log("Update result:", result);
+      alert("User profile updated successfully!");
+      setShowEditModal(false);
+      fetchUsers(); // Refresh the list
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      console.error("Error details:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      alert(
+        "Failed to update user profile: " + (error.message || "Unknown error")
+      );
+    }
+  };
+
+  const handleGuideVerification = async (userId, userRole, currentVerified) => {
+    try {
+      if (userRole !== "guide") {
+        alert("This action is only available for guide users");
+        return;
+      }
+
+      const newStatus = currentVerified ? "rejected" : "verified";
+      console.log(
+        `Updating guide verification for user ${userId} to ${newStatus}`
+      );
+
+      // Call the guide verification API
+      const result = await adminService.verifyGuide(userId, newStatus);
+      console.log("Guide verification result:", result);
+      alert(`Guide ${newStatus} successfully!`);
+
+      fetchUsers(); // Refresh the list
+    } catch (error) {
+      console.error("Error updating guide verification:", error);
+      console.error("Error details:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      alert(
+        "Failed to update guide verification: " +
+          (error.message || "Unknown error")
+      );
+    }
+  };
+
   const handleStatusUpdate = async (userId, newStatus) => {
     try {
-      await adminService.updateUserStatus(userId, newStatus);
-      alert(`User status updated to ${newStatus}`);
+      console.log(`Updating user ${userId} status to ${newStatus}`);
+      // Use updateUserProfile to update user status
+      const result = await adminService.updateUserProfile(userId, {
+        is_active: newStatus === "active" ? 1 : 0,
+      });
+      console.log("Status update result:", result);
+      alert(`User status updated to ${newStatus} successfully!`);
+
+      // Close the modal if it's open
+      if (showModal) {
+        setShowModal(false);
+      }
+
       fetchUsers(); // Refresh the list
     } catch (error) {
       console.error("Error updating user status:", error);
-      alert("Failed to update user status");
+      console.error("Error details:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      alert(
+        "Failed to update user status: " + (error.message || "Unknown error")
+      );
     }
   };
 
@@ -69,25 +231,40 @@ const UserManagement = () => {
   return (
     <div className="user-management">
       <div className="user-management-header">
-        <h2>User Management</h2>
-        <div className="filters">
-          <select
-            value={filters.role}
-            onChange={(e) => setFilters({ ...filters, role: e.target.value })}
+        <div className="header-left">
+          <h2>User Management</h2>
+          <p>Manage all users and their permissions</p>
+        </div>
+        <div className="header-right">
+          <button
+            onClick={handleCreateUser}
+            className="btn-create-user"
+            title="Create New User"
           >
-            <option value="">All Roles</option>
-            <option value="tourist">Tourist</option>
-            <option value="guide">Guide</option>
-            <option value="admin">Admin</option>
-          </select>
-          <select
-            value={filters.status}
-            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-          >
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
+            <FaPlus style={{ marginRight: "8px" }} />
+            Create New User
+          </button>
+          <div className="filters">
+            <select
+              value={filters.role}
+              onChange={(e) => setFilters({ ...filters, role: e.target.value })}
+            >
+              <option value="">All Roles</option>
+              <option value="tourist">Tourist</option>
+              <option value="guide">Guide</option>
+              <option value="admin">Admin</option>
+            </select>
+            <select
+              value={filters.status}
+              onChange={(e) =>
+                setFilters({ ...filters, status: e.target.value })
+              }
+            >
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -141,18 +318,45 @@ const UserManagement = () => {
                       <FaEye />
                     </button>
                     <button
+                      onClick={() => handleEditUser(user)}
+                      className="btn-status activate"
+                      title="Edit Profile"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
                       onClick={() =>
-                        handleStatusUpdate(
+                        handleGuideVerification(
                           user.id,
-                          user.is_active ? "inactive" : "active"
+                          user.role,
+                          user.is_verified
                         )
                       }
                       className={`btn-status ${
-                        user.is_active ? "deactivate" : "activate"
+                        user.role === "guide"
+                          ? user.is_verified
+                            ? "deactivate"
+                            : "activate"
+                          : "disabled"
                       }`}
-                      title={user.is_active ? "Deactivate" : "Activate"}
+                      title={
+                        user.role === "guide"
+                          ? user.is_verified
+                            ? "Reject Guide Verification"
+                            : "Verify Guide"
+                          : "Only available for guides"
+                      }
+                      disabled={user.role !== "guide"}
                     >
-                      <FaEdit />
+                      {user.role === "guide" ? (
+                        user.is_verified ? (
+                          <FaToggleOn />
+                        ) : (
+                          <FaToggleOff />
+                        )
+                      ) : (
+                        <FaTimes />
+                      )}
                     </button>
                     <button
                       onClick={() => handleDeleteUser(user.id)}
@@ -217,17 +421,271 @@ const UserManagement = () => {
                     selectedUser.is_active ? "inactive" : "active"
                   )
                 }
-                className={`btn ${
+                className={`btn btn-status-toggle ${
                   selectedUser.is_active ? "btn-danger" : "btn-success"
                 }`}
               >
-                {selectedUser.is_active ? "Deactivate" : "Activate"}
+                {selectedUser.is_active ? (
+                  <>
+                    <FaToggleOff style={{ marginRight: "8px" }} />
+                    Deactivate
+                  </>
+                ) : (
+                  <>
+                    <FaToggleOn style={{ marginRight: "8px" }} />
+                    Activate
+                  </>
+                )}
               </button>
+
+              {selectedUser.role === "guide" && (
+                <button
+                  onClick={() =>
+                    handleGuideVerification(
+                      selectedUser.id,
+                      selectedUser.role,
+                      selectedUser.is_verified
+                    )
+                  }
+                  className={`btn ${
+                    selectedUser.is_verified ? "btn-danger" : "btn-success"
+                  }`}
+                >
+                  {selectedUser.is_verified ? (
+                    <>
+                      <FaTimes style={{ marginRight: "8px" }} />
+                      Reject Guide
+                    </>
+                  ) : (
+                    <>
+                      <FaCheck style={{ marginRight: "8px" }} />
+                      Verify Guide
+                    </>
+                  )}
+                </button>
+              )}
+
               <button
                 onClick={() => setShowModal(false)}
-                className="btn btn-secondary"
+                className="btn btn-close-modal"
               >
+                <FaTimes style={{ marginRight: "8px" }} />
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Profile Modal */}
+      {showEditModal && selectedUser && (
+        <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Edit User Profile</h3>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="close-btn"
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="edit-form">
+                <div className="form-group">
+                  <label htmlFor="name">Name:</label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={editFormData.name}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        name: e.target.value,
+                      })
+                    }
+                    placeholder="Enter user name"
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="phone">Phone:</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    value={editFormData.phone}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        phone: e.target.value,
+                      })
+                    }
+                    placeholder="Enter phone number"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button onClick={handleUpdateProfile} className="btn btn-apply">
+                <FaCheck style={{ marginRight: "8px" }} />
+                Apply Changes
+              </button>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="btn btn-cancel"
+              >
+                <FaTimes style={{ marginRight: "8px" }} />
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create User Modal */}
+      {showCreateModal && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowCreateModal(false)}
+        >
+          <div
+            className="modal-content create-user-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h3>
+                <FaUser style={{ marginRight: "10px" }} />
+                Create New User
+              </h3>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="close-btn"
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="create-user-form">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="create-name">Full Name *</label>
+                    <input
+                      type="text"
+                      id="create-name"
+                      value={createFormData.name}
+                      onChange={(e) =>
+                        setCreateFormData({
+                          ...createFormData,
+                          name: e.target.value,
+                        })
+                      }
+                      placeholder="Enter full name"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="create-email">Email Address *</label>
+                    <input
+                      type="email"
+                      id="create-email"
+                      value={createFormData.email}
+                      onChange={(e) =>
+                        setCreateFormData({
+                          ...createFormData,
+                          email: e.target.value,
+                        })
+                      }
+                      placeholder="Enter email address"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="create-password">Password *</label>
+                    <input
+                      type="password"
+                      id="create-password"
+                      value={createFormData.password}
+                      onChange={(e) =>
+                        setCreateFormData({
+                          ...createFormData,
+                          password: e.target.value,
+                        })
+                      }
+                      placeholder="Enter password"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="create-role">User Role *</label>
+                    <select
+                      id="create-role"
+                      value={createFormData.role}
+                      onChange={(e) =>
+                        setCreateFormData({
+                          ...createFormData,
+                          role: e.target.value,
+                        })
+                      }
+                      required
+                    >
+                      <option value="tourist">Tourist</option>
+                      <option value="guide">Guide</option>
+                      <option value="admin">Admin</option>
+                      <option value="support">Support</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="create-phone">Phone Number</label>
+                    <input
+                      type="tel"
+                      id="create-phone"
+                      value={createFormData.phone}
+                      onChange={(e) =>
+                        setCreateFormData({
+                          ...createFormData,
+                          phone: e.target.value,
+                        })
+                      }
+                      placeholder="Enter phone number (optional)"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="create-avatar">Avatar URL</label>
+                    <input
+                      type="url"
+                      id="create-avatar"
+                      value={createFormData.avatar_url}
+                      onChange={(e) =>
+                        setCreateFormData({
+                          ...createFormData,
+                          avatar_url: e.target.value,
+                        })
+                      }
+                      placeholder="Enter avatar URL (optional)"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                onClick={handleCreateSubmit}
+                className="btn btn-apply btn-create"
+              >
+                <FaPlus style={{ marginRight: "8px" }} />
+                Create User
+              </button>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="btn btn-cancel"
+              >
+                <FaTimes style={{ marginRight: "8px" }} />
+                Cancel
               </button>
             </div>
           </div>

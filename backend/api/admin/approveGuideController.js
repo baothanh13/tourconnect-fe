@@ -2,11 +2,11 @@ const { connectToDB } = require("../../config/db");
 
 const approveGuide = async (req, res) => {
     try {
-        const { id } = req.params; // guide id
-        const { status } = req.body; // 'verified' hoặc 'rejected'
+        const { id } = req.params; // users id
+        const { status } = req.body; // 'verified', 'rejected' hoặc 'pending' 
 
-        if (!["verified", "rejected"].includes(status)) {
-            return res.status(400).json({ message: "Status must be 'verified' or 'rejected'" });
+        if (!["verified", "rejected", "pending"].includes(status)) {
+            return res.status(400).json({ message: "Status must be 'verified' or 'rejected' or 'pending'" });
         }
 
         const connection = await connectToDB();
@@ -14,7 +14,7 @@ const approveGuide = async (req, res) => {
         const [result] = await connection.execute(
             `UPDATE guides 
              SET verification_status = ? 
-             WHERE id = ?`,
+             WHERE user_id = ?`,
             [status, id]
         );
 

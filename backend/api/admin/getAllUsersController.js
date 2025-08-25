@@ -4,7 +4,7 @@ const getAllUsers = async (req, res) => {
     try {
         const connection = await connectToDB();
         const [rows] = await connection.execute(
-            "SELECT * FROM users"
+            "SELECT * FROM users WHERE role IN ('tourist', 'guide', 'support');"
         );
         res.status(200).json(rows);
     } catch (err) {

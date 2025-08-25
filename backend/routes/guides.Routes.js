@@ -6,9 +6,7 @@ const getGuideById = require("../api/guides/getGuideById.Controller");
 const createGuide = require("../api/guides/createGuide.Controller");
 const updateGuide = require("../api/guides/updateGuide.Controller");
 // const createGuideProfile = require("../api/guides/createGuideProfile.Controller"); 
-const getGuideByUserId = require('../api/guides/getGuideByUserId');
 const getGuideReviews = require('../api/guides/getGuideReviews.Controller');
-const verifyToken = require('../middleware/verifyToken');  // Import middleware
 // const createGuideProfile = require("../api/guides/createGuideProfile.Controller");
 const getGuideByUserId = require("../api/guides/getGuideByUserId");
 const {

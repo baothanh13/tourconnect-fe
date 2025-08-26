@@ -87,6 +87,7 @@ const LoginPage = () => {
         </form>
 
         <div className="login-links">
+          <Link to="/forgot-password">Forgot your password?</Link>
           <Link to="/register">Don't have an account? Register now</Link>
           <Link to="/">← Back to Home</Link>
         </div>

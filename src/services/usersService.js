@@ -63,6 +63,34 @@ const usersService = {
     }
   },
 
+  // Forgot password: send OTP to email
+  sendForgotPasswordOTP: async (email) => {
+    try {
+      const response = await apiClient.post("/forgot-password/send-otp", { email });
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to send OTP."
+      );
+    }
+  },
+
+  // Forgot password: confirm OTP and set new password
+  resetPassword: async ({ otp, token, newPassword }) => {
+    try {
+      const response = await apiClient.post("/forgot-password/reset", {
+        otp,
+        token,
+        newPassword,
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to reset password."
+      );
+    }
+  },
+
   // ... (rest of the file is correct)
 
   // Get user profile

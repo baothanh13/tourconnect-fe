@@ -13,7 +13,7 @@ const createGuide = async (req, res) => {
         }
 
         // ✅ Sinh guide_id mới
-         const guideId = generateId('guide');
+        const guideId = generateId('guide');
         await connection.execute(
             `INSERT INTO guides (id, user_id, location, languages, specialties, price_per_hour, experience_years, description, certificates) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [guideId, userId, location, JSON.stringify(languages), JSON.stringify(specialties), price_per_hour, experience_years, description, JSON.stringify(certificates)]

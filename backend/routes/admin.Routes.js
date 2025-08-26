@@ -137,7 +137,7 @@ router.get("/stats", getSystemStats);
  *       - in: path
  *         name: id
  *         required: true
- *         description: User ID
+ *         description: Guide ID
  *         schema:
  *           type: string
  *     requestBody:

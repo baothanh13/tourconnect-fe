@@ -276,8 +276,8 @@ const UserManagement = () => {
               <th>Name</th>
               <th>Email</th>
               <th>Role</th>
-              <th>Status</th>
-              <th>Verified</th>
+              {/* <th>Status</th>
+              <th>Verified</th> */}
               <th>Created</th>
               <th>Actions</th>
             </tr>
@@ -291,7 +291,7 @@ const UserManagement = () => {
                 <td>
                   <span className={`role-badge ${user.role}`}>{user.role}</span>
                 </td>
-                <td>
+                {/* <td>
                   <span
                     className={`status-badge ${
                       user.is_active ? "active" : "inactive"
@@ -306,7 +306,7 @@ const UserManagement = () => {
                   ) : (
                     <FaTimes className="unverified-icon" />
                   )}
-                </td>
+                </td> */}
                 <td>{new Date(user.created_at).toLocaleDateString()}</td>
                 <td>
                   <div className="action-buttons">
@@ -324,7 +324,7 @@ const UserManagement = () => {
                     >
                       <FaEdit />
                     </button>
-                    <button
+                    {/* <button
                       onClick={() =>
                         handleGuideVerification(
                           user.id,
@@ -357,7 +357,7 @@ const UserManagement = () => {
                       ) : (
                         <FaTimes />
                       )}
-                    </button>
+                    </button> */}
                     <button
                       onClick={() => handleDeleteUser(user.id)}
                       className="btn-delete"

@@ -11,7 +11,7 @@ export const guideDashboardService = {
     try {
       const token = localStorage.getItem("tourconnect_token");
 
-      // Use new backend API endpoint first, fallback to old method if needed
+      // Use new backend API endpoint first
       try {
         const response = await fetch(
           `${API_BASE_URL}/guides/dashboard/${userId}/stats`,
@@ -29,47 +29,53 @@ export const guideDashboardService = {
             profile: data.guide,
             stats: data.stats,
           };
+        } else {
+          throw new Error(`API returned status: ${response.status}`);
         }
       } catch (apiError) {
-        console.log(
-          "New API not available, falling back to legacy method:",
-          apiError
-        );
+        // If new API fails, try legacy method with better error handling
+        try {
+          const [guideProfile, guideTours, guideBookings, guideReviews] =
+            await Promise.all([
+              guidesService.getGuideByUserId(userId),
+              toursService
+                .getToursByGuide(guideId, { limit: 100 })
+                .catch(() => ({ tours: [] })),
+              bookingsService
+                .getGuideBookings(guideId, { limit: 100 })
+                .catch(() => ({ bookings: [] })),
+              guidesService
+                .getGuideReviews(guideId, { limit: 100 })
+                .catch(() => ({
+                  reviews: [],
+                  totalReviews: 0,
+                  averageRating: 0,
+                })),
+            ]);
+
+          // Calculate statistics using legacy method
+          const stats = this.calculateGuideStats(
+            guideProfile,
+            guideTours,
+            guideBookings,
+            guideReviews
+          );
+
+          return {
+            profile: guideProfile,
+            tours: guideTours,
+            bookings: guideBookings,
+            reviews: guideReviews,
+            stats,
+          };
+        } catch (legacyError) {
+          throw new Error(
+            "Failed to load dashboard data from both new and legacy APIs"
+          );
+        }
       }
-
-      // Fallback to legacy method
-      const [guideProfile, guideTours, guideBookings, guideReviews] =
-        await Promise.all([
-          guidesService.getGuideByUserId(userId),
-          toursService
-            .getToursByGuide(guideId, { limit: 100 })
-            .catch(() => ({ tours: [] })),
-          bookingsService
-            .getGuideBookings(guideId, { limit: 100 })
-            .catch(() => ({ bookings: [] })),
-          guidesService
-            .getGuideReviews(guideId, { limit: 100 })
-            .catch(() => ({ reviews: [], totalReviews: 0, averageRating: 0 })),
-        ]);
-
-      // Calculate statistics using legacy method
-      const stats = this.calculateGuideStats(
-        guideProfile,
-        guideTours,
-        guideBookings,
-        guideReviews
-      );
-
-      return {
-        profile: guideProfile,
-        tours: guideTours,
-        bookings: guideBookings,
-        reviews: guideReviews,
-        stats,
-      };
     } catch (error) {
-      console.error("Error fetching guide dashboard data:", error);
-      throw new Error("Failed to load dashboard data");
+      throw error;
     }
   },
 
@@ -136,29 +142,25 @@ export const guideDashboardService = {
       const token = localStorage.getItem("tourconnect_token");
 
       // Try new backend API first
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/guides/dashboard/${userId}/activities?limit=${limit}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          return data.activities || [];
+      const response = await fetch(
+        `${API_BASE_URL}/guides/dashboard/${userId}/activities?limit=${limit}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
-      } catch (apiError) {
-        console.log("New API not available, using mock data:", apiError);
-      }
+      );
 
-      // Fallback to mock data
-      return this.getMockActivities(limit);
+      if (response.ok) {
+        const data = await response.json();
+        return data.activities || [];
+      } else {
+        // If API fails, return mock data as fallback
+        return this.getMockActivities(limit);
+      }
     } catch (error) {
-      console.error("Error fetching recent activities:", error);
+      // Return mock data if API call fails
       return this.getMockActivities(limit);
     }
   },
@@ -169,29 +171,25 @@ export const guideDashboardService = {
       const token = localStorage.getItem("tourconnect_token");
 
       // Try new backend API first
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/guides/dashboard/${userId}/bookings?limit=${limit}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          return data.bookings || [];
+      const response = await fetch(
+        `${API_BASE_URL}/guides/dashboard/${userId}/bookings?limit=${limit}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
-      } catch (apiError) {
-        console.log("New API not available, using mock data:", apiError);
-      }
+      );
 
-      // Fallback to mock data
-      return this.getMockUpcomingBookings(limit);
+      if (response.ok) {
+        const data = await response.json();
+        return data.bookings || [];
+      } else {
+        // If API fails, return mock data as fallback
+        return this.getMockUpcomingBookings(limit);
+      }
     } catch (error) {
-      console.error("Error fetching upcoming bookings:", error);
+      // Return mock data if API call fails
       return this.getMockUpcomingBookings(limit);
     }
   },

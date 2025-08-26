@@ -182,7 +182,7 @@ export const guidesService = {
   // Update guide profile (for guides themselves)
   async updateGuideProfile(id, guideData) {
     try {
-      const response = await apiClient.put(`/profile/${id}`, guideData);
+      const response = await apiClient.put(`/${id}`, guideData);
       return response.data;
     } catch (error) {
       console.error("Error updating guide profile:", error);

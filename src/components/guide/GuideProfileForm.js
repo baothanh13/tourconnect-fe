@@ -103,7 +103,7 @@ const GuideProfileForm = ({ onProfileCreated, initialData, onCancel }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!user?.id) {
       setError("User not authenticated");
       return;
@@ -138,12 +138,10 @@ const GuideProfileForm = ({ onProfileCreated, initialData, onCancel }) => {
 
       let response;
 
-      if (initialData?.id) {
-        // Update existing guide
-        response = await guidesService.updateGuideProfile(
-          initialData.id,
-          cleanedData
-        );
+      if (initialData?.id || initialData?.guide_id) {
+        // Update existing guide - use guide_id if available, otherwise use id
+        const guideId = initialData.guide_id || initialData.id;
+        response = await guidesService.updateGuideProfile(guideId, cleanedData);
         alert("Guide profile updated successfully!");
       } else {
         // Create new guide

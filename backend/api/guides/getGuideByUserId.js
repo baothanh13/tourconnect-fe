@@ -31,7 +31,11 @@ async function getGuideByUserId(req, res) {
       return res.status(404).json({ message: "Guide not found" });
     }
 
-    res.json(rows[0]);
+    // Add guide_id field for frontend compatibility
+    const guide = rows[0];
+    guide.guide_id = guide.id;
+
+    res.json(guide);
   } catch (err) {
     console.error("Error fetching guide by userId:", err);
     res.status(500).json({ success: false, message: "Internal server error" });

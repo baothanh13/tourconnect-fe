@@ -9,7 +9,7 @@ export const guideDashboardService = {
   // Get comprehensive guide dashboard data using new backend API
   async getGuideDashboardData(userId, guideId) {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("tourconnect_token");
 
       // Use new backend API endpoint first, fallback to old method if needed
       try {
@@ -133,7 +133,7 @@ export const guideDashboardService = {
   // Get recent activities using new API
   async getRecentActivities(userId, limit = 5) {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("tourconnect_token");
 
       // Try new backend API first
       try {
@@ -166,7 +166,7 @@ export const guideDashboardService = {
   // Get upcoming bookings using new API
   async getUpcomingBookings(userId, limit = 5) {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("tourconnect_token");
 
       // Try new backend API first
       try {

@@ -66,8 +66,10 @@ export const guidesService = {
   async getGuideByUserId(userId) {
     try {
       // Add cache busting parameter to ensure fresh data
-      const timestamp = Date.now();
-      const response = await apiClient.get(`/user/${userId}?t=${timestamp}`);
+      const timestamp = Date.now() + Math.random();
+      const response = await apiClient.get(
+        `/user/${userId}?t=${timestamp}&_=${Math.random()}`
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching guide by user ID:", error);
@@ -77,7 +79,7 @@ export const guidesService = {
     }
   },
 
-  // Create guide profile
+  // Create guide profile (POST /api/guides)
   async createGuide(guideData) {
     try {
       const response = await apiClient.post("/", guideData);
@@ -90,8 +92,8 @@ export const guidesService = {
     }
   },
 
-  // Update guide profile
-  async updateGuide(guideId, guideData) {
+  // Update guide profile (PUT /api/guides/{id})
+  async updateGuideProfile(guideId, guideData) {
     try {
       const response = await apiClient.put(`/${guideId}`, guideData);
       return response.data;
@@ -99,19 +101,6 @@ export const guidesService = {
       console.error("Error updating guide:", error);
       throw new Error(
         error.response?.data?.message || "Failed to update guide profile."
-      );
-    }
-  },
-
-  // Create guide profile (additional endpoint)
-  async createGuideProfile(guideData) {
-    try {
-      const response = await apiClient.post("/", guideData);
-      return response.data;
-    } catch (error) {
-      console.error("Error creating guide profile:", error);
-      throw new Error(
-        error.response?.data?.message || "Failed to create guide profile."
       );
     }
   },
@@ -179,19 +168,6 @@ export const guidesService = {
     }
   },
 
-  // Update guide profile (for guides themselves)
-  async updateGuideProfile(id, guideData) {
-    try {
-      const response = await apiClient.put(`/${id}`, guideData);
-      return response.data;
-    } catch (error) {
-      console.error("Error updating guide profile:", error);
-      throw new Error(
-        error.response?.data?.message || "Failed to update guide profile."
-      );
-    }
-  },
-
   // Upload guide images
   async uploadGuideImages(guideId, images) {
     try {
@@ -239,26 +215,26 @@ export const guidesService = {
 
   // Get guide reviews
   async getGuideReviews(guideId, options = {}) {
-  try {
-    const params = new URLSearchParams();
+    try {
+      const params = new URLSearchParams();
 
-    if (options.page) params.append("page", options.page);
-    if (options.limit) params.append("limit", options.limit);
+      if (options.page) params.append("page", options.page);
+      if (options.limit) params.append("limit", options.limit);
 
-    const queryString = params.toString();
-    const url = queryString
-      ? `/reviews/${guideId}?${queryString}`
-      : `/reviews/${guideId}`;
+      const queryString = params.toString();
+      const url = queryString
+        ? `/reviews/${guideId}?${queryString}`
+        : `/reviews/${guideId}`;
 
-    const response = await apiClient.get(url);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching guide reviews:", error);
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch reviews."
-    );
-  }
-}
+      const response = await apiClient.get(url);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching guide reviews:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch reviews."
+      );
+    }
+  },
 };
 
 export default guidesService;

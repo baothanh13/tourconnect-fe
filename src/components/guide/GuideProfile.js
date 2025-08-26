@@ -43,7 +43,18 @@ const GuideProfile = () => {
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
-      setError("Failed to load profile data");
+
+      // If guide not found (404), it means no profile exists - this is normal for new guides
+      if (
+        error.message?.includes("Guide not found") ||
+        error.message?.includes("404")
+      ) {
+        console.log("No profile found - guide needs to create profile");
+        setProfile(null); // This will trigger the create form
+        setError(null); // Clear error since this is expected
+      } else {
+        setError("Failed to load profile data");
+      }
     } finally {
       setLoading(false);
     }
@@ -109,8 +120,18 @@ const GuideProfile = () => {
           <h2>Unable to Load Profile</h2>
           <p>{error}</p>
           <button
+            onClick={() => {
+              setError(null);
+              setProfile(null); // This will show the create form
+            }}
+            className="retry-btn"
+          >
+            Create Profile Instead
+          </button>
+          <button
             onClick={() => window.location.reload()}
             className="retry-btn"
+            style={{ marginLeft: "10px", backgroundColor: "#6c757d" }}
           >
             Try Again
           </button>
@@ -122,7 +143,14 @@ const GuideProfile = () => {
   if (!profile) {
     return (
       <GuideProfileForm
-        onProfileCreated={(newProfile) => setProfile(newProfile)}
+        onProfileCreated={async (newProfile) => {
+          console.log("Profile created:", newProfile);
+          // Extract the guide object from response
+          const profileData = newProfile.guide || newProfile;
+          setProfile(profileData);
+          // Force a fresh fetch to ensure consistency
+          await fetchProfileData();
+        }}
       />
     );
   }
@@ -132,10 +160,16 @@ const GuideProfile = () => {
       <GuideProfileForm
         initialData={profile}
         onProfileCreated={async (updatedProfile) => {
-          setProfile(updatedProfile);
+          console.log("Profile updated:", updatedProfile);
           setEditing(false);
-          // Force a fresh fetch to ensure we have the latest data
+
+          // Force a fresh fetch from server to ensure we have the latest data
           await fetchProfileData();
+
+          // Clear any cached data and refetch again
+          setTimeout(async () => {
+            await fetchProfileData();
+          }, 100);
         }}
         onCancel={() => setEditing(false)}
       />

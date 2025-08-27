@@ -18,7 +18,8 @@ const getToursByGuide = async (req, res) => {
     // Lấy danh sách tour
     const [rows] = await pool.execute(
       `
-      SELECT *
+      SELECT 
+        id, title, description, duration_hours, max_people, price, image_url, category, tour_date, tour_time
       FROM tours
       WHERE guide_id = ?
       ORDER BY created_at DESC

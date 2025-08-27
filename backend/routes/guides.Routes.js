@@ -524,6 +524,8 @@ router.put("/certificate/:userId", updateCertificateImage);
  *               price: { type: number, example: 25.00 }
  *               image_url: { type: string, example: "https://example.com/tour.jpg" }
  *               category: { type: string, example: "cultural" }
+ *               tour_date: { type: string, format: date, example: "2024-12-31" }
+ *               tour_time: { type: string, format: time, example: "09:00:00" }
  *     responses:
  *       201:
  *         description: Tour created

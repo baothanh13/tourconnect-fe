@@ -334,20 +334,27 @@ const GuideTours = () => {
                   <button
                     className="action-btn view-btn"
                     onClick={() => navigate(`/tours/${tour.id}`)}
-                    title="View tour"
+                    title="View tour details"
                   >
                     <FaEye />
+                    <span>View</span>
                   </button>
                   <button
                     className="action-btn delete-btn"
                     onClick={() => handleDeleteTour(tour.id)}
                     disabled={deleting === tour.id}
-                    title="Delete tour"
+                    title="Delete tour permanently"
                   >
                     {deleting === tour.id ? (
-                      <FaSpinner className="spinner" />
+                      <>
+                        <FaSpinner className="spinner" />
+                        <span>Deleting...</span>
+                      </>
                     ) : (
-                      <FaTrash />
+                      <>
+                        <FaTrash />
+                        <span>Delete</span>
+                      </>
                     )}
                   </button>
                 </div>

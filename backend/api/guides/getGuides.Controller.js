@@ -30,9 +30,9 @@ const getGuides = async (req, res) => {
                 g.total_reviews,
                 g.is_available,
                 g.current_location,
-                g.verification_status
             FROM guides g
             JOIN users u ON g.user_id = u.id
+            WHERE verification_status = 'verified';
         `;
         const params = [];
 

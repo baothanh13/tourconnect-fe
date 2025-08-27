@@ -94,11 +94,21 @@ const getGuideDashboardStats = async (req, res) => {
       [guide.id]
     );
 
+    // Completed Tours
+    const [completedTours] = await pool.execute(
+      `SELECT COUNT(DISTINCT t.id) as completed_tours
+      FROM tours t
+      JOIN bookings b ON t.guide_id = b.guide_id
+      WHERE t.guide_id = ? AND b.status = 'completed'`,
+      [guide.id]
+    );
+
     // Total customers (ước lượng)
     const totalCustomers = (bookingStats[0].completed_bookings || 0) * 1.5;
 
     const stats = {
       totalTours: tourStats[0].total_tours || 0,
+      completedTours: completedTours[0].completed_tours || 0, // ✅ thêm completedTours
       upcomingTours: bookingStats[0].upcoming_bookings || 0,
       pendingBookings: bookingStats[0].pending_bookings || 0,
       totalBookings: bookingStats[0].total_bookings || 0,

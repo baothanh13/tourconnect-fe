@@ -29,13 +29,15 @@ import SupportDashboard from "./pages/SupportDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Guide components
-import GuideTours from "./components/guide/GuideTours";
+import GuideTours from "./pages/GuideTours";
+import CreateTour from "./pages/CreateTour";
+import EditTour from "./pages/EditTour";
+import TourDetail from "./pages/TourDetail";
 import GuideBookings from "./components/guide/GuideBookings";
 import GuideEarnings from "./components/guide/GuideEarnings";
 import GuideProfile from "./components/guide/GuideProfile";
 import GuideProfileForm from "./components/guide/GuideProfileForm";
 import GuideManagement from "./components/guide/GuideManagement";
-import GuideAPIDemo from "./components/guide/GuideAPIDemo";
 import FindGuideByUser from "./components/guide/FindGuideByUser";
 import GuideProfileEditor from "./components/guide/GuideProfileEditor";
 import FAQ from "./pages/FAQ";
@@ -96,6 +98,23 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/guide/tours/new"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <CreateTour />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/tours/:tourId/edit"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <EditTour />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/tours/:tourId" element={<TourDetail />} />
           <Route
             path="/guide/bookings"
             element={
@@ -161,14 +180,6 @@ function App() {
             }
           />
 
-          <Route
-            path="/guide/api-demo"
-            element={
-              <ProtectedRoute allowedRoles={["guide", "admin"]}>
-                <GuideAPIDemo />
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="/guide/management"
             element={

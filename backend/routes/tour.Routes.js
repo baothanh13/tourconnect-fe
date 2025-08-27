@@ -1,11 +1,11 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const getTours = require('../api/tours/getTours.Controller');
-const getTourById = require('../api/tours/getTourById.Controller');
-const createTour = require('../api/tours/createTour.Controller');
-const updateTour = require('../api/tours/updateTour.Controller');
-const deleteTour = require('../api/tours/deleteTour.Controller');
-const getToursByGuide = require('../api/tours/getToursByGuide.Controller');
+const getTours = require("../api/tours/getTours.Controller");
+const getTourById = require("../api/tours/getTourById.Controller");
+const createTour = require("../api/tours/createTour.Controller");
+const updateTour = require("../api/tours/updateTour.Controller");
+const deleteTour = require("../api/tours/deleteTour.Controller");
+const getToursByGuide = require("../api/tours/getToursByGuide.Controller");
 
 // Nếu có auth/role guard thì bật:
 // const verifyToken = require('../middleware/verifyToken');
@@ -44,7 +44,7 @@ const getToursByGuide = require('../api/tours/getToursByGuide.Controller');
  *       200:
  *         description: OK
  */
-router.get('/', getTours);
+router.get("/", getTours);
 
 /**
  * @swagger
@@ -67,7 +67,7 @@ router.get('/', getTours);
  *       200:
  *         description: OK
  */
-router.get('/guide/:guideId', getToursByGuide);
+router.get("/guide/:guideId", getToursByGuide);
 
 /**
  * @swagger
@@ -86,7 +86,7 @@ router.get('/guide/:guideId', getToursByGuide);
  *       404:
  *         description: Tour not found
  */
-router.get('/:id', getTourById);
+router.get("/:id", getTourById);
 
 /**
  * @swagger
@@ -118,7 +118,7 @@ router.get('/:id', getTourById);
  *       400:
  *         description: Validation error
  */
-router.post('/', /* verifyToken, requireGuideOrAdmin, */ createTour);
+router.post("/", /* verifyToken, requireGuideOrAdmin, */ createTour);
 
 /**
  * @swagger
@@ -154,7 +154,7 @@ router.post('/', /* verifyToken, requireGuideOrAdmin, */ createTour);
  *       404:
  *         description: Tour not found
  */
-router.put('/:id', /* verifyToken, requireGuideOrAdmin, */ updateTour);
+router.put("/:id", /* verifyToken, requireGuideOrAdmin, */ updateTour);
 
 /**
  * @swagger
@@ -177,6 +177,6 @@ router.put('/:id', /* verifyToken, requireGuideOrAdmin, */ updateTour);
  *       409:
  *         description: FK constraint prevents deletion
  */
-router.delete('/:id', /* verifyToken, requireGuideOrAdmin, */ deleteTour);
+router.delete("/:id", /* verifyToken, requireGuideOrAdmin, */ deleteTour);
 
 module.exports = router;

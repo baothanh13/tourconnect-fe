@@ -32,6 +32,8 @@ import {
   FaHeadset,
   FaShare,
   FaGlobe,
+  FaSpinner,
+  FaHeart,
 } from "react-icons/fa";
 import "./DashboardStyles.css";
 import "./ModernDashboard.css";
@@ -60,6 +62,7 @@ const GuideDashboard = () => {
   const [recentActivities, setRecentActivities] = useState([]);
   const [upcomingBookings, setUpcomingBookings] = useState([]);
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -68,56 +71,123 @@ const GuideDashboard = () => {
     }, 100);
   };
 
+  const refreshDashboard = async () => {
+    if (!user || !user.id || !guideProfile?.id) return;
+
+    try {
+      setRefreshing(true);
+      setError(null);
+
+      // Refresh all dashboard data
+      const dashboardData = await guideDashboardService.getGuideDashboardData(
+        user.id,
+        guideProfile.id
+      );
+
+      const apiStats = dashboardData.stats || {};
+      const enhancedStats = {
+        totalTours: apiStats.totalTours || 0,
+        completedTours: apiStats.completedBookings || 0,
+        upcomingTours: apiStats.upcomingTours || 0,
+        pendingBookings: apiStats.pendingBookings || 0,
+        totalEarnings: parseFloat(apiStats.totalEarnings) || 0,
+        monthlyEarnings: parseFloat(apiStats.monthlyEarnings) || 0,
+        growthPercentage: apiStats.growthPercentage || 0,
+        averageRating: apiStats.averageRating || 0,
+        totalReviews: apiStats.totalReviews || 0,
+        totalCustomers:
+          apiStats.totalCustomers ||
+          Math.round((apiStats.completedBookings || 0) * 1.5),
+        activeTours:
+          (apiStats.totalTours || 0) - (apiStats.completedBookings || 0),
+        verificationStatus:
+          apiStats.verificationStatus ||
+          guideProfile.verification_status ||
+          "pending",
+      };
+
+      setStats(enhancedStats);
+
+      // Refresh activities and bookings
+      const [activities, upcoming] = await Promise.all([
+        guideDashboardService.getRecentActivities(user.id, 5).catch(() => []),
+        guideDashboardService.getUpcomingBookings(user.id, 5).catch(() => []),
+      ]);
+
+      setRecentActivities(activities);
+      setUpcomingBookings(upcoming);
+    } catch (error) {
+      setError(`Failed to refresh dashboard: ${error.message}`);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   useEffect(() => {
     const loadGuideData = async () => {
+      if (!user || !user.id) {
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
 
         // First get guide profile by user ID
         const profile = await guidesService.getGuideByUserId(user.id);
-        setGuideProfile(profile);
 
-        if (profile && profile.id) {
-          // Use the guide ID to fetch dashboard data
-          const dashboardData =
-            await guideDashboardService.getGuideDashboardData(
-              user.id,
-              profile.id
-            );
-
-          // Enhanced stats calculation
-          const enhancedStats = {
-            ...dashboardData.stats,
-            monthlyEarnings: Math.round(
-              dashboardData.stats.totalEarnings * 0.3
-            ), // Mock monthly calculation
-            growthPercentage: 15.5, // Mock growth
-            totalCustomers: dashboardData.stats.completedTours * 2, // Estimate customers
-            activeTours:
-              dashboardData.stats.totalTours -
-              dashboardData.stats.completedTours,
-          };
-
-          setStats(enhancedStats);
-
-          // Fetch additional data
-          const [activities, upcoming] = await Promise.all([
-            guideDashboardService.getRecentActivities(user.id, 5),
-            guideDashboardService.getUpcomingBookings(user.id, 5),
-          ]);
-
-          setRecentActivities(activities);
-          setUpcomingBookings(upcoming);
-        } else {
+        if (!profile || !profile.id) {
           // Guide profile doesn't exist yet - redirect to profile creation
           navigate("/guide/profile/create");
+          return;
         }
-      } catch (error) {
-        console.error("Error loading guide data:", error);
-        setError(error.message);
 
-        // Fallback to mock data if API fails
+        setGuideProfile(profile);
+
+        // Use the guide ID to fetch dashboard data from the API
+        const dashboardData = await guideDashboardService.getGuideDashboardData(
+          user.id,
+          profile.id
+        );
+
+        // Use stats from API response directly, with fallback calculations
+        const apiStats = dashboardData.stats || {};
+        const enhancedStats = {
+          totalTours: apiStats.totalTours || 0,
+          completedTours: apiStats.completedBookings || 0,
+          upcomingTours: apiStats.upcomingTours || 0,
+          pendingBookings: apiStats.pendingBookings || 0,
+          totalEarnings: parseFloat(apiStats.totalEarnings) || 0,
+          monthlyEarnings: parseFloat(apiStats.monthlyEarnings) || 0,
+          growthPercentage: apiStats.growthPercentage || 0,
+          averageRating: apiStats.averageRating || 0,
+          totalReviews: apiStats.totalReviews || 0,
+          totalCustomers:
+            apiStats.totalCustomers ||
+            Math.round((apiStats.completedBookings || 0) * 1.5),
+          activeTours:
+            (apiStats.totalTours || 0) - (apiStats.completedBookings || 0),
+          verificationStatus:
+            apiStats.verificationStatus ||
+            profile.verification_status ||
+            "pending",
+        };
+
+        setStats(enhancedStats);
+
+        // Fetch additional data concurrently
+        const [activities, upcoming] = await Promise.all([
+          guideDashboardService.getRecentActivities(user.id, 5).catch(() => []),
+          guideDashboardService.getUpcomingBookings(user.id, 5).catch(() => []),
+        ]);
+
+        setRecentActivities(activities);
+        setUpcomingBookings(upcoming);
+      } catch (error) {
+        setError(`Failed to load dashboard: ${error.message}`);
+
+        // Set fallback stats to prevent UI breaking
         setStats({
           totalTours: 0,
           completedTours: 0,
@@ -137,11 +207,7 @@ const GuideDashboard = () => {
       }
     };
 
-    if (user && user.id) {
-      loadGuideData();
-    } else {
-      setLoading(false);
-    }
+    loadGuideData();
   }, [user, navigate]);
 
   const getVerificationStatusColor = (status) => {
@@ -155,6 +221,13 @@ const GuideDashboard = () => {
       default:
         return "secondary";
     }
+  };
+
+  const getTimeBasedGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
   };
 
   const formatDate = (dateString) => {
@@ -193,6 +266,7 @@ const GuideDashboard = () => {
     trend,
     className = "",
     onClick,
+    isLoading = false,
   }) => (
     <div
       className={`modern-stat-card ${className}`}
@@ -200,7 +274,9 @@ const GuideDashboard = () => {
       style={{ cursor: onClick ? "pointer" : "default" }}
     >
       <div className="stat-header">
-        <div className="stat-icon">{icon}</div>
+        <div className="stat-icon">
+          {isLoading ? <FaSpinner className="spinner" /> : icon}
+        </div>
         {trend !== undefined && trend !== null && (
           <div
             className={`trend-indicator ${trend > 0 ? "positive" : "negative"}`}
@@ -211,7 +287,7 @@ const GuideDashboard = () => {
         )}
       </div>
       <div className="stat-content">
-        <h3 className="stat-value">{value}</h3>
+        <h3 className="stat-value">{isLoading ? "..." : value}</h3>
         <p className="stat-title">{title}</p>
         {subtitle && <p className="stat-subtitle">{subtitle}</p>}
       </div>
@@ -241,11 +317,11 @@ const GuideDashboard = () => {
         <div className="header-brand">
           <h1>Guide Dashboard</h1>
           <p>
-            Welcome back,{" "}
+            {getTimeBasedGreeting()},{" "}
             <span className="user-name">
               {user?.name || guideProfile?.name || "Guide"}
             </span>
-            !
+            ! Ready to guide today?
           </p>
         </div>
 
@@ -300,6 +376,14 @@ const GuideDashboard = () => {
               </span>
             </div>
           )}
+          <button
+            className="refresh-btn"
+            onClick={refreshDashboard}
+            disabled={refreshing}
+            title="Refresh dashboard data"
+          >
+            {refreshing ? <FaSpinner className="spinner" /> : "🔄"}
+          </button>
           <button className="notification-btn">
             <FaBell />
             <span className="notification-badge">3</span>
@@ -330,6 +414,7 @@ const GuideDashboard = () => {
               subtitle={`${stats.activeTours} active`}
               className="tours-card"
               onClick={() => navigate("/guide/tours")}
+              isLoading={loading}
             />
             <StatCard
               icon={<FaCalendarCheck />}
@@ -337,6 +422,7 @@ const GuideDashboard = () => {
               value={stats.completedTours}
               trend={8.2}
               className="completed-card"
+              isLoading={loading}
             />
             <StatCard
               icon={<FaDollarSign />}
@@ -346,22 +432,31 @@ const GuideDashboard = () => {
               trend={stats.growthPercentage}
               className="earnings-card"
               onClick={() => navigate("/guide/earnings")}
+              isLoading={loading}
             />
             <StatCard
               icon={<FaStar />}
               title="Average Rating"
-              value={`${stats.averageRating} ⭐`}
+              value={
+                stats.averageRating
+                  ? `${stats.averageRating} ⭐`
+                  : "No ratings yet"
+              }
               subtitle={`${stats.totalReviews} reviews`}
               className="rating-card"
               onClick={() => navigate("/guide/reviews")}
+              isLoading={loading}
             />
             <StatCard
               icon={<FaClock />}
               title="Pending Bookings"
               value={stats.pendingBookings}
-              subtitle="Need attention"
+              subtitle={
+                stats.pendingBookings > 0 ? "Need attention" : "All caught up!"
+              }
               className="pending-card"
               onClick={() => navigate("/guide/bookings?status=pending")}
+              isLoading={loading}
             />
             <StatCard
               icon={<FaUsers />}
@@ -370,6 +465,7 @@ const GuideDashboard = () => {
               subtitle="Served customers"
               trend={5.3}
               className="customers-card"
+              isLoading={loading}
             />
           </div>
 
@@ -463,11 +559,22 @@ const GuideDashboard = () => {
                       </div>
                     ))}
                   </div>
+                ) : loading ? (
+                  <div className="empty-state">
+                    <FaSpinner className="spinner" />
+                    <p>Loading activities...</p>
+                    <span>
+                      Please wait while we fetch your recent activities
+                    </span>
+                  </div>
                 ) : (
                   <div className="empty-state">
                     <FaClock />
                     <p>No recent activities</p>
-                    <span>Your activity history will appear here</span>
+                    <span>
+                      Your activity history will appear here once you start
+                      engaging with tourists
+                    </span>
                   </div>
                 )}
               </div>
@@ -515,6 +622,7 @@ const GuideDashboard = () => {
                             onClick={() =>
                               navigate(`/guide/bookings/${booking.id}`)
                             }
+                            title="View booking details"
                           >
                             <FaEye />
                           </button>
@@ -522,11 +630,22 @@ const GuideDashboard = () => {
                       </div>
                     ))}
                   </div>
+                ) : loading ? (
+                  <div className="empty-state">
+                    <FaSpinner className="spinner" />
+                    <p>Loading bookings...</p>
+                    <span>
+                      Please wait while we fetch your upcoming bookings
+                    </span>
+                  </div>
                 ) : (
                   <div className="empty-state">
                     <FaCalendarAlt />
                     <p>No upcoming bookings</p>
-                    <span>New bookings will appear here</span>
+                    <span>
+                      New bookings will appear here. Start promoting your tours
+                      to get booked!
+                    </span>
                   </div>
                 )}
               </div>

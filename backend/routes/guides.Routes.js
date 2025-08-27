@@ -8,7 +8,8 @@ const updateGuide = require("../api/guides/updateGuide.Controller");
 // const createGuideProfile = require("../api/guides/createGuideProfile.Controller"); 
 const getGuideReviews = require('../api/guides/getGuideReviews.Controller');
 // const createGuideProfile = require("../api/guides/createGuideProfile.Controller");
-const getGuideByUserId = require("../api/guides/getGuideByUserId");
+const getGuideByUserId = require("../api/guides/getGuideByUserId.Controller");
+const updateCertificateImage = require("../api/guides/updateCertificateImage.Controller");
 const {
   getGuideDashboardStats,
   getGuideRecentActivities,
@@ -443,6 +444,61 @@ router.get(
   "/dashboard/:user_id/bookings",
   getGuideUpcomingBookings
 );
+
+// PUT /api/guides/certificate/:userId - Update certificate image by user ID
+/**
+ * @swagger
+ * /api/guides/certificate/{userId}:
+ *   put:
+ *     summary: Update certificate image by user ID
+ *     description: Cập nhật ảnh chứng chỉ của guide theo user ID
+ *     tags: [Guides]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID của guide
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               certificate_img:
+ *                 type: string
+ *                 format: uri
+ *                 example: "https://example.com/certificate.jpg"
+ *                 description: URL của ảnh chứng chỉ
+ *     responses:
+ *       200:
+ *         description: Certificate image updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Certificate image updated successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     userId:
+ *                       type: string
+ *                     certificate_img:
+ *                       type: string
+ *       404:
+ *         description: Guide not found
+ *       500:
+ *         description: Server error
+ */
+router.put("/certificate/:userId", updateCertificateImage);
 
 /**
  * @swagger

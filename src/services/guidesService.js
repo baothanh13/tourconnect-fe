@@ -213,6 +213,21 @@ export const guidesService = {
     }
   },
 
+  // Update certificate image by user ID
+  async updateCertificateImage(userId, certificateImgUrl) {
+    try {
+      const response = await apiClient.put(`/certificate/${userId}`, {
+        certificate_img: certificateImgUrl
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating certificate image:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to update certificate image."
+      );
+    }
+  },
+
   // Get guide reviews
   async getGuideReviews(guideId, options = {}) {
     try {
@@ -236,5 +251,6 @@ export const guidesService = {
     }
   },
 };
+
 
 export default guidesService;

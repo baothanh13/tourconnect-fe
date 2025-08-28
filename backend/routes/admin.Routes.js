@@ -6,6 +6,7 @@ const getAllUsers = require("../api/admin/getAllUsersController");
 const getAllGuides = require("../api/admin/getAllGuidesController");
 const getAllBookings = require("../api/admin/getAllBookingsController");
 const getSystemStats = require("../api/admin/getSystemStatsController");
+const getSystemActivities = require("../api/admin/getSystemActivitiesController");
 const approveGuide = require("../api/admin/approveGuideController");
 const deleteUserController = require("../api/admin/deleteUserController");
 const updateUserProfile = require("../api/admin/updateUserProfileController");
@@ -255,4 +256,17 @@ router.put("/users/:id/profile", updateUserProfile);
  */
 router.get("/users/:id", getUserById);
 
+
+/** * @swagger
+ * /api/admin/activities:
+ *   get:
+ *     summary: Get recent system activities
+ *     tags: [Admin]
+ *     responses:
+ *       200:
+ *         description: List of recent system activities
+ *       500:
+ *         description: Error fetching system activities
+ */
+router.get("/activities", getSystemActivities);
 module.exports = router;

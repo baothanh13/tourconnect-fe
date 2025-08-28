@@ -41,6 +41,12 @@ import GuideProfileForm from "./components/guide/GuideProfileForm";
 import GuideManagement from "./components/guide/GuideManagement";
 import FindGuideByUser from "./components/guide/FindGuideByUser";
 import GuideProfileEditor from "./components/guide/GuideProfileEditor";
+
+// Tourist components
+import TouristBookings from "./components/tourist/TouristBookings";
+import TouristReviews from "./components/tourist/TouristReviews";
+import TouristProfile from "./components/tourist/TouristProfile";
+
 import FAQ from "./pages/FAQ";
 function App() {
   return (
@@ -77,6 +83,32 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["tourist"]}>
                 <TouristDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Tourist Routes */}
+          <Route
+            path="/tourist/bookings"
+            element={
+              <ProtectedRoute allowedRoles={["tourist"]}>
+                <TouristBookings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tourist/reviews"
+            element={
+              <ProtectedRoute allowedRoles={["tourist"]}>
+                <TouristReviews />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tourist/profile"
+            element={
+              <ProtectedRoute allowedRoles={["tourist"]}>
+                <TouristProfile />
               </ProtectedRoute>
             }
           />

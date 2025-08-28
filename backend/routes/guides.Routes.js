@@ -5,8 +5,8 @@ const getGuides = require("../api/guides/getGuides.Controller");
 const getGuideById = require("../api/guides/getGuideById.Controller");
 const createGuide = require("../api/guides/createGuide.Controller");
 const updateGuide = require("../api/guides/updateGuide.Controller");
-// const createGuideProfile = require("../api/guides/createGuideProfile.Controller"); 
-const getGuideReviews = require('../api/guides/getGuideReviews.Controller');
+// const createGuideProfile = require("../api/guides/createGuideProfile.Controller");
+const getGuideReviews = require("../api/guides/getGuideReviews.Controller");
 // const createGuideProfile = require("../api/guides/createGuideProfile.Controller");
 const getGuideByUserId = require("../api/guides/getGuideByUserId.Controller");
 const updateCertificateImage = require("../api/guides/updateCertificateImage.Controller");
@@ -355,7 +355,7 @@ router.get("/user/:userId", getGuideByUserId);
  *                 page: { type: integer, example: 1 }
  *                 limit: { type: integer, example: 20 }
  */
-router.get('/reviews/:guideId', getGuideReviews);
+router.get("/reviews/:guideId", getGuideReviews);
 
 // Guide Dashboard Routes
 
@@ -407,10 +407,7 @@ router.get("/dashboard/:user_id/stats", getGuideDashboardStats);
  *       404:
  *         description: Guide not found
  */
-router.get(
-  "/dashboard/:user_id/activities",
-  getGuideRecentActivities
-);
+router.get("/dashboard/:user_id/activities", getGuideRecentActivities);
 
 /**
  * @swagger
@@ -439,10 +436,7 @@ router.get(
  *       404:
  *         description: Guide not found
  */
-router.get(
-  "/dashboard/:user_id/bookings",
-  getGuideUpcomingBookings
-);
+router.get("/dashboard/:user_id/bookings", getGuideUpcomingBookings);
 
 // PUT /api/guides/certificate/:userId - Update certificate image by user ID
 /**
@@ -498,6 +492,5 @@ router.get(
  *         description: Server error
  */
 router.put("/certificate/:userId", updateCertificateImage);
-
 
 module.exports = router;

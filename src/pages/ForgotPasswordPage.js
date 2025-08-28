@@ -88,7 +88,11 @@ const ForgotPasswordPage = () => {
             </div>
 
             <div className="form-navigation">
-              <button type="submit" className="register-button" disabled={isLoading}>
+              <button
+                type="submit"
+                className="register-button"
+                disabled={isLoading}
+              >
                 {isLoading ? "Sending..." : "Send OTP"}
               </button>
             </div>
@@ -135,10 +139,11 @@ const ForgotPasswordPage = () => {
             </div>
 
             <div className="form-navigation">
-              <button type="button" onClick={() => setStep(1)} className="back-button">
-                ← Back
-              </button>
-              <button type="submit" className="register-button" disabled={isLoading}>
+              <button
+                type="submit"
+                className="register-button"
+                disabled={isLoading}
+              >
                 {isLoading ? "Resetting..." : "Reset Password"}
               </button>
             </div>
@@ -147,7 +152,6 @@ const ForgotPasswordPage = () => {
 
         <div className="register-links">
           <Link to="/login">Back to Login</Link>
-          <Link to="/">← Back to Home</Link>
         </div>
       </div>
     </div>
@@ -155,5 +159,3 @@ const ForgotPasswordPage = () => {
 };
 
 export default ForgotPasswordPage;
-
-

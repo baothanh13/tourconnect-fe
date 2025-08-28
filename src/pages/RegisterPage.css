@@ -34,6 +34,47 @@
   max-width: 500px;
 }
 
+/* Ensure input fields have proper text color */
+.register-container input,
+.register-container input[type="text"],
+.register-container input[type="email"],
+.register-container input[type="password"],
+.register-container input[type="tel"],
+.register-container textarea,
+.register-container select {
+  color: var(--text-dark) !important;
+  background-color: #fff !important;
+}
+
+/* Override any global styles that might interfere */
+.register-page input,
+.register-page input[type="text"],
+.register-page input[type="email"],
+.register-page input[type="password"],
+.register-page input[type="tel"],
+.register-page textarea,
+.register-page select {
+  color: var(--text-dark) !important;
+  background-color: #fff !important;
+}
+
+/* Ensure text is visible in all states */
+.register-page .form-group input,
+.register-page .form-group input:hover,
+.register-page .form-group input:focus,
+.register-page .form-group input:active,
+.register-page .form-group textarea,
+.register-page .form-group textarea:hover,
+.register-page .form-group textarea:focus,
+.register-page .form-group textarea:active,
+.register-page .form-group select,
+.register-page .form-group select:hover,
+.register-page .form-group select:focus,
+.register-page .form-group select:active {
+  color: var(--text-dark) !important;
+  background-color: #fff !important;
+}
+
 /* --- Typography --- */
 .register-title {
   text-align: center;
@@ -77,8 +118,15 @@
   font-size: 1rem;
   transition: all var(--transition);
   font-family: inherit;
-  background: #f9fafb;
-  color: var(--text-dark);
+  background: #fff !important;
+  color: var(--text-dark) !important;
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  color: var(--text-dark) !important;
+  background: #fff !important;
 }
 
 .form-group input:focus,
@@ -87,7 +135,23 @@
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-  background: var(--bg-card);
+  background: #fff !important;
+  color: var(--text-dark) !important;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #999;
+  opacity: 1;
+}
+
+/* Fix for autocomplete styling */
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-dark) !important;
+  -webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
+  background-color: #fff !important;
 }
 
 /* --- Specialties Grid --- */
@@ -190,13 +254,14 @@
 }
 .form-navigation {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 .form-navigation .register-button {
-  flex-grow: 1;
+  width: 100%;
 }
 .back-button {
-  padding: 0.85rem 1.5rem;
+  padding: 0.85rem 1rem;
   background: var(--bg-card);
   color: var(--text-dark);
   border: 1px solid var(--border-color);
@@ -205,6 +270,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition);
+  width: 100%;
 }
 .back-button:hover {
   background-color: var(--bg-page);

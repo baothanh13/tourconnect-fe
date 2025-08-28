@@ -275,9 +275,9 @@ const RegisterPage = () => {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="back-button"
+                  className="register-button"
                 >
-                  ← Back
+                  ← Back to Step 1
                 </button>
                 <button
                   type="submit"
@@ -302,7 +302,6 @@ const RegisterPage = () => {
         {step < 3 && (
           <div className="register-links">
             <Link to="/login">Already have an account? Login</Link>
-            <Link to="/">← Back to Home</Link>
           </div>
         )}
       </div>

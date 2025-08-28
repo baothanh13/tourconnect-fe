@@ -17,6 +17,33 @@
   max-width: 400px;
 }
 
+/* Ensure input fields have proper text color */
+.login-container input,
+.login-container input[type="text"],
+.login-container input[type="email"],
+.login-container input[type="password"] {
+  color: #333 !important;
+  background-color: #fff !important;
+}
+
+/* Override any global styles that might interfere */
+.login-page input,
+.login-page input[type="text"],
+.login-page input[type="email"],
+.login-page input[type="password"] {
+  color: #333 !important;
+  background-color: #fff !important;
+}
+
+/* Ensure text is visible in all states */
+.login-page .form-group input,
+.login-page .form-group input:hover,
+.login-page .form-group input:focus,
+.login-page .form-group input:active {
+  color: #333 !important;
+  background-color: #fff !important;
+}
+
 .login-container h1 {
   text-align: center;
   color: #333;
@@ -48,17 +75,41 @@
   border: 2px solid #e1e5e9;
   border-radius: 8px;
   font-size: 16px;
+  color: #333 !important;
+  background-color: #fff !important;
   transition: border-color 0.3s ease;
+}
+
+.form-group input:hover {
+  color: #333 !important;
+  background-color: #fff !important;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: #667eea;
+  color: #333 !important;
+  background-color: #fff !important;
+}
+
+.form-group input::placeholder {
+  color: #999;
+  opacity: 1;
+}
+
+/* Fix for autocomplete styling */
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #333 !important;
+  -webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
+  background-color: #fff !important;
 }
 
 .form-group input:disabled {
   background-color: #f8f9fa;
   cursor: not-allowed;
+  color: #666;
 }
 
 .login-button {

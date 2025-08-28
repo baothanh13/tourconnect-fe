@@ -1,29 +1,40 @@
 class ApiService {
   constructor() {
     this.baseURL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
-    this.token = localStorage.getItem("authToken");
+    this.token = localStorage.getItem("tourconnect_token"); // Fix: Use correct token key
   }
 
   // Set authorization token
   setAuthToken(token) {
     this.token = token;
-    localStorage.setItem("authToken", token);
+    localStorage.setItem("tourconnect_token", token); // Fix: Use correct token key
   }
 
   // Remove authorization token
   removeAuthToken() {
     this.token = null;
-    localStorage.removeItem("authToken");
+    localStorage.removeItem("tourconnect_token"); // Fix: Use correct token key
+  }
+
+  // Get current token (refresh from localStorage if needed)
+  getCurrentToken() {
+    if (!this.token) {
+      this.token = localStorage.getItem("tourconnect_token");
+    }
+    return this.token;
   }
 
   // Generic API request method
   async request(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`;
 
+    // Always get fresh token from localStorage
+    const currentToken = this.getCurrentToken();
+
     const config = {
       headers: {
         "Content-Type": "application/json",
-        ...(this.token && { Authorization: `Bearer ${this.token}` }),
+        ...(currentToken && { Authorization: `Bearer ${currentToken}` }),
         ...options.headers,
       },
       ...options,

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import usersService from "../services/usersService";
+import apiService from "../services/api";
 
 export const AuthContext = createContext();
 
@@ -31,6 +32,9 @@ export const AuthProvider = ({ children }) => {
 
       setUser(userWithId);
       setToken(storedToken);
+
+      // Set token in API service
+      apiService.setAuthToken(storedToken);
     }
     setLoading(false);
   }, []);
@@ -51,6 +55,9 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem("tourconnect_user", JSON.stringify(userWithId));
       localStorage.setItem("tourconnect_token", data.token);
+
+      // Set token in API service
+      apiService.setAuthToken(data.token);
 
       return { success: true, user: userWithId };
     } catch (error) {

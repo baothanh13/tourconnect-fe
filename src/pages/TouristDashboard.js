@@ -1,14 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Loading from "../components/Loading";
-import { FaSignOutAlt } from "react-icons/fa";
+import touristService from "../services/touristService";
+import {
+  FaSignOutAlt,
+  FaHome,
+  FaCalendarCheck,
+  FaHeart,
+  FaStar,
+  FaMapMarkerAlt,
+  FaDollarSign,
+  FaRoute,
+  FaUsers,
+  FaClock,
+  FaEye,
+  FaComments,
+  FaBookmark,
+  FaGift,
+  FaSearch,
+  FaBell,
+  FaArrowUp,
+  FaArrowDown,
+  FaExclamationTriangle,
+  FaHeadset,
+} from "react-icons/fa";
 import "./DashboardStyles.css";
+import "./ModernDashboard.css";
+import "./TouristDashboard.css";
 
 const TouristDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
+  const [activeView, setActiveView] = useState("dashboard");
+  const [error, setError] = useState(null);
+
+  // Tourist-specific state
   const [stats, setStats] = useState({
     totalBookings: 0,
     completedTours: 0,
@@ -16,7 +45,16 @@ const TouristDashboard = () => {
     totalSpent: 0,
     favoriteGuides: 0,
     savedWishlist: 0,
+    averageRating: 0,
+    totalReviews: 0,
+    membershipsLevel: "Explorer",
+    rewardPoints: 0,
+    monthlySpent: 0,
+    growthPercentage: 0,
   });
+
+  const [upcomingTours, setUpcomingTours] = useState([]);
+  const [recentActivities, setRecentActivities] = useState([]);
 
   const handleLogout = () => {
     logout();
@@ -26,91 +64,534 @@ const TouristDashboard = () => {
   };
 
   useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab) {
+      setActiveView(tab);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     const loadTouristData = async () => {
+      if (!user?.id) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        // Simulate API call
-        setTimeout(() => {
-          setStats({
-            totalBookings: 8,
-            completedTours: 5,
-            upcomingTours: 3,
-            totalSpent: 2450,
-            favoriteGuides: 4,
-            savedWishlist: 12,
-          });
-          setLoading(false);
-        }, 1000);
+        setLoading(true);
+        setError(null);
+
+        const fetchTouristStats = async () => {
+          try {
+            const statsData = await touristService.getTouristStats(user.id);
+            setStats(statsData);
+          } catch (error) {
+            console.error("Error fetching tourist stats:", error);
+            // Set default stats on error
+            setStats({
+              totalBookings: 0,
+              completedTours: 0,
+              upcomingTours: 0,
+              totalSpent: 0,
+              favoriteGuides: 0,
+              savedWishlist: 0,
+              averageRating: 0,
+              totalReviews: 0,
+              membershipsLevel: "Beginner Explorer",
+              rewardPoints: 0,
+              monthlySpent: 0,
+              growthPercentage: 0,
+            });
+          }
+        };
+
+        const fetchRecentBookings = async () => {
+          try {
+            // Recent bookings will be handled by the TouristBookings component
+          } catch (error) {
+            console.error("Error fetching recent bookings:", error);
+          }
+        };
+
+        const fetchUpcomingTours = async () => {
+          try {
+            const upcomingData = await touristService.getUpcomingTours(user.id);
+            setUpcomingTours(upcomingData);
+          } catch (error) {
+            console.error("Error fetching upcoming tours:", error);
+            setUpcomingTours([]);
+          }
+        };
+
+        const fetchRecentActivities = async () => {
+          try {
+            const activitiesData = await touristService.getRecentActivities(
+              user.id
+            );
+            setRecentActivities(activitiesData);
+          } catch (error) {
+            console.error("Error fetching recent activities:", error);
+            setRecentActivities([]);
+          }
+        };
+
+        const fetchFavoriteGuides = async () => {
+          try {
+            // Favorite guides will be handled by a separate component
+          } catch (error) {
+            console.error("Error fetching favorite guides:", error);
+          }
+        };
+
+        const fetchWishlistTours = async () => {
+          try {
+            // Wishlist tours will be handled by a separate component
+          } catch (error) {
+            console.error("Error fetching wishlist tours:", error);
+          }
+        };
+
+        // Load data with timeout to prevent infinite loading
+        const loadPromises = [
+          fetchTouristStats(),
+          fetchRecentBookings(),
+          fetchUpcomingTours(),
+          fetchRecentActivities(),
+          fetchFavoriteGuides(),
+          fetchWishlistTours(),
+        ];
+
+        // Add timeout of 10 seconds
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Loading timeout")), 10000)
+        );
+
+        await Promise.race([Promise.allSettled(loadPromises), timeoutPromise]);
+
+        setLoading(false);
       } catch (error) {
         console.error("Error loading tourist data:", error);
+        setError("Failed to load dashboard data. Please try again.");
         setLoading(false);
       }
     };
 
     loadTouristData();
-  }, []);
+  }, [user]);
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(amount);
+  };
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  // Component for modern stat cards
+  const StatCard = ({
+    icon,
+    title,
+    value,
+    subtitle,
+    trend,
+    className,
+    onClick,
+    isLoading,
+  }) => (
+    <div
+      className={`modern-stat-card ${className || ""} ${
+        onClick ? "clickable" : ""
+      }`}
+      onClick={onClick}
+    >
+      <div className="stat-header">
+        <div className="stat-icon">{icon}</div>
+        {trend && (
+          <div className={`trend ${trend > 0 ? "positive" : "negative"}`}>
+            {trend > 0 ? <FaArrowUp /> : <FaArrowDown />}
+            {Math.abs(trend)}%
+          </div>
+        )}
+      </div>
+      <div className="stat-content">
+        <h3 className="stat-title">{title}</h3>
+        <p className="stat-value">{isLoading ? "..." : value}</p>
+        {subtitle && <span className="stat-subtitle">{subtitle}</span>}
+      </div>
+    </div>
+  );
+
+  // Component for quick action cards
+  const QuickActionCard = ({
+    icon,
+    label,
+    description,
+    onClick,
+    className,
+  }) => (
+    <div className={`quick-action-card ${className || ""}`} onClick={onClick}>
+      <div className="action-icon">{icon}</div>
+      <div className="action-content">
+        <h4>{label}</h4>
+        <p>{description}</p>
+      </div>
+    </div>
+  );
+
+  const renderDashboard = () => (
+    <div className="modern-dashboard-content">
+      {error && (
+        <div className="error-banner">
+          <FaExclamationTriangle />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {/* Main Stats Grid */}
+      <div className="stats-grid-modern">
+        <StatCard
+          icon={<FaCalendarCheck />}
+          title="Total Bookings"
+          value={stats.totalBookings}
+          subtitle={`${stats.upcomingTours} upcoming`}
+          className="bookings-card"
+          onClick={() => navigate("/tourist/bookings")}
+          isLoading={loading}
+        />
+        <StatCard
+          icon={<FaRoute />}
+          title="Completed Tours"
+          value={stats.completedTours}
+          trend={stats.growthPercentage}
+          className="completed-card"
+          isLoading={loading}
+        />
+        <StatCard
+          icon={<FaDollarSign />}
+          title="Total Spent"
+          value={formatCurrency(stats.totalSpent)}
+          subtitle={`${formatCurrency(stats.monthlySpent)} this month`}
+          trend={15.3}
+          className="earnings-card revenue"
+          onClick={() => navigate("/tourist/expenses")}
+          isLoading={loading}
+        />
+        <StatCard
+          icon={<FaStar />}
+          title="Average Rating"
+          value={`${stats.averageRating}/5.0`}
+          subtitle={`Based on ${stats.totalReviews} reviews`}
+          className="rating-card"
+          isLoading={loading}
+        />
+      </div>
+
+      {/* Secondary Stats */}
+      <div className="secondary-stats">
+        <StatCard
+          icon={<FaHeart />}
+          title="Favorite Guides"
+          value={stats.favoriteGuides}
+          subtitle="Saved to favorites"
+          className="info"
+        />
+        <StatCard
+          icon={<FaBookmark />}
+          title="Wishlist"
+          value={stats.savedWishlist}
+          subtitle="Tours saved for later"
+          className="info"
+        />
+        <StatCard
+          icon={<FaGift />}
+          title="Reward Points"
+          value={stats.rewardPoints.toLocaleString()}
+          subtitle={`${stats.membershipsLevel} Level`}
+          className="warning"
+        />
+      </div>
+
+      {/* Quick Actions */}
+      <div className="dashboard-section">
+        <div className="section-header-modern">
+          <div className="section-title">
+            <h2>Quick Actions</h2>
+            <p>Explore, book, and manage your adventures</p>
+          </div>
+        </div>
+        <div className="quick-actions-grid">
+          <QuickActionCard
+            icon={<FaSearch />}
+            label="Browse Tours"
+            description="Discover amazing tours and experiences"
+            onClick={() => navigate("/tours")}
+            className="action-browse"
+          />
+          <QuickActionCard
+            icon={<FaCalendarCheck />}
+            label="My Bookings"
+            description="View and manage your bookings"
+            onClick={() => navigate("/tourist/bookings")}
+            className="action-bookings"
+          />
+          <QuickActionCard
+            icon={<FaHeart />}
+            label="Favorite Guides"
+            description="Connect with your preferred guides"
+            onClick={() => navigate("/tourist/favorites")}
+            className="action-favorites"
+          />
+          <QuickActionCard
+            icon={<FaBookmark />}
+            label="Wishlist"
+            description="Tours you want to experience"
+            onClick={() => navigate("/tourist/wishlist")}
+            className="action-wishlist"
+          />
+          <QuickActionCard
+            icon={<FaComments />}
+            label="Leave Review"
+            description="Share your tour experiences"
+            onClick={() => navigate("/tourist/reviews")}
+            className="action-reviews"
+          />
+          <QuickActionCard
+            icon={<FaHeadset />}
+            label="Support Center"
+            description="Get help and contact support"
+            onClick={() => navigate("/support")}
+            className="action-support"
+          />
+        </div>
+      </div>
+
+      {/* Dashboard Grid */}
+      <div className="dashboard-grid-modern">
+        {/* Upcoming Tours */}
+        <div className="dashboard-card">
+          <div className="card-header">
+            <h3>Upcoming Tours</h3>
+            <button
+              className="view-all-btn"
+              onClick={() => navigate("/tourist/bookings?filter=upcoming")}
+            >
+              View All
+            </button>
+          </div>
+          <div className="card-content">
+            {upcomingTours.length > 0 ? (
+              <div className="tours-list">
+                {upcomingTours.map((tour) => (
+                  <div key={tour.id} className="tour-item-modern">
+                    <div className="tour-date">
+                      <span className="date">{formatDate(tour.date)}</span>
+                      <span className="time">{tour.time}</span>
+                    </div>
+                    <div className="tour-details">
+                      <h4 className="tour-title">{tour.title}</h4>
+                      <p className="tour-guide">Guide: {tour.guide}</p>
+                      <div className="tour-info">
+                        <span>
+                          <FaMapMarkerAlt /> {tour.location}
+                        </span>
+                        <span>
+                          <FaClock /> {tour.duration}
+                        </span>
+                        <span>
+                          <FaUsers /> {tour.groupSize} people
+                        </span>
+                      </div>
+                    </div>
+                    <div className="tour-actions">
+                      <button className="btn-small btn-view">
+                        <FaEye />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="no-data">
+                <span>
+                  No upcoming tours. Browse our amazing tours to book your next
+                  adventure!
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Recent Activities */}
+        <div className="dashboard-card">
+          <div className="card-header">
+            <h3>Recent Activities</h3>
+            <button
+              className="view-all-btn"
+              onClick={() => navigate("/tourist/activities")}
+            >
+              View All
+            </button>
+          </div>
+          <div className="card-content">
+            {recentActivities.length > 0 ? (
+              <div className="activities-list">
+                {recentActivities.map((activity) => (
+                  <div key={activity.id} className="activity-item-modern">
+                    <div className="activity-icon">{activity.icon}</div>
+                    <div className="activity-content">
+                      <h4 className="activity-title">{activity.title}</h4>
+                      <p className="activity-description">
+                        {activity.description}
+                      </p>
+                      <span className="activity-time">
+                        <FaClock /> {activity.timestamp.toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="no-data">
+                <span>
+                  Your activity history will appear here once you start booking
+                  tours
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Early return for authentication checks
+  if (!user) {
+    return (
+      <div className="error-container">
+        <div className="error-content">
+          <FaExclamationTriangle className="error-icon" />
+          <h2>Authentication Required</h2>
+          <p>Please log in to access your dashboard.</p>
+          <button className="retry-btn" onClick={() => navigate("/login")}>
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if user is a tourist (optional role check)
+  if (user.role && user.role !== "tourist") {
+    return (
+      <div className="error-container">
+        <div className="error-content">
+          <FaExclamationTriangle className="error-icon" />
+          <h2>Access Restricted</h2>
+          <p>This dashboard is only available for tourists.</p>
+          <button className="retry-btn" onClick={() => navigate("/")}>
+            Go Home
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return <Loading />;
   }
 
+  if (error) {
+    return (
+      <div className="error-container">
+        <div className="error-content">
+          <FaExclamationTriangle className="error-icon" />
+          <h2>Oops! Something went wrong</h2>
+          <p>{error}</p>
+          <button
+            className="retry-btn"
+            onClick={() => window.location.reload()}
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="dashboard-page">
-      {/* Simple header with logout */}
-      <div className="dashboard-header-simple">
-        <div className="header-left">
+    <div className="modern-dashboard-page">
+      {/* Modern Header */}
+      <div className="modern-dashboard-header">
+        <div className="header-brand">
           <h1>Tourist Dashboard</h1>
           <p>
-            Welcome back, {user?.name || "Traveler"}! Ready for your next
-            adventure?
+            Welcome back,{" "}
+            <span className="user-name">{user?.name || "Traveler"}</span>! Ready
+            for your next adventure?
           </p>
         </div>
-        <button onClick={handleLogout} className="logout-btn-simple">
-          <FaSignOutAlt />
-          Logout
-        </button>
+
+        <div className="header-navigation">
+          <button
+            onClick={() => setActiveView("dashboard")}
+            className={`nav-button ${
+              activeView === "dashboard" ? "active" : ""
+            }`}
+          >
+            <FaHome />
+            <span>Dashboard</span>
+          </button>
+          <button
+            className={`nav-button ${
+              activeView === "bookings" ? "active" : ""
+            }`}
+            onClick={() => navigate("/tourist/bookings")}
+          >
+            <FaCalendarCheck />
+            <span>My Bookings</span>
+          </button>
+          <button
+            className={`nav-button ${
+              activeView === "favorites" ? "active" : ""
+            }`}
+            onClick={() => navigate("/tourist/favorites")}
+          >
+            <FaHeart />
+            <span>Favorites</span>
+          </button>
+          <button
+            className={`nav-button ${activeView === "reviews" ? "active" : ""}`}
+            onClick={() => navigate("/tourist/reviews")}
+          >
+            <FaStar />
+            <span>Reviews</span>
+          </button>
+        </div>
+
+        <div className="header-actions">
+          <div className="user-level">
+            <span className="level-badge">{stats.membershipsLevel}</span>
+            <span className="points">{stats.rewardPoints} pts</span>
+          </div>
+          <button className="notification-btn">
+            <FaBell />
+            <span className="notification-badge">2</span>
+          </button>
+          <button onClick={handleLogout} className="logout-button">
+            <FaSignOutAlt />
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
 
       {/* Dashboard content */}
-      <div className="dashboard-content-simple">
-        <div className="stats-grid">
-          <div className="stat-card">
-            <h3>Total Bookings</h3>
-            <p className="stat-number">{stats.totalBookings}</p>
-          </div>
-          <div className="stat-card success">
-            <h3>Completed Tours</h3>
-            <p className="stat-number">{stats.completedTours}</p>
-          </div>
-          <div className="stat-card">
-            <h3>Upcoming Tours</h3>
-            <p className="stat-number">{stats.upcomingTours}</p>
-          </div>
-          <div className="stat-card">
-            <h3>Total Spent</h3>
-            <p className="stat-number">${stats.totalSpent.toLocaleString()}</p>
-          </div>
-          <div className="stat-card">
-            <h3>Favorite Guides</h3>
-            <p className="stat-number">{stats.favoriteGuides}</p>
-          </div>
-          <div className="stat-card">
-            <h3>Wishlist Items</h3>
-            <p className="stat-number">{stats.savedWishlist}</p>
-          </div>
-        </div>
-
-        <div className="quick-actions">
-          <h2>Quick Actions</h2>
-          <div className="action-buttons">
-            <button className="action-btn">Browse Tours</button>
-            <button className="action-btn">My Bookings</button>
-            <button className="action-btn">Favorite Guides</button>
-            <button className="action-btn">Wishlist</button>
-            <button className="action-btn">Profile Settings</button>
-            <button className="action-btn">Leave Review</button>
-          </div>
-        </div>
-      </div>
+      <div className="dashboard-main">{renderDashboard()}</div>
     </div>
   );
 };

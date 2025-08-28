@@ -13,6 +13,8 @@ module.exports = async (req, res) => {
     price,
     image_url = null,
     category = null,
+    tour_date = null,
+    tour_time = null,
   } = req.body || {};
 
   if (!guide_id || !title || price === undefined) {
@@ -33,8 +35,8 @@ module.exports = async (req, res) => {
 
     await pool.execute(
       `INSERT INTO tours
-       (id, guide_id, title, description, duration_hours, max_people, price, image_url, category)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (id, guide_id, title, description, duration_hours, max_people, price, image_url, category, tour_date, tour_time)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         guide_id,
@@ -45,6 +47,8 @@ module.exports = async (req, res) => {
         price,
         image_url,
         category,
+        tour_date,
+        tour_time
       ]
     );
 

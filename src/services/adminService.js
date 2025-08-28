@@ -241,7 +241,7 @@ export const adminService = {
   // Get revenue statistics
   async getRevenueStats() {
     try {
-      const response = await apiClient.get("/admin/revenue-stats");
+      const response = await apiClient.get("/admin/stats");
       return response.data;
     } catch (error) {
       console.error("Error fetching revenue stats:", error);

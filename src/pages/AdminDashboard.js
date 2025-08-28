@@ -86,7 +86,7 @@ const AdminDashboard = () => {
         });
 
         setRecentActivities(
-          Array.isArray(activitiesData) ? activitiesData : []
+          Array.isArray(activitiesData.activities) ? activitiesData.activities : []
         );
       } catch (error) {
         console.error("Error loading admin data:", error);
@@ -160,19 +160,19 @@ const AdminDashboard = () => {
   );
 
   const ActivityItem = ({ activity }) => (
-    <div className="activity-item">
-      <div className="activity-icon">
-        <FaCheckCircle />
-      </div>
-      <div className="activity-content">
-        <p className="activity-text">{activity.action}</p>
-        <p className="activity-user">{activity.user}</p>
-        <span className="activity-time">
-          <FaClock /> {new Date(activity.timestamp).toLocaleString()}
-        </span>
-      </div>
+  <div className="activity-item">
+    <div className="activity-icon">
+      <FaCheckCircle />
     </div>
-  );
+    <div className="activity-content">
+      <p className="activity-text">{activity.title}</p>
+      <p className="activity-user">{activity.description}</p>
+      <span className="activity-time">
+        <FaClock /> {new Date(activity.timestamp).toLocaleString()}
+      </span>
+    </div>
+  </div>
+);
 
   const renderContent = () => {
     switch (activeView) {

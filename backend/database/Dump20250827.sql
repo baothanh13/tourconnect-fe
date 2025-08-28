@@ -2,7 +2,7 @@
 --
 -- Host: 127.0.0.1    Database: tourconnect
 -- ------------------------------------------------------
--- Server version	9.4.0
+-- Server version	8.0.43
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -45,6 +45,7 @@ CREATE TABLE `bookings` (
 
 LOCK TABLES `bookings` WRITE;
 /*!40000 ALTER TABLE `bookings` DISABLE KEYS */;
+INSERT INTO `bookings` VALUES ('44af3e43-53f9-443e-b1f0-54ef0d5bc4b7','71ab5530-a5d3-46b9-9f03-374dc96e0221','a4bcb60a-62da-4da8-a465-174075eb3bfe','2025-08-09','08:00:00',5,20,200.00,'pending','pending','I hope you can singing while guide us','2025-08-09 04:58:56'),('B25082102708','G25082101805','U25082003795','2025-08-21','08:00:00',3,2,75.00,'pending','pending','Speak Japanese','2025-08-21 02:50:48');
 /*!40000 ALTER TABLE `bookings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -65,12 +66,12 @@ CREATE TABLE `guides` (
   `experience_years` int DEFAULT NULL,
   `description` text,
   `certificates` json DEFAULT NULL,
-  `certificate_img` text,
   `rating` decimal(3,2) DEFAULT '0.00',
   `total_reviews` int DEFAULT '0',
   `is_available` tinyint(1) DEFAULT '1',
   `current_location` point DEFAULT NULL,
   `verification_status` enum('pending','verified','rejected') DEFAULT 'pending',
+  `certificate_img` text,
   PRIMARY KEY (`id`),
   KEY `fk_guides_user` (`user_id`),
   CONSTRAINT `fk_guides_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -83,6 +84,7 @@ CREATE TABLE `guides` (
 
 LOCK TABLES `guides` WRITE;
 /*!40000 ALTER TABLE `guides` DISABLE KEYS */;
+INSERT INTO `guides` VALUES ('G25082101805','U25082016650','Ho Chi Minh','[\"English\"]','[\"Cultural Tours\"]',20.00,5,'Experienced tour guide with deep knowledge of Hanoi history.','[\"Language Certificate B\"]',0.00,0,1,NULL,'verified',NULL);
 /*!40000 ALTER TABLE `guides` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -198,6 +200,7 @@ CREATE TABLE `support_tickets` (
 
 LOCK TABLES `support_tickets` WRITE;
 /*!40000 ALTER TABLE `support_tickets` DISABLE KEYS */;
+INSERT INTO `support_tickets` VALUES ('ST25082205208','tienbi63543@gmail.com','0987654321','Issue with booking','I cannot reject my booking properly.','guide','open','2025-08-22 05:30:00','2025-08-22 05:30:00');
 /*!40000 ALTER TABLE `support_tickets` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -220,6 +223,8 @@ CREATE TABLE `tours` (
   `category` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `tour_date` date DEFAULT NULL,
+  `tour_time` time DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `guide_id` (`guide_id`),
   CONSTRAINT `tours_ibfk_1` FOREIGN KEY (`guide_id`) REFERENCES `guides` (`id`)
@@ -232,6 +237,7 @@ CREATE TABLE `tours` (
 
 LOCK TABLES `tours` WRITE;
 /*!40000 ALTER TABLE `tours` DISABLE KEYS */;
+INSERT INTO `tours` VALUES ('T25082101917','G25082101805','Hanoi Old Quarter Walking Tour','Explore historical streets...',3,10,25.00,'https://example.com/tour.jpg','cultural','2025-08-21 01:58:47','2025-08-21 01:58:47',NULL,NULL),('T25082705698','G25082101805','Dong Hoi Walking Tour','Explore historical streets...',3,5,10.00,'https://example.com/tour.jpg','Cultural Tours','2025-08-27 05:57:15','2025-08-27 05:57:15',NULL,NULL);
 /*!40000 ALTER TABLE `tours` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -263,7 +269,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('082c56d8-005b-44a5-a0bd-bff4e8cb40a0','tienbi63543@gmail.com','$2b$10$0mP3rqHCtynb/EHcQ.9.VuTzI3y26L7KmI3CWWcbf24p89S5fSSy6','tourist','Tien Dang','0123456789',NULL,'2025-08-06 02:22:44','2025-08-06 03:09:20'),('a4bcb60a-62da-4da8-a465-174075eb3bfe','kiritanitaiyo@gmail.com','$2b$10$wYf0fws0.Ii4ad/Nh1DAhud3Y0..QWmRBejhKTk5qi6aqTD1vOPr2','tourist','johndoe','0123456789',NULL,'2025-08-06 02:54:57','2025-08-06 02:56:57'),('e7ab7661-51cc-4e7d-8fc0-74a78cadcd4f','2251120118@ut.edu.vn','$2b$10$pJ92Ydme.KxfQlRILUAlSuHCr8r7pnTYZ0Zq4KublxmsyUVUlVgFq','tourist','Dang Minh Tien','0123456789',NULL,'2025-08-06 05:28:58','2025-08-06 05:29:54'),('U25082614769','congtru4104@gmail.com','$2b$10$aVNoBa58oltLZnzwBb5rz.vFXgv0z8ND8Hj4ItuAg90Ft.E9OdBBq','tourist','Phạm Công Trứ','0962226270',NULL,'2025-08-26 14:02:24','2025-08-26 14:08:12');
+INSERT INTO `users` VALUES ('0f3baa94-1610-4e20-820e-5ba3e8a3e12e','2251120118@ut.edu.vn','$2b$10$k5yZhBfu4lKhwwBng0lK1.H4iAIdF.5VY2RygAV3WgA/AaICUJa5i','support','support1','0123456789',NULL,'2025-08-14 06:47:13','2025-08-16 12:49:08'),('76a9100a-1aef-457f-bc6e-c595fa06d889','tien632004@gmail.com','$2b$10$d/OAwpKgmprvD9ywKu9Qxez2J/fBscPJxN8MhAlVqNhRnlh9i7Md.','admin','Admin','0123456789',NULL,'2025-08-14 06:42:06','2025-08-20 09:06:21'),('U25082003795','kiritanitaiyo@gmail.com','$2b$10$gObHi1zkrmpTa9gomxnWm.Dhfle5gwSSr/GipEdTm0mMaO/idMM4i','tourist','Dang Anh Tien','0913295410','https://example.com/avatar.jpg','2025-08-20 03:35:04','2025-08-21 02:49:36'),('U25082016650','tienbi63543@gmail.com','$2b$10$9ge7ueij1DaU/E1ZE1QwK.2hnXgkzULtLZR7YVi3HJSxuzpaMcFmS','guide','Thomas','0886485440',NULL,'2025-08-20 16:49:54','2025-08-20 16:49:54'),('U25082501351','jane@example.com','$2b$10$S31bmR04Yxeg7drYv7PzCu/jx2dPN/H02Qa6rFOgFkYM9dtAGl0AW','tourist','Jane Doe','0912345678','https://example.com/avatar.jpg','2025-08-25 01:45:51','2025-08-25 01:45:51'),('U25082501402','tienminh123@gmail.com','$2b$10$a2hL.YAY3XsSQxPtKznfMefSXCkySpGCAFGf95GSexW5yuyx0bHTK','guide','Tien Minh','0987654321','https://i.redd.it/o4m065lln8kb1.jpg','2025-08-25 01:56:39','2025-08-25 05:24:06'),('U25082611378','nguyenvana@gmail.com','$2b$10$zgYEmTN0P69.r7FF.85Cf.77DJuO52anAlRI083h8M0Osx.dun3ZG','guide','Nguyễn Văn A','0987654321','https://i.redd.it/o4m065lln8kb1.jpg','2025-08-26 11:44:26','2025-08-26 11:44:26'),('U25082611688','baothanh@gmail.com','$2b$10$nX3sdnHGfN77Xgs0dvIrF.3LurJPu8Vq/ao//JNwDdZWyhKWEs1Cu','guide','Phan Quy Bao Thanh','0987654321','https://i.redd.it/o4m065lln8kb1.jpg','2025-08-26 11:42:06','2025-08-26 11:42:06'),('U25082613366','arcgenshin2505@gmail.com','$2b$10$tR3poWU6elsgkSULhYKk.ugacttZ1RIVf9qIblrD4jaXl5cwWY8yW','tourist','MaiKHOAAAAAAAA','0987654321',NULL,'2025-08-26 13:58:12','2025-08-26 13:58:12');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -276,4 +282,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-27 12:52:26
+-- Dump completed on 2025-08-27 19:40:04

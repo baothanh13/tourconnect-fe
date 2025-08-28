@@ -7,13 +7,13 @@ const getSystemStats = async (req, res) => {
         const [[userCount]] = await connection.execute("SELECT COUNT(*) AS total_users FROM users");
         const [[guideCount]] = await connection.execute("SELECT COUNT(*) AS total_guides FROM guides");
         const [[bookingCount]] = await connection.execute("SELECT COUNT(*) AS total_bookings FROM bookings");
-        const [[bookingRevenue]] = await connection.execute("SELECT SUM(total_price) AS total_revenue FROM bookings WHERE status = 'completed'");
+        const [[bookingRevenue]] = await connection.execute("SELECT SUM(total_price) AS total_revenue FROM bookings WHERE status = 'confirmed'");
 
         // thêm doanh thu tháng hiện tại
         const [[monthlyRevenue]] = await connection.execute(`
             SELECT SUM(total_price) AS monthly_revenue
             FROM bookings
-            WHERE status = 'completed'
+            WHERE status = 'confirmed'
               AND MONTH(created_at) = MONTH(CURRENT_DATE())
               AND YEAR(created_at) = YEAR(CURRENT_DATE())
         `);

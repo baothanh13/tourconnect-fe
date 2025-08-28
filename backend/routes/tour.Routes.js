@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const getTours = require("../api/tours/getTours.Controller");
+const createTour = require("../api/tours/createTour.Controller");
 const getTourById = require("../api/tours/getTourById.Controller");
 const updateTour = require("../api/tours/updateTour.Controller");
 const deleteTour = require("../api/tours/deleteTour.Controller");
@@ -44,6 +45,39 @@ const getToursByGuide = require("../api/tours/getToursByGuide.Controller");
  *         description: OK
  */
 router.get("/", getTours);
+
+
+/**
+ * @swagger
+ * /api/tours:
+ *   post:
+ *     summary: Create a new tour
+ *     tags: [Tours]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [guide_id, title, price]
+ *             properties:
+ *               guide_id: { type: string, example: "guide-uuid" }
+ *               title: { type: string, example: "Hanoi Old Quarter Walking Tour" }
+ *               description: { type: string, example: "Explore historical streets..." }
+ *               duration_hours: { type: integer, example: 3 }
+ *               max_people: { type: integer, example: 10 }
+ *               price: { type: number, example: 25.00 }
+ *               image_url: { type: string, example: "https://example.com/tour.jpg" }
+ *               category: { type: string, example: "cultural" }
+ *     responses:
+ *       201:
+ *         description: Tour created
+ *       400:
+ *         description: Validation error
+ */
+router.post("/", /* verifyToken, requireGuideOrAdmin, */ createTour);
 
 /**
  * @swagger
@@ -108,14 +142,16 @@ router.get("/:id", getTourById);
  *           schema:
  *             type: object
  *             properties:
- *               guide_id: { type: string }
- *               title: { type: string }
- *               description: { type: string }
- *               duration_hours: { type: integer }
- *               max_people: { type: integer }
- *               price: { type: number }
- *               image_url: { type: string }
- *               category: { type: string }
+ *               guide_id: { type: string, example: "guide-uuid" }
+ *               title: { type: string, example: "Hanoi Old Quarter Walking Tour" }
+ *               description: { type: string, example: "Explore historical streets..." }
+ *               duration_hours: { type: integer, example: 3 }
+ *               max_people: { type: integer, example: 10 }
+ *               price: { type: number, example: 25.00 }
+ *               image_url: { type: string, example: "https://example.com/tour.jpg" }
+ *               category: { type: string, example: "cultural" }
+ *               tour_date: { type: string, format: date, example: "2024-12-31" }
+ *               tour_time: { type: string, format: time, example: "09:00:00" }
  *     responses:
  *       200:
  *         description: Tour updated

@@ -15,7 +15,6 @@ const {
   getGuideRecentActivities,
   getGuideUpcomingBookings,
 } = require("../api/guides/guideDashboard.Controller");
-const createTour = require("../api/guides/createTour.Controller");
 const verifyToken = require("../middleware/verifyToken"); // Import middleware
 
 // GET /api/guides - Danh sách guides với filter query
@@ -500,38 +499,5 @@ router.get(
  */
 router.put("/certificate/:userId", updateCertificateImage);
 
-/**
- * @swagger
- * /api/guides/tours:
- *   post:
- *     summary: Create a new tour for guide
- *     tags: [Guides]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [guide_id, title, price]
- *             properties:
- *               guide_id: { type: string, example: "guide-uuid" }
- *               title: { type: string, example: "Hanoi Old Quarter Walking Tour" }
- *               description: { type: string, example: "Explore historical streets..." }
- *               duration_hours: { type: integer, example: 3 }
- *               max_people: { type: integer, example: 10 }
- *               price: { type: number, example: 25.00 }
- *               image_url: { type: string, example: "https://example.com/tour.jpg" }
- *               category: { type: string, example: "cultural" }
- *               tour_date: { type: string, format: date, example: "2024-12-31" }
- *               tour_time: { type: string, format: time, example: "09:00:00" }
- *     responses:
- *       201:
- *         description: Tour created
- *       400:
- *         description: Validation error
- */
-router.post("/tours", verifyToken, createTour);
 
 module.exports = router;

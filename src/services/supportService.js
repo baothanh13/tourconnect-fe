@@ -35,7 +35,9 @@ export const supportService = {
       if (filters.order) params.append("order", filters.order);
 
       const queryString = params.toString();
-      const url = queryString ? `/support?${queryString}` : "/support";
+      const url = queryString
+        ? `/supportTickets?${queryString}`
+        : "/supportTickets";
 
       const response = await apiClient.get(url);
       return response.data;
@@ -50,7 +52,7 @@ export const supportService = {
   // Get support ticket by ID
   async getTicketById(ticketId) {
     try {
-      const response = await apiClient.get(`/support/${ticketId}`);
+      const response = await apiClient.get(`/supportTickets/${ticketId}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching support ticket:", error);
@@ -64,7 +66,7 @@ export const supportService = {
   // Create new support ticket
   async createTicket(ticketData) {
     try {
-      const response = await apiClient.post("/support", ticketData);
+      const response = await apiClient.post("/supportTickets", ticketData);
       return response.data;
     } catch (error) {
       console.error("Error creating support ticket:", error);
@@ -77,7 +79,7 @@ export const supportService = {
   // Update support ticket
   async updateTicket(ticketId, updateData) {
     try {
-      const response = await apiClient.put(`/support/${ticketId}`, updateData);
+      const response = await apiClient.put(`/supportTickets/${ticketId}`, updateData);
       return response.data;
     } catch (error) {
       console.error("Error updating support ticket:", error);
@@ -90,7 +92,7 @@ export const supportService = {
   // Delete support ticket
   async deleteTicket(ticketId) {
     try {
-      const response = await apiClient.delete(`/support/${ticketId}`);
+      const response = await apiClient.delete(`/supportTickets/${ticketId}`);
       return response.data;
     } catch (error) {
       console.error("Error deleting support ticket:", error);
@@ -103,7 +105,7 @@ export const supportService = {
   // Get support statistics
   async getSupportStats() {
     try {
-      const response = await apiClient.get("/support/stats");
+      const response = await apiClient.get("/supportTickets/stats");
       return response.data;
     } catch (error) {
       console.error("Error fetching support stats:", error);
@@ -116,7 +118,7 @@ export const supportService = {
   // Update ticket status
   async updateTicketStatus(ticketId, status) {
     try {
-      const response = await apiClient.put(`/support/${ticketId}`, { status });
+      const response = await apiClient.put(`/supportTickets/${ticketId}`, { status });
       return response.data;
     } catch (error) {
       console.error("Error updating ticket status:", error);
@@ -129,7 +131,7 @@ export const supportService = {
   // Assign staff to ticket
   async assignStaff(ticketId, staffId) {
     try {
-      const response = await apiClient.put(`/support/${ticketId}`, {
+      const response = await apiClient.put(`/supportTickets/${ticketId}`, {
         assigned_staff: staffId,
       });
       return response.data;

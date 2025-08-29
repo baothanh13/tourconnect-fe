@@ -54,8 +54,13 @@ const TouristReviews = () => {
 
   const handleCreateReview = async (e) => {
     e.preventDefault();
-    try {
-      await touristService.createReview(user.id, newReview);
+      try {
+        const reviewData = {
+        user_id: user.id,   // lấy id từ token hoặc state user
+        ...newReview,       // spread toàn bộ dữ liệu review nhập form
+      };
+
+      await touristService.createReview(reviewData); // chỉ truyền 1 object
       setShowCreateModal(false);
       setNewReview({
         rating: 5,

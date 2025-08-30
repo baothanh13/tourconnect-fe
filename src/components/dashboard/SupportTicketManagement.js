@@ -13,7 +13,7 @@ import {
 } from "react-icons/fa";
 import "./SupportTicketManagement.css";
 
-const SupportTicketManagement = () => {
+const SupportTicketManagement = ({ onTicketUpdate = () => {} }) => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -32,8 +32,13 @@ const SupportTicketManagement = () => {
   const fetchTickets = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await supportService.getAllTickets(filters);
-      setTickets(data.tickets || data);
+      const res = await supportService.getAllTickets(filters);
+      const rows = Array.isArray(res?.data)
+        ? res.data
+        : Array.isArray(res)
+        ? res
+        : [];
+      setTickets(rows);
     } catch (error) {
       console.error("Error fetching support tickets:", error);
       alert("Failed to fetch support tickets");
@@ -51,6 +56,10 @@ const SupportTicketManagement = () => {
       await supportService.updateTicketStatus(ticketId, newStatus);
       alert(`Ticket status updated to ${newStatus}`);
       fetchTickets(); // Refresh the list
+      // Refresh dashboard data to update stats
+      if (onTicketUpdate) {
+        onTicketUpdate();
+      }
     } catch (error) {
       console.error("Error updating ticket status:", error);
       alert("Failed to update ticket status");
@@ -69,6 +78,10 @@ const SupportTicketManagement = () => {
       setResponseText("");
       setShowModal(false);
       fetchTickets(); // Refresh the list
+      // Refresh dashboard data to update stats
+      if (onTicketUpdate) {
+        onTicketUpdate();
+      }
     } catch (error) {
       console.error("Error adding response:", error);
       alert("Failed to add response");
@@ -81,6 +94,10 @@ const SupportTicketManagement = () => {
         await supportService.deleteTicket(ticketId);
         alert("Ticket deleted successfully");
         fetchTickets(); // Refresh the list
+        // Refresh dashboard data to update stats
+        if (onTicketUpdate) {
+          onTicketUpdate();
+        }
       } catch (error) {
         console.error("Error deleting ticket:", error);
         alert("Failed to delete ticket");
@@ -97,7 +114,7 @@ const SupportTicketManagement = () => {
     switch (status?.toLowerCase()) {
       case "open":
         return "danger";
-      case "in_progress":
+      case "pending":
         return "warning";
       case "resolved":
         return "success";
@@ -131,7 +148,7 @@ const SupportTicketManagement = () => {
           >
             <option value="">All Status</option>
             <option value="open">Open</option>
-            <option value="in_progress">In Progress</option>
+                         <option value="pending">Pending</option>
             <option value="resolved">Resolved</option>
             <option value="closed">Closed</option>
           </select>
@@ -223,11 +240,11 @@ const SupportTicketManagement = () => {
                       <>
                         <button
                           onClick={() =>
-                            handleStatusUpdate(ticket.id, "in_progress")
+                            handleStatusUpdate(ticket.id, "pending")
                           }
                           className="btn-progress"
                           title="Mark In Progress"
-                          disabled={ticket.status === "in_progress"}
+                          disabled={ticket.status === "pending"}
                         >
                           <FaClock />
                         </button>
@@ -358,11 +375,11 @@ const SupportTicketManagement = () => {
                 <>
                   <button
                     onClick={() => {
-                      handleStatusUpdate(selectedTicket.id, "in_progress");
+                      handleStatusUpdate(selectedTicket.id, "pending");
                       setShowModal(false);
                     }}
                     className="btn btn-warning"
-                    disabled={selectedTicket.status === "in_progress"}
+                    disabled={selectedTicket.status === "pending"}
                   >
                     Mark In Progress
                   </button>

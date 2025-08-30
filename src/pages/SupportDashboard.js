@@ -9,40 +9,20 @@ import {
   FaTicketAlt,
   FaCheckCircle,
   FaUsers,
-  FaHeadset,
-  FaChartBar,
   FaExclamationCircle,
   FaClock,
   FaUserTie,
   FaHome,
-  FaTasks,
-  FaUserFriends,
   FaBell,
   FaArrowUp,
   FaArrowDown,
-  FaTrendUp,
-  FaMapMarkerAlt,
-  FaCamera,
-  FaFileAlt,
-  FaCog,
-  FaQuestionCircle,
-  FaShare,
-  FaGlobe,
-  FaSpinner,
-  FaHeart,
-  FaEye,
-  FaEdit,
-  FaTrash,
-  FaPlus,
-  FaSearch,
-  FaFilter,
-  FaDownload,
-  FaRefresh,
 } from "react-icons/fa";
 import "./DashboardStyles.css";
 import "./ModernDashboard.css";
 import "./TouristDashboard.css";
 import "./SupportDashboard.css";
+
+
 
 const SupportDashboard = () => {
   const { user, logout } = useAuth();
@@ -60,11 +40,12 @@ const SupportDashboard = () => {
     averageResponseTime: 0,
     customerSatisfaction: 0,
     monthlyGrowth: 0,
+    resolutionRate: 0,
   });
-  const [recentTickets, setRecentTickets] = useState([]);
   const [recentActivities, setRecentActivities] = useState([]);
   const [error, setError] = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
+
+
 
   const handleLogout = () => {
     logout();
@@ -73,17 +54,11 @@ const SupportDashboard = () => {
     }, 100);
   };
 
-  const refreshDashboard = async () => {
-    try {
-      setRefreshing(true);
-      setError(null);
-      await loadSupportData();
-    } catch (error) {
-      console.error("Error refreshing dashboard:", error);
-      setError("Failed to refresh dashboard data");
-    } finally {
-      setRefreshing(false);
-    }
+
+
+  // Function to refresh dashboard data (can be called from child components)
+  const refreshDashboardData = async () => {
+    await loadSupportData();
   };
 
   useEffect(() => {
@@ -93,64 +68,47 @@ const SupportDashboard = () => {
   const loadSupportData = async () => {
     try {
       setLoading(true);
+      setError(null);
 
       // Fetch support stats from backend
       const statsData = await supportService.getSupportStats();
+      
+      // Check if statsData is valid
+      if (!statsData) {
+        throw new Error("No data received from API");
+      }
+
+      // Use stats data directly for ticket counts (more efficient)
+      const openCount = statsData.open_tickets || 0;
+      const pendingCount = statsData.pending_tickets || 0;
+      const resolvedCount = statsData.resolved_tickets || 0;
+      const closedCount = statsData.closed_tickets || 0;
+      const totalCount = openCount + pendingCount + resolvedCount + closedCount;
 
       // Calculate additional metrics
-      const totalTickets = statsData.open_tickets + statsData.resolved_tickets;
-      const urgentTickets = Math.floor(statsData.open_tickets * 0.3);
+      const urgentTickets = Math.floor(openCount * 0.3);
       const averageResponseTime = Math.floor(Math.random() * 4) + 1; // Mock data
       const customerSatisfaction = Math.floor(Math.random() * 20) + 80; // Mock data
       const monthlyGrowth = Math.floor(Math.random() * 15) + 5; // Mock data
+      
+      // Calculate resolution rate
+      const resolutionRate = totalCount > 0 ? Math.floor((resolvedCount / totalCount) * 100) : 0;
 
-      // Fetch totals via list endpoint (for total tickets) and in-progress via filter
-      const listAll = await supportService.getAllTickets({ limit: 1 });
-      const totalFromApi = Number(listAll?.total) || 0;
 
-      let inProgressCount = 0;
-      try {
-        const inProg = await supportService.getAllTickets({ status: "pending", limit: 1 });
-        inProgressCount = Number(inProg?.total) || 0;
-      } catch (_) {
-        inProgressCount = Math.floor(totalTickets * 0.1);
-      }
 
-      setStats({
-        openTickets: statsData.open_tickets || 0,
-        resolvedTickets: statsData.resolved_tickets || 0,
-        totalUsers: statsData.total_users || 0,
-        totalGuides: statsData.total_guides || 0,
-        inProgressTickets: inProgressCount,
-        totalTickets: totalFromApi || totalTickets,
-        urgentTickets: urgentTickets,
-        averageResponseTime: averageResponseTime,
-        customerSatisfaction: customerSatisfaction,
-        monthlyGrowth: monthlyGrowth,
-      });
-
-      // Load recent tickets from backend
-      try {
-        const ticketsResp = await supportService.getAllTickets({ limit: 5, sort: "created_at", order: "desc" });
-        const tickets = Array.isArray(ticketsResp?.data)
-          ? ticketsResp.data
-          : Array.isArray(ticketsResp)
-          ? ticketsResp
-          : [];
-        const mapped = tickets.map((t) => ({
-          id: t.id || t.ticket_id || t._id,
-          title: t.title || t.subject || (t.description ? String(t.description).slice(0, 50) : "Support Ticket"),
-          user: t.user_name || t.user || t.created_by || "User",
-          priority: t.priority || "medium",
-          status: t.status || "open",
-          date: t.created_at || t.createdAt || t.date || "",
-          category: t.category || t.support_type || "General",
-        }));
-        setRecentTickets(mapped);
-      } catch (e) {
-        console.warn("Fallback to mock recent tickets due to API error", e);
-        setRecentTickets([]);
-      }
+              setStats({
+          openTickets: openCount,
+          resolvedTickets: resolvedCount,
+          totalUsers: statsData.total_users || 0,
+          totalGuides: statsData.total_guides || 0,
+          inProgressTickets: pendingCount,
+          totalTickets: totalCount,
+          urgentTickets: urgentTickets,
+          averageResponseTime: averageResponseTime,
+          customerSatisfaction: customerSatisfaction,
+          monthlyGrowth: monthlyGrowth,
+          resolutionRate: resolutionRate,
+        });
 
       // Derive recent activities from tickets or stats if available
       try {
@@ -160,13 +118,17 @@ const SupportDashboard = () => {
           : Array.isArray(ticketsForActivities)
           ? ticketsForActivities
           : [];
-        const activities = list.map((t, idx) => ({
-          id: t.id || t.ticket_id || t._id || idx,
-          type: t.status === "resolved" ? "ticket_resolved" : "ticket_update",
-          description: `${(t.title || t.subject || "Ticket")} ${t.status ? `is ${t.status}` : "updated"}`,
-          time: t.updated_at || t.updatedAt || t.created_at || "",
-          status: t.status === "resolved" ? "completed" : t.status || "pending",
-        }));
+        const activities = list.map((t, idx) => {
+          const timeStr = t.updated_at || t.updatedAt || t.created_at || "";
+          const time = timeStr ? new Date(timeStr).toLocaleString() : "N/A";
+          return {
+            id: t.id || t.ticket_id || t._id || idx,
+            type: t.status === "resolved" ? "ticket_resolved" : "ticket_update",
+            description: `Ticket #${t.id} - ${t.subject || "Support Request"} is ${t.status}`,
+            time: time,
+            status: t.status === "resolved" ? "completed" : t.status || "pending",
+          };
+        });
         setRecentActivities(activities);
       } catch (e) {
         setRecentActivities([]);
@@ -175,6 +137,8 @@ const SupportDashboard = () => {
       setLoading(false);
     } catch (error) {
       console.error("Error loading support data:", error);
+      setError("Failed to load dashboard data. Please try again.");
+      
       // Fallback to mock data if API fails
       setStats({
         openTickets: 23,
@@ -187,6 +151,7 @@ const SupportDashboard = () => {
         averageResponseTime: 2.5,
         customerSatisfaction: 92,
         monthlyGrowth: 12,
+        resolutionRate: 86,
       });
       setLoading(false);
     }
@@ -235,16 +200,16 @@ const SupportDashboard = () => {
           />
           <SupportStatCard
             icon={<FaClock />}
-            title="In Progress"
+            title="Pending"
             value={stats.inProgressTickets}
-            subtitle={`${Math.floor(stats.inProgressTickets * 0.8)}% active`}
+            subtitle={`${Math.floor((stats.inProgressTickets / (stats.totalTickets || 1)) * 100)}% of total`}
             className="info"
           />
           <SupportStatCard
             icon={<FaCheckCircle />}
             title="Resolved"
             value={stats.resolvedTickets}
-            subtitle={`${Math.floor((stats.resolvedTickets / (stats.totalTickets || 1)) * 100)}% success`}
+            subtitle={`${stats.resolutionRate}% resolution rate`}
             className="success"
           />
           <SupportStatCard
@@ -278,73 +243,10 @@ const SupportDashboard = () => {
           <button className="tab-btn">Settings</button>
         </div> */}
 
-        {/* Dashboard Content */}
+        {/* Recent Activities (restored) */}
         <div className="dashboard-content-wrapper">
           <div className="tab-content">
             <div className="content-grid">
-              {/* Quick Actions */}
-              <div className="dashboard-section">
-                <div className="section-header-modern">
-                  <div className="section-title">
-                    <h2>Quick Actions</h2>
-                    <p>Quick actions for support work</p>
-                  </div>
-                </div>
-                <div className="quick-actions-grid">
-                  <div className="quick-action-card action-browse" onClick={() => setActiveView("tickets")}>
-                    <div className="action-icon"><FaPlus /></div>
-                    <div className="action-content">
-                      <h4>Create Ticket</h4>
-                      <p>Create a new support ticket</p>
-                    </div>
-                  </div>
-                  <div className="quick-action-card" onClick={() => setActiveView("tickets")}>
-                    <div className="action-icon urgent"><FaExclamationCircle /></div>
-                    <div className="action-content">
-                      <h4>Urgent Issues</h4>
-                      <p>Filter and handle priority tickets</p>
-                    </div>
-                  </div>
-                  <div className="quick-action-card action-bookings" onClick={() => setActiveView("tickets")}>
-                    <div className="action-icon"><FaCheckCircle /></div>
-                    <div className="action-content">
-                      <h4>Resolve Tickets</h4>
-                      <p>Mark open tickets as resolved</p>
-                    </div>
-                  </div>
-                  <div className="quick-action-card action-support" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-                    <div className="action-icon"><FaChartBar /></div>
-                    <div className="action-content">
-                      <h4>View Reports</h4>
-                      <p>View analytics and trends</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Recent Tickets */}
-              <div className="content-card">
-                <h3>Recent Tickets</h3>
-                <div className="recent-list">
-                  {recentTickets.map((ticket) => (
-                    <div key={ticket.id} className="recent-item">
-                      <div className="item-info">
-                        <strong>{ticket.title}</strong>
-                        <span>{ticket.user} • {ticket.category}</span>
-                      </div>
-                                             <div className={`status-badge ${ticket.status}`}>
-                         {ticket.status.replace('_', ' ')}
-                       </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="empty-state">
-                  <p>View all tickets</p>
-                  <a href="#" className="action-link">Manage Tickets →</a>
-                </div>
-              </div>
-
-              {/* Recent Activities */}
               <div className="content-card">
                 <h3>Recent Activities</h3>
                 <div className="recent-list">
@@ -360,33 +262,11 @@ const SupportDashboard = () => {
                     </div>
                   ))}
                 </div>
-                <div className="empty-state">
-                  <p>View all activities</p>
-                  <a href="#" className="action-link">Activity Log →</a>
-                </div>
-              </div>
-
-              {/* Performance Metrics */}
-              <div className="content-card">
-                <h3>Performance Metrics</h3>
-                <div className="stats-list">
-                  <div className="stat-row">
-                    <span>Urgent Tickets</span>
-                    <span className="stat-value">{stats.urgentTickets}</span>
+                {!recentActivities.length && (
+                  <div className="empty-state">
+                    <p>No recent activities</p>
                   </div>
-                  <div className="stat-row">
-                    <span>Avg Response Time</span>
-                    <span className="stat-value">{stats.averageResponseTime}h</span>
-                  </div>
-                  <div className="stat-row">
-                    <span>Customer Satisfaction</span>
-                    <span className="stat-value">{stats.customerSatisfaction}%</span>
-                  </div>
-                  <div className="stat-row">
-                    <span>Monthly Growth</span>
-                    <span className="stat-value">+{stats.monthlyGrowth}%</span>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
@@ -398,14 +278,45 @@ const SupportDashboard = () => {
   const renderContent = () => {
     switch (activeView) {
       case "tickets":
-        return <SupportTicketManagement />;
+        return <SupportTicketManagement onTicketUpdate={refreshDashboardData} />;
       default:
         return renderDashboard();
     }
   };
 
+
+
   return (
     <div className="modern-dashboard-page">
+      {/* Error Banner */}
+      {error && (
+        <div className="error-banner" style={{
+          backgroundColor: '#fee',
+          color: '#c33',
+          padding: '10px 20px',
+          margin: '10px 0',
+          borderRadius: '5px',
+          border: '1px solid #fcc',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <span>{error}</span>
+          <button 
+            onClick={() => setError(null)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#c33',
+              cursor: 'pointer',
+              fontSize: '18px'
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       {/* Modern Header */}
       <div className="modern-dashboard-header">
         <div className="header-brand">

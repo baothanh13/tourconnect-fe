@@ -4,7 +4,7 @@ module.exports = async function getAllTickets(req, res) {
   try {
     const { status, support_type, q, page = 1, limit = 20, sort = "created_at", order = "desc" } = req.query;
 
-    const allowedStatus = ["open", "pending", "closed"];
+    const allowedStatus = ["open", "pending", "closed", "resolved"];
     const allowedTypes = ["user", "guide"];
     const allowedSort = ["created_at", "updated_at", "status"];
 

@@ -7,6 +7,12 @@ module.exports = async function getSupportStats(req, res) {
     const [[open]]   = await connection.execute(
       `SELECT COUNT(*) AS c FROM support_tickets WHERE status = 'open'`
     );
+    const [[pending]] = await connection.execute(
+      `SELECT COUNT(*) AS c FROM support_tickets WHERE status = 'pending'`
+    );
+    const [[resolved]] = await connection.execute(
+      `SELECT COUNT(*) AS c FROM support_tickets WHERE status = 'resolved'`
+    );
     const [[closed]] = await connection.execute(
       `SELECT COUNT(*) AS c FROM support_tickets WHERE status = 'closed'`
     );
@@ -19,7 +25,9 @@ module.exports = async function getSupportStats(req, res) {
 
     return res.json({
       open_tickets: open.c,
-      resolved_tickets: closed.c,
+      pending_tickets: pending.c,
+      resolved_tickets: resolved.c,
+      closed_tickets: closed.c,
       total_users: totalUsers.c,
       total_guides: totalGuides.c,
     });

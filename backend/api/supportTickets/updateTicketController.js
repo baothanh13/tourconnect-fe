@@ -15,7 +15,7 @@ module.exports = async function updateTicket(req, res) {
     if (message !== undefined) { set.push("message = ?"); params.push(message); }
     if (status !== undefined) {
       if (!allowedStatus.includes(status)) {
-        return res.status(400).json({ message: "status must be 'open' | 'pending' | 'closed' | 'resolved" });
+        return res.status(400).json({ message: "status must be 'open' | 'pending' | 'closed' | 'resolved'" });
       }
       set.push("status = ?");
       params.push(status);

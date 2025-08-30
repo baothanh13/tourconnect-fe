@@ -106,6 +106,12 @@ export const supportService = {
   async getSupportStats() {
     try {
       const response = await apiClient.get("/supportTickets/stats");
+      
+      // Validate response data
+      if (!response.data) {
+        throw new Error("No data received from API");
+      }
+      
       return response.data;
     } catch (error) {
       console.error("Error fetching support stats:", error);
@@ -146,9 +152,9 @@ export const supportService = {
   // Add response to ticket
   async addResponse(ticketId, response) {
     try {
-      const result = await apiClient.put(`/support/${ticketId}`, {
+      const result = await apiClient.put(`/supportTickets/${ticketId}`, {
         response,
-        status: "in_progress",
+        status: "pending",
       });
       return result.data;
     } catch (error) {

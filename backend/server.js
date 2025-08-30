@@ -9,6 +9,7 @@ const adminRoutes = require("./routes/admin.Routes");
 const supportTicketsRoutes = require("./routes/supportTickets.Routes");
 const tourRoutes = require("./routes/tour.Routes");
 const reviewRoutes = require("./routes/review.Routes");
+const touristRoutes = require("./routes/tourist.Routes");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swaggerOptions");
 const cors = require("cors");
@@ -86,7 +87,7 @@ connectToDB()
       supportTicketsRoutes
     );
     app.use(
-      "/api/tours",
+      "/api/toursist",
       (req, res, next) => {
         req.db = app.locals.db;
         next();
@@ -101,6 +102,16 @@ connectToDB()
       },
       reviewRoutes
     );
+    
+    app.use(
+      "/api/tourist",
+      (req, res, next) => {
+        req.db = app.locals.db;
+        next();
+      },
+      touristRoutes
+    );
+
     // ✅ Chỉ listen một lần
     app.listen(PORT, () => {
       console.log(`🚀 Server running at http://localhost:${PORT}`);

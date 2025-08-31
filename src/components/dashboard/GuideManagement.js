@@ -1,14 +1,22 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { adminService } from "../../services/adminService";
 import Loading from "../Loading";
-import { FaCheck, FaTimes, FaEye, FaUserCheck } from "react-icons/fa";
+import {
+  FaEye,
+  FaUserCheck,
+  FaTimes,
+  FaCheck,
+  FaSpinner,
+} from "react-icons/fa";
 import "./GuideManagement.css";
 
 const GuideManagement = () => {
   const [guides, setGuides] = useState([]);
+  const [filteredGuides, setFilteredGuides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     verification_status: "",
+    search: "",
     page: 1,
     limit: 10,
   });
@@ -18,7 +26,8 @@ const GuideManagement = () => {
   const fetchGuides = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await adminService.getAllGuides(filters);
+      // Fetch all guides and filter on frontend for better search performance
+      const data = await adminService.getAllGuides({ page: 1, limit: 1000 });
       // Handle different response formats
       if (Array.isArray(data)) {
         setGuides(data);
@@ -39,11 +48,36 @@ const GuideManagement = () => {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, []);
 
   useEffect(() => {
     fetchGuides();
   }, [fetchGuides]);
+
+  // Filter guides based on search term and status
+  useEffect(() => {
+    let filtered = guides;
+
+    // Filter by search term (name, email, location)
+    if (filters.search) {
+      const searchTerm = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (guide) =>
+          guide.user_name?.toLowerCase().includes(searchTerm) ||
+          guide.user_email?.toLowerCase().includes(searchTerm) ||
+          guide.location?.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Filter by verification status
+    if (filters.verification_status) {
+      filtered = filtered.filter(
+        (guide) => guide.verification_status === filters.verification_status
+      );
+    }
+
+    setFilteredGuides(filtered);
+  }, [guides, filters.search, filters.verification_status]);
 
   const handleVerificationUpdate = async (guideId, status) => {
     try {
@@ -87,6 +121,13 @@ const GuideManagement = () => {
       <div className="guide-management-header">
         <h2>Guide Management</h2>
         <div className="filters">
+          <input
+            type="text"
+            placeholder="Search guides by name, email, or location..."
+            value={filters.search}
+            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+            className="search-input"
+          />
           <select
             value={filters.verification_status}
             onChange={(e) =>
@@ -96,7 +137,6 @@ const GuideManagement = () => {
             <option value="">All Status</option>
             <option value="pending">Pending</option>
             <option value="verified">Verified</option>
-            <option value="rejected">Rejected</option>
           </select>
         </div>
       </div>
@@ -118,8 +158,8 @@ const GuideManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {guides &&
-              guides.map((guide) => (
+            {filteredGuides &&
+              filteredGuides.map((guide) => (
                 <tr key={guide.id}>
                   <td>{guide.id}</td>
                   <td>{guide.user_name}</td>
@@ -198,60 +238,173 @@ const GuideManagement = () => {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Guide Details</h3>
+              <span
+                className={`status-badge ${getStatusColor(
+                  selectedGuide.verification_status
+                )}`}
+              >
+                {selectedGuide.verification_status}
+              </span>
               <button onClick={() => setShowModal(false)} className="close-btn">
                 ×
               </button>
             </div>
+
             <div className="modal-body">
-              <div className="guide-detail-item">
-                <strong>ID:</strong> {selectedGuide.id}
-              </div>
-              <div className="guide-detail-item">
-                <strong>Name:</strong> {selectedGuide.user_name}
-              </div>
-              <div className="guide-detail-item">
-                <strong>Email:</strong> {selectedGuide.user_email}
-              </div>
-              <div className="guide-detail-item">
-                <strong>Phone:</strong> {selectedGuide.phone || "N/A"}
-              </div>
-              <div className="guide-detail-item">
-                <strong>Location:</strong> {selectedGuide.location}
-              </div>
-              <div className="guide-detail-item">
-                <strong>Languages:</strong> {selectedGuide.languages}
-              </div>
-              <div className="guide-detail-item">
-                <strong>Experience:</strong>{" "}
-                {selectedGuide.experience_years
-                  ? `${selectedGuide.experience_years} years`
-                  : "N/A"}
-              </div>
-              <div className="guide-detail-item">
-                <strong>Bio:</strong> {selectedGuide.bio || "N/A"}
-              </div>
-              <div className="guide-detail-item">
-                <strong>Verification Status:</strong>
-                <span
-                  className={`status-badge ${getStatusColor(
-                    selectedGuide.verification_status
-                  )}`}
-                >
-                  {selectedGuide.verification_status}
-                </span>
-              </div>
-              <div className="guide-detail-item">
-                <strong>Rating:</strong>{" "}
-                {selectedGuide.rating ? `${selectedGuide.rating}/5` : "N/A"}
-              </div>
-              <div className="guide-detail-item">
-                <strong>Total Tours:</strong> {selectedGuide.total_tours || 0}
-              </div>
-              <div className="guide-detail-item">
-                <strong>Created:</strong>{" "}
-                {new Date(selectedGuide.created_at).toLocaleString()}
+              <div className="guide-form">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Guide ID</label>
+                    <div className="form-control">{selectedGuide.id}</div>
+                  </div>
+                  <div className="form-group">
+                    <label>Full Name</label>
+                    <div className="form-control">
+                      {selectedGuide.user_name}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Email Address</label>
+                    <div className="form-control">
+                      {selectedGuide.user_email}
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Phone Number</label>
+                    <div className="form-control">
+                      {selectedGuide.phone || "Not provided"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Location</label>
+                    <div className="form-control">{selectedGuide.location}</div>
+                  </div>
+                  <div className="form-group">
+                    <label>Experience Years</label>
+                    <div className="form-control">
+                      {selectedGuide.experience_years} years
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Price per Hour</label>
+                    <div className="form-control price">
+                      ${selectedGuide.price_per_hour}
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Availability Status</label>
+                    <div
+                      className={`form-control ${
+                        selectedGuide.is_available ? "available" : "unavailable"
+                      }`}
+                    >
+                      {selectedGuide.is_available ? "Available" : "Unavailable"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Languages</label>
+                    <div className="form-control">
+                      {Array.isArray(selectedGuide.languages)
+                        ? selectedGuide.languages.join(", ")
+                        : selectedGuide.languages || "Not specified"}
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Specialties</label>
+                    <div className="form-control">
+                      {Array.isArray(selectedGuide.specialties)
+                        ? selectedGuide.specialties.join(", ")
+                        : selectedGuide.specialties || "Not specified"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Rating</label>
+                    <div className="form-control rating">
+                      <span className="rating-value">
+                        {parseFloat(selectedGuide.rating || 0).toFixed(1)}/5
+                      </span>
+                      <div className="stars">
+                        {[...Array(5)].map((_, i) => (
+                          <span
+                            key={i}
+                            className={
+                              i < Math.floor(selectedGuide.rating || 0)
+                                ? "star filled"
+                                : "star"
+                            }
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Total Reviews</label>
+                    <div className="form-control">
+                      {selectedGuide.total_reviews || 0} reviews
+                    </div>
+                  </div>
+                </div>
+
+                {selectedGuide.certificates && (
+                  <div className="form-row">
+                    <div className="form-group full-width">
+                      <label>Certificates</label>
+                      <div className="form-control">
+                        {Array.isArray(selectedGuide.certificates)
+                          ? selectedGuide.certificates.join(", ")
+                          : selectedGuide.certificates}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {selectedGuide.description && (
+                  <div className="form-row">
+                    <div className="form-group full-width">
+                      <label>Description</label>
+                      <div className="form-control description">
+                        {selectedGuide.description}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Current Location</label>
+                    <div className="form-control">
+                      {selectedGuide.current_location || "Not tracking"}
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Verification Status</label>
+                    <div
+                      className={`form-control status ${selectedGuide.verification_status}`}
+                    >
+                      {selectedGuide.verification_status}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+
             <div className="modal-footer">
               {selectedGuide.verification_status === "pending" && (
                 <>
@@ -260,18 +413,18 @@ const GuideManagement = () => {
                       handleVerificationUpdate(selectedGuide.id, "verified");
                       setShowModal(false);
                     }}
-                    className="btn btn-success"
+                    className="btn btn-approve"
                   >
-                    Approve
+                    <FaCheck /> Approve
                   </button>
                   <button
                     onClick={() => {
                       handleVerificationUpdate(selectedGuide.id, "rejected");
                       setShowModal(false);
                     }}
-                    className="btn btn-danger"
+                    className="btn btn-reject"
                   >
-                    Reject
+                    <FaTimes /> Reject
                   </button>
                 </>
               )}
@@ -281,17 +434,11 @@ const GuideManagement = () => {
                     handleVerificationUpdate(selectedGuide.id, "verified");
                     setShowModal(false);
                   }}
-                  className="btn btn-success"
+                  className="btn btn-approve"
                 >
-                  Approve
+                  <FaUserCheck /> Approve
                 </button>
               )}
-              <button
-                onClick={() => setShowModal(false)}
-                className="btn btn-secondary"
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>

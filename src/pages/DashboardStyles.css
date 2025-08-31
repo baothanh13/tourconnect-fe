@@ -474,6 +474,42 @@
   color: #166534;
 }
 
+.activity-status.cancelled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.activity-status.created {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.activity-status.updated {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+/* Activity item status-based styling */
+.activity-item.status-cancelled .activity-icon {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.activity-item.status-success .activity-icon {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.activity-item.status-warning .activity-icon {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.activity-item.status-default .activity-icon {
+  background-color: #f1f5f9;
+  color: var(--primary-color);
+}
+
 /* --- Bookings List --- */
 .bookings-list {
   padding: 1rem 2rem 2rem;

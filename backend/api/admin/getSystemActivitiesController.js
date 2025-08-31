@@ -1,12 +1,10 @@
-const { connectToDB } = require("../../config/db");
-
 const getSystemActivities = async (req, res) => {
-    try {
-        const connection = await connectToDB();
+  try {
+    const connection = req.db;
 
-        const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 10;
 
-        const [activities] = await connection.execute(`
+    const [activities] = await connection.execute(`
            (
             SELECT 
                 CONCAT('user_create_', u.id) AS id,
@@ -91,14 +89,17 @@ const getSystemActivities = async (req, res) => {
             )
             ORDER BY timestamp DESC
             LIMIT ${limit}
-        `,
-        );
-         
+        `);
 
-        res.status(200).json({ activities });
-    } catch (err) {
-        res.status(500).json({ message: "Error fetching system activities", error: err.message });
-    }
-}
+    res.status(200).json({ activities });
+  } catch (err) {
+    res
+      .status(500)
+      .json({
+        message: "Error fetching system activities",
+        error: err.message,
+      });
+  }
+};
 
 module.exports = getSystemActivities;

@@ -214,27 +214,27 @@ export const adminService = {
       return response.data;
     } catch (error) {
       console.error("Error fetching activities:", error);
-      // Return mock activities as fallback
-      return [
-        {
-          id: 1,
-          action: "User registered",
-          timestamp: new Date().toISOString(),
-          user: "New User",
-        },
-        {
-          id: 2,
-          action: "Guide verified",
-          timestamp: new Date(Date.now() - 3600000).toISOString(),
-          user: "Guide Name",
-        },
-        {
-          id: 3,
-          action: "Booking created",
-          timestamp: new Date(Date.now() - 7200000).toISOString(),
-          user: "Tourist Name",
-        },
-      ];
+      // Return mock activities as fallback that match the backend structure
+      return {
+        activities: [
+          {
+            id: "fallback_1",
+            type: "booking",
+            title: "Booking Created (Fallback)",
+            description: "Unable to load live activities",
+            status: "info",
+            timestamp: new Date().toISOString(),
+          },
+          {
+            id: "fallback_2",
+            type: "user",
+            title: "User Registered (Fallback)",
+            description: "Unable to load live activities",
+            status: "created",
+            timestamp: new Date(Date.now() - 3600000).toISOString(),
+          },
+        ],
+      };
     }
   },
 
@@ -242,14 +242,19 @@ export const adminService = {
   async getRevenueStats() {
     try {
       const response = await apiClient.get("/admin/stats");
-      return response.data;
+      const data = response.data;
+
+      // Map the API response fields to what the frontend expects
+      return {
+        total_revenue: parseFloat(data.total_bookings_revenue || 0),
+        monthly_revenue: parseFloat(data.monthly_revenue || 0),
+      };
     } catch (error) {
       console.error("Error fetching revenue stats:", error);
       // Return mock revenue data
       return {
         total_revenue: 125780,
         monthly_revenue: 15650,
-        growth_percentage: 12.5,
       };
     }
   },

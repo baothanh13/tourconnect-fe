@@ -21,7 +21,10 @@ const BookingManagement = () => {
   const [allBookings, setAllBookings] = useState([]); // Store all bookings
   const [filteredBookings, setFilteredBookings] = useState([]); // Store filtered bookings
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState("");
+  const [filters, setFilters] = useState({
+    status: "",
+    search: "",
+  });
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
@@ -72,34 +75,40 @@ const BookingManagement = () => {
     }
   }, []);
 
-  // Filter bookings based on status
-  const applyStatusFilter = useCallback(
-    (status) => {
-      if (!status || status === "") {
-        setFilteredBookings(allBookings);
-      } else {
-        const filtered = allBookings.filter(
-          (booking) => booking.status?.toLowerCase() === status.toLowerCase()
-        );
-        setFilteredBookings(filtered);
-      }
-    },
-    [allBookings]
-  );
+  // Filter bookings based on status and search
+  const applyFilters = useCallback(() => {
+    let filtered = allBookings;
 
-  // Handle status filter change
-  const handleStatusChange = (newStatus) => {
-    setStatusFilter(newStatus);
-    applyStatusFilter(newStatus);
-  };
+    // Filter by search term (tourist name, guide name, tour name, booking ID)
+    if (filters.search) {
+      const searchTerm = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (booking) =>
+          booking.tourist_name?.toLowerCase().includes(searchTerm) ||
+          booking.guide_name?.toLowerCase().includes(searchTerm) ||
+          booking.tour_name?.toLowerCase().includes(searchTerm) ||
+          booking.id?.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Filter by status
+    if (filters.status) {
+      filtered = filtered.filter(
+        (booking) =>
+          booking.status?.toLowerCase() === filters.status.toLowerCase()
+      );
+    }
+
+    setFilteredBookings(filtered);
+  }, [allBookings, filters]);
 
   useEffect(() => {
     fetchBookings();
   }, [fetchBookings]);
 
   useEffect(() => {
-    applyStatusFilter(statusFilter);
-  }, [applyStatusFilter, statusFilter]);
+    applyFilters();
+  }, [applyFilters]);
 
   const handleViewBooking = (booking) => {
     setSelectedBooking(booking);
@@ -184,9 +193,16 @@ const BookingManagement = () => {
       <div className="booking-management-header">
         <h2>Booking Management</h2>
         <div className="filters">
+          <input
+            type="text"
+            placeholder="Search bookings by tourist, guide, tour, or booking ID..."
+            value={filters.search}
+            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+            className="search-input"
+          />
           <select
-            value={statusFilter}
-            onChange={(e) => handleStatusChange(e.target.value)}
+            value={filters.status}
+            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
           >
             <option value="">All Status</option>
             <option value="pending">Pending</option>
@@ -194,9 +210,6 @@ const BookingManagement = () => {
             <option value="cancelled">Cancelled</option>
             <option value="completed">Completed</option>
           </select>
-          <div className="filter-info">
-            Showing {filteredBookings.length} of {allBookings.length} bookings
-          </div>
         </div>
       </div>
 
@@ -204,8 +217,8 @@ const BookingManagement = () => {
         <div className="no-bookings">
           <FaCalendarAlt size={48} color="#ccc" />
           <p>
-            {statusFilter
-              ? `No bookings found with status: ${statusFilter}`
+            {filters.status || filters.search
+              ? `No bookings found matching your criteria`
               : "No bookings found"}
           </p>
         </div>
@@ -223,7 +236,6 @@ const BookingManagement = () => {
                 <th>Guests</th>
                 <th>Amount</th>
                 <th>Status</th>
-                <th>Created</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -235,52 +247,27 @@ const BookingManagement = () => {
                       {truncateId(booking.id)}
                     </span>
                   </td>
-                  <td>
-                    <div className="user-info">
-                      <FaUser className="user-icon" />
-                      <span>{booking.tourist_name}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="user-info">
-                      <FaUsers className="guide-icon" />
-                      <span>{booking.guide_name}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="tour-info">
-                      <FaMapMarkerAlt className="location-icon" />
-                      <span>{booking.tour_name}</span>
-                    </div>
+                  <td>{booking.tourist_name}</td>
+                  <td>{booking.guide_name}</td>
+                  <td className="tour-cell">
+                    <span title={booking.tour_name}>
+                      {booking.tour_name.length > 30
+                        ? `${booking.tour_name.substring(0, 30)}...`
+                        : booking.tour_name}
+                    </span>
                   </td>
                   <td>
                     <div className="date-info">
-                      <FaCalendarAlt className="calendar-icon" />
-                      <div>
-                        <div>{formatDate(booking.booking_date)}</div>
-                        <small className="time-slot">
-                          {formatTime(booking.time_slot)}
-                        </small>
-                      </div>
+                      <div>{formatDate(booking.booking_date)}</div>
+                      <small className="time-slot">
+                        {formatTime(booking.time_slot)}
+                      </small>
                     </div>
                   </td>
-                  <td>
-                    <div className="duration-info">
-                      <FaClock className="duration-icon" />
-                      <span>{booking.duration_hours}h</span>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="guests-info">
-                      <FaUsers className="guests-icon" />
-                      <span>{booking.number_of_tourists || 1}</span>
-                    </div>
-                  </td>
+                  <td>{booking.duration_hours}h</td>
+                  <td>{booking.number_of_tourists || 1}</td>
                   <td className="amount">
-                    <div className="amount-info">
-                      <FaDollarSign className="amount-icon" />
-                      <span>{formatCurrency(booking.total_price)}</span>
-                    </div>
+                    {formatCurrency(booking.total_price)}
                   </td>
                   <td>
                     <span
@@ -288,13 +275,9 @@ const BookingManagement = () => {
                         booking.status
                       )}`}
                     >
-                      {getStatusIcon(booking.status)}
-                      <span className="status-text">
-                        {booking.status?.toUpperCase() || "UNKNOWN"}
-                      </span>
+                      {booking.status?.toUpperCase() || "UNKNOWN"}
                     </span>
                   </td>
-                  <td>{formatDate(booking.created_at)}</td>
                   <td>
                     <div className="action-buttons">
                       <button
@@ -436,14 +419,6 @@ const BookingManagement = () => {
                   </div>
                 </div>
               )}
-            </div>
-            <div className="modal-footer">
-              <button
-                onClick={() => setShowModal(false)}
-                className="btn btn-secondary"
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>

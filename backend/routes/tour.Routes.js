@@ -6,6 +6,7 @@ const getTourById = require("../api/tours/getTourById.Controller");
 const updateTour = require("../api/tours/updateTour.Controller");
 const deleteTour = require("../api/tours/deleteTour.Controller");
 const getToursByGuide = require("../api/tours/getToursByGuide.Controller");
+const getToursByWeek = require("../api/tours/getToursByWeek.Controller");
 
 // Nếu có auth/role guard thì bật:
 // const verifyToken = require('../middleware/verifyToken');
@@ -45,6 +46,81 @@ const getToursByGuide = require("../api/tours/getToursByGuide.Controller");
  *         description: OK
  */
 router.get("/", getTours);
+
+/**
+ * @swagger
+ * /api/tours/week:
+ *   get:
+ *     summary: Get weekly tours of a specific guide
+ *     description: Retrieve all tours of a guide in a given week based on the provided date (Monday to Sunday).
+ *     tags: [Tours]
+ *     parameters:
+ *       - in: query
+ *         name: date
+ *         schema:
+ *           type: string
+ *           format: date
+ *         required: true
+ *         description: Any date within the week (YYYY-MM-DD). The API will automatically calculate Monday to Sunday of that week.
+ *       - in: query
+ *         name: guide_id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The unique Guide ID (e.g., G123). Required to filter tours of that guide.
+ *     responses:
+ *       200:
+ *         description: List of tours within the selected week for the specified guide
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 week:
+ *                   type: object
+ *                   properties:
+ *                     start:
+ *                       type: string
+ *                       example: "2025-09-01"
+ *                     end:
+ *                       type: string
+ *                       example: "2025-09-07"
+ *                 guide_id:
+ *                   type: string
+ *                   example: "G123"
+ *                 tours:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "T001"
+ *                       title:
+ *                         type: string
+ *                         example: "Discover Hanoi Old Quarter"
+ *                       description:
+ *                         type: string
+ *                         example: "A walking tour through Hanoi's Old Quarter with local street food tasting"
+ *                       category:
+ *                         type: string
+ *                         example: "city"
+ *                       tour_date:
+ *                         type: string
+ *                         format: date
+ *                         example: "2025-09-03"
+ *                       tour_time:
+ *                         type: string
+ *                         format: time
+ *                         example: "08:00:00"
+ *       400:
+ *         description: Missing or invalid date or guide_id
+ *       404:
+ *         description: No tours found in the selected week
+ *       500:
+ *         description: Server error
+ */
+router.get("/week", getToursByWeek);
 
 
 /**
@@ -182,5 +258,7 @@ router.put("/:id", /* verifyToken, requireGuideOrAdmin, */ updateTour);
  *         description: FK constraint prevents deletion
  */
 router.delete("/:id", /* verifyToken, requireGuideOrAdmin, */ deleteTour);
+
+
 
 module.exports = router;

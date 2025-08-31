@@ -87,13 +87,14 @@ connectToDB()
       supportTicketsRoutes
     );
     app.use(
-      "/api/toursist",
+      "/api/tours",
       (req, res, next) => {
         req.db = app.locals.db;
         next();
       },
       tourRoutes
     );
+    
     app.use(
       "/api/reviews",
       (req, res, next) => {

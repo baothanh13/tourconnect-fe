@@ -2,7 +2,7 @@ const generateId = require("../../utils/generateId");
 const { connectToDB } = require("../../config/db");
 
 // Chỉ chấp nhận 2 loại support_type
-const ALLOWED_TYPES = ["user", "guide"];
+const ALLOWED_TYPES = ["tourist", "guide"];
 
 module.exports = async function createTicket(req, res) {
   try {
@@ -15,7 +15,7 @@ module.exports = async function createTicket(req, res) {
     if (!ALLOWED_TYPES.includes(support_type)) {
       return res
         .status(400)
-        .json({ message: "support_type must be 'user' or 'guide'" });
+        .json({ message: "support_type must be 'tourist' or 'guide'" });
     }
 
     // optional: check email format

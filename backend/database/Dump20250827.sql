@@ -186,7 +186,7 @@ CREATE TABLE `support_tickets` (
   `phone` varchar(20) NOT NULL,
   `subject` varchar(255) NOT NULL,
   `message` text NOT NULL,
-  `support_type` enum('user','guide') NOT NULL,
+  `support_type` enum('tourist','guide') NOT NULL,
   `status` enum('open','pending','closed','resolved') DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

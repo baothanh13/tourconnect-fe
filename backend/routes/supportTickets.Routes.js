@@ -34,8 +34,8 @@ const getSupportStats = require("../api/supportTickets/getSupportStatsController
  *                 example: "I cannot confirm my booking properly."
  *               support_type:
  *                 type: string
- *                 enum: [user, guide]
- *                 example: "user"
+ *                 enum: [tourist, guide]
+ *                 example: "tourist"
  *               email:
  *                 type: string
  *                 example: "user@gmail.com"

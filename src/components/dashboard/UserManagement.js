@@ -16,10 +16,12 @@ import "./UserManagement.css";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     role: "",
     status: "",
+    search: "",
     page: 1,
     limit: 10,
   });
@@ -43,7 +45,8 @@ const UserManagement = () => {
   const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await adminService.getAllUsers(filters);
+      // Fetch all users and filter on frontend for better search performance
+      const data = await adminService.getAllUsers({ page: 1, limit: 1000 });
       // Handle different response formats
       if (Array.isArray(data)) {
         setUsers(data);
@@ -65,11 +68,39 @@ const UserManagement = () => {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, []);
 
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
+
+  // Filter users based on search term, role, and status
+  useEffect(() => {
+    let filtered = users;
+
+    // Filter by search term (name, email)
+    if (filters.search) {
+      const searchTerm = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (user) =>
+          user.name?.toLowerCase().includes(searchTerm) ||
+          user.email?.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Filter by role
+    if (filters.role) {
+      filtered = filtered.filter((user) => user.role === filters.role);
+    }
+
+    // Filter by status
+    if (filters.status) {
+      const isActive = filters.status === "active";
+      filtered = filtered.filter((user) => user.is_active === isActive);
+    }
+
+    setFilteredUsers(filtered);
+  }, [users, filters.search, filters.role, filters.status]);
 
   const handleCreateUser = () => {
     setCreateFormData({
@@ -233,7 +264,6 @@ const UserManagement = () => {
       <div className="user-management-header">
         <div className="header-left">
           <h2>User Management</h2>
-          <p>Manage all users and their permissions</p>
         </div>
         <div className="header-right">
           <button
@@ -245,6 +275,15 @@ const UserManagement = () => {
             Create New User
           </button>
           <div className="filters">
+            <input
+              type="text"
+              placeholder="Search users by name or email..."
+              value={filters.search}
+              onChange={(e) =>
+                setFilters({ ...filters, search: e.target.value })
+              }
+              className="search-input"
+            />
             <select
               value={filters.role}
               onChange={(e) => setFilters({ ...filters, role: e.target.value })}
@@ -252,17 +291,6 @@ const UserManagement = () => {
               <option value="">All Roles</option>
               <option value="tourist">Tourist</option>
               <option value="guide">Guide</option>
-              <option value="admin">Admin</option>
-            </select>
-            <select
-              value={filters.status}
-              onChange={(e) =>
-                setFilters({ ...filters, status: e.target.value })
-              }
-            >
-              <option value="">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
             </select>
           </div>
         </div>
@@ -283,7 +311,7 @@ const UserManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <tr key={user.id}>
                 <td>{user.id}</td>
                 <td>{user.name || user.full_name}</td>

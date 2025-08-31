@@ -26,6 +26,7 @@ import {
   FaArrowDown,
   FaClock,
   FaCheckCircle,
+  FaTimes,
 } from "react-icons/fa";
 import "./DashboardStyles.css";
 import "./ModernDashboard.css";
@@ -43,7 +44,6 @@ const AdminDashboard = () => {
     pendingGuides: 0,
     activeBookings: 0,
     monthlyRevenue: 0,
-    growthPercentage: 0,
   });
   const [recentActivities, setRecentActivities] = useState([]);
   const [error, setError] = useState(null);
@@ -82,11 +82,13 @@ const AdminDashboard = () => {
           pendingGuides: Array.isArray(guidesData) ? guidesData.length : 0,
           activeBookings: Array.isArray(bookingsData) ? bookingsData.length : 0,
           monthlyRevenue: revenueData.monthly_revenue || 15650,
-          growthPercentage: revenueData.growth_percentage || 12.5,
         });
 
+        // Handle activities data structure - backend returns {activities: [...]}
+        const activitiesArray =
+          activitiesData?.activities || activitiesData || [];
         setRecentActivities(
-          Array.isArray(activitiesData.activities) ? activitiesData.activities : []
+          Array.isArray(activitiesArray) ? activitiesArray : []
         );
       } catch (error) {
         console.error("Error loading admin data:", error);
@@ -101,7 +103,6 @@ const AdminDashboard = () => {
           pendingGuides: 12,
           activeBookings: 89,
           monthlyRevenue: 15650,
-          growthPercentage: 12.5,
         });
       } finally {
         setLoading(false);
@@ -159,20 +160,51 @@ const AdminDashboard = () => {
     </div>
   );
 
-  const ActivityItem = ({ activity }) => (
-  <div className="activity-item">
-    <div className="activity-icon">
-      <FaCheckCircle />
-    </div>
-    <div className="activity-content">
-      <p className="activity-text">{activity.title}</p>
-      <p className="activity-user">{activity.description}</p>
-      <span className="activity-time">
-        <FaClock /> {new Date(activity.timestamp).toLocaleString()}
-      </span>
-    </div>
-  </div>
-);
+  const ActivityItem = ({ activity }) => {
+    // Get appropriate icon based on activity type
+    const getActivityIcon = (type, status) => {
+      switch (type) {
+        case "booking":
+          return status === "cancelled" ? <FaTimes /> : <FaCalendarCheck />;
+        case "user":
+          return <FaUsers />;
+        case "guide":
+          return <FaUserTie />;
+        default:
+          return <FaCheckCircle />;
+      }
+    };
+
+    // Get status color class
+    const getStatusClass = (status) => {
+      switch (status) {
+        case "cancelled":
+          return "status-cancelled";
+        case "confirmed":
+        case "created":
+          return "status-success";
+        case "pending":
+          return "status-warning";
+        default:
+          return "status-default";
+      }
+    };
+
+    return (
+      <div className={`activity-item ${getStatusClass(activity.status)}`}>
+        <div className="activity-icon">
+          {getActivityIcon(activity.type, activity.status)}
+        </div>
+        <div className="activity-content">
+          <p className="activity-text">{activity.title}</p>
+          <p className="activity-user">{activity.description}</p>
+          <span className="activity-time">
+            <FaClock /> {new Date(activity.timestamp).toLocaleString()}
+          </span>
+        </div>
+      </div>
+    );
+  };
 
   const renderContent = () => {
     switch (activeView) {
@@ -220,7 +252,6 @@ const AdminDashboard = () => {
                 title="Total Revenue"
                 value={`$${stats.totalRevenue.toLocaleString()}`}
                 subtitle="Lifetime earnings"
-                trend={stats.growthPercentage}
                 className="revenue"
               />
             </div>
@@ -246,7 +277,6 @@ const AdminDashboard = () => {
                 title="Monthly Revenue"
                 value={`$${stats.monthlyRevenue.toLocaleString()}`}
                 subtitle="This month"
-                trend={stats.growthPercentage}
                 className="info"
               />
             </div>

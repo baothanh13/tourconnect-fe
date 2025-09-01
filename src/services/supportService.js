@@ -49,6 +49,19 @@ export const supportService = {
     }
   },
 
+  // Get support tickets by user ID
+  async getTicketsByUserId(userId) {
+    try {
+      const response = await apiClient.get(`/supportTickets/user/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user support tickets:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch user support tickets."
+      );
+    }
+  },
+
   // Get support ticket by ID
   async getTicketById(ticketId) {
     try {
@@ -66,7 +79,10 @@ export const supportService = {
   // Create new support ticket
   async createTicket(ticketData) {
     try {
-      const response = await apiClient.post("/supportTickets", ticketData);
+      // Remove user_id from ticketData since backend will get it from auth token
+      const { user_id, ...ticketDataWithoutUserId } = ticketData;
+      
+      const response = await apiClient.post("/supportTickets", ticketDataWithoutUserId);
       return response.data;
     } catch (error) {
       console.error("Error creating support ticket:", error);

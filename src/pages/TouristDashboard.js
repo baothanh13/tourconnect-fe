@@ -365,7 +365,7 @@ const TouristDashboard = () => {
             icon={<FaHeadset />}
             label="Support Center"
             description="Get help and contact support"
-            onClick={() => navigate("/support")}
+            onClick={() => navigate("/tourist/support")}
             className="action-support"
           />
         </div>
@@ -558,12 +558,12 @@ const TouristDashboard = () => {
           </button>
           <button
             className={`nav-button ${
-              activeView === "favorites" ? "active" : ""
+              activeView === "support" ? "active" : ""
             }`}
-            onClick={() => navigate("/tourist/favorites")}
+            onClick={() => navigate("/tourist/support")}
           >
-            <FaHeart />
-            <span>Favorites</span>
+            <FaHeadset />
+            <span>Support</span>
           </button>
           <button
             className={`nav-button ${activeView === "reviews" ? "active" : ""}`}

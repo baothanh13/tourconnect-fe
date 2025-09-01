@@ -47,6 +47,7 @@ import GuideReviews from "./components/guide/GuideReviews";
 import TouristBookings from "./components/tourist/TouristBookings";
 import TouristReviews from "./components/tourist/TouristReviews";
 import TouristProfile from "./components/tourist/TouristProfile";
+import TouristSupport from "./components/tourist/TouristSupport";
 
 import FAQ from "./pages/FAQ";
 function App() {
@@ -84,6 +85,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["tourist"]}>
                 <TouristDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tourist/support"
+            element={
+              <ProtectedRoute allowedRoles={["tourist"]}>
+                <TouristSupport />
               </ProtectedRoute>
             }
           />

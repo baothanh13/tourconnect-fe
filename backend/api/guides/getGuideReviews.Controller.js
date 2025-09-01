@@ -23,14 +23,13 @@ module.exports = async (req, res) => {
         r.comment,
         r.created_at,
         r.booking_id,
-        r.tour_id,
-        t.title AS tour_title,
-        u.id   AS tourist_id,
-        u.name AS tourist_name,
-        u.avatar_url AS tourist_avatar
+        r.tour_title,
+        g.id    AS guide_id,
+        ug.name AS guide_name,
+        ug.avatar_url AS guide_avatar
       FROM reviews r
-      JOIN tours t ON t.id = r.tour_id
-      JOIN users u ON u.id = r.tourist_id
+      JOIN guides g  ON g.id = r.guide_id
+      JOIN users  ug ON ug.id = g.user_id
       WHERE r.guide_id = ?
       ORDER BY r.created_at DESC
       LIMIT ${limit} OFFSET ${offset}

@@ -24,13 +24,11 @@ module.exports = async (req, res) => {
         r.comment,
         r.created_at,
         r.booking_id,
-        r.tour_id,
-        t.title AS tour_title,
+        r.tour_title,
         g.id    AS guide_id,
         ug.name AS guide_name,
         ug.avatar_url AS guide_avatar
       FROM reviews r
-      JOIN tours  t  ON t.id = r.tour_id
       JOIN guides g  ON g.id = r.guide_id
       JOIN users  ug ON ug.id = g.user_id
       WHERE r.tourist_id = ?

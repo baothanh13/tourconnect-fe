@@ -5,11 +5,11 @@ const generateId = require('../../utils/generateId');
 // body: { booking_id, tour_id, rating (1..5), comment? }
 // Gợi ý: nếu bạn có JWT -> lấy tourist_id từ req.user.id để chống giả mạo
 module.exports = async (req, res) => {
-  const { booking_id, tour_id, rating, comment = null } = req.body || {};
+  const { booking_id, tour_title, rating, comment = null } = req.body || {};
 
   // Validate input
-  if (!booking_id || !tour_id || rating === undefined) {
-    return res.status(400).json({ message: 'booking_id, tour_id, rating are required' });
+  if (!booking_id || !tour_title || rating === undefined) {
+    return res.status(400).json({ message: 'booking_id, tour_title, rating are required' });
   }
   const r = Number(rating);
   if (Number.isNaN(r) || r < 1 || r > 5) {
@@ -36,17 +36,6 @@ module.exports = async (req, res) => {
       return res.status(400).json({ message: 'Cannot review a cancelled booking' });
     }
 
-    // Kiểm tra tour tồn tại và thuộc về guide của booking
-    const [tourRows] = await conn.execute(
-      `SELECT id, guide_id FROM tours WHERE id = ?`,
-      [tour_id]
-    );
-    if (tourRows.length === 0) {
-      return res.status(404).json({ message: 'Tour not found' });
-    }
-    if (tourRows[0].guide_id !== booking.guide_id) {
-      return res.status(400).json({ message: 'Tour does not belong to this booking’s guide' });
-    }
 
     // Chống review trùng cho cùng booking bởi cùng tourist
     const [dup] = await conn.execute(
@@ -61,9 +50,9 @@ module.exports = async (req, res) => {
     const id = generateId('review');
     await conn.execute(
       `INSERT INTO reviews
-        (id, booking_id, tourist_id, guide_id, tour_id, rating, comment)
+        (id, booking_id, tourist_id, guide_id, tour_title, rating, comment)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [id, booking_id, booking.tourist_id, booking.guide_id, tour_id, r, comment]
+      [id, booking_id, booking.tourist_id, booking.guide_id, tour_title, r, comment]
     );
 
     // Cập nhật điểm trung bình và tổng số review của guide (atomic theo công thức)

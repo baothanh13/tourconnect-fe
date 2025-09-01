@@ -2,19 +2,21 @@ const express = require("express");
 const router = express.Router();
 const createTicket = require("../api/supportTickets/createTicketController");
 const getAllTickets = require("../api/supportTickets/getAllTicketsController");
-const getTicketById = require("../api/supportTickets/getTicketByIdController");
+const getTicketsByUserId = require("../api/supportTickets/getTicketByUserIdController");
 const updateTicket = require("../api/supportTickets/updateTicketController");
 const deleteTicket = require("../api/supportTickets/deleteTicketController");
 const getSupportStats = require("../api/supportTickets/getSupportStatsController");
-
+const verifyToken = require("../middleware/verifyToken");
 
 /**
  * @swagger
  * /api/supportTickets:
  *   post:
  *     summary: Create a new support ticket
- *     description: Allows an authenticated user or guide to create a support ticket.
+ *     description: Allows an authenticated tourist or guide to create a support ticket.
  *     tags: [Support Tickets]
+ *     security:
+ *       - bearerAuth: []   # Yêu cầu JWT Bearer token
  *     requestBody:
  *       required: true
  *       content:
@@ -46,12 +48,13 @@ const getSupportStats = require("../api/supportTickets/getSupportStatsController
  *       201:
  *         description: Support ticket created successfully
  *       400:
- *         description: Missing required fields
+ *         description: Missing required fields or invalid input
+ *       401:
+ *         description: Unauthorized - missing or invalid token
  *       500:
  *         description: Internal server error
  */
-router.post("/", createTicket);
-
+router.post("/", verifyToken, createTicket);
 
 /**
  * @swagger
@@ -104,27 +107,25 @@ router.get("/stats", getSupportStats);
 
 /**
  * @swagger
- * /api/supportTickets/{id}:
+ * /api/supportTickets/{user_id}:
  *   get:
- *     summary: Get a support ticket by ID
- *     description: Fetch details of a specific support ticket using its ID.
+ *     summary: Get all support tickets of a user
+ *     description: Fetch a list of all support tickets created by a specific user.
  *     tags: [Support Tickets]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: user_id
  *         required: true
  *         schema:
  *           type: string
- *         description: The support ticket ID
+ *         description: The ID of the user whose tickets are being fetched
  *     responses:
  *       200:
- *         description: Support ticket details
- *       404:
- *         description: Ticket not found
+ *         description: List of support tickets (can be empty if user has no tickets)
  *       500:
  *         description: Internal server error
  */
-router.get("/:id", getTicketById);
+router.get("/:user_id", getTicketsByUserId);
 
 /**
  * @swagger

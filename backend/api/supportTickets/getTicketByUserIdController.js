@@ -1,6 +1,6 @@
 const { connectToDB } = require("../../config/db");
 
-module.exports = async function getTicketById(req, res) {
+module.exports = async function getTicketsByUserId(req, res) {
   try {
     const { user_id } = req.params;
     const connection = await connectToDB();
@@ -11,12 +11,12 @@ module.exports = async function getTicketById(req, res) {
     );
 
     if (!rows.length) {
-      return res.status(404).json({ message: "Ticket not found" });
+      return res.status(404).json({ message: "No tickets found for this user" });
     }
 
-    return res.json(rows[0]);
+    return res.json(rows); // trả về tất cả tickets
   } catch (err) {
-    console.error("getTicketByUserId error:", err);
+    console.error("getTicketsByUserId error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };

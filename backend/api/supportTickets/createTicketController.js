@@ -7,6 +7,8 @@ const ALLOWED_TYPES = ["tourist", "guide"];
 module.exports = async function createTicket(req, res) {
   try {
     const { subject, message, support_type, email, phone } = req.body;
+    // Lấy user_id từ middleware auth (ví dụ passport/jwt)
+    const user_id = req.user?.id; // hoặc const { user_id } = req.body;
 
     if (!subject || !message || !support_type) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -18,19 +20,23 @@ module.exports = async function createTicket(req, res) {
         .json({ message: "support_type must be 'tourist' or 'guide'" });
     }
 
+    if (!user_id) {
+      return res.status(400).json({ message: "Missing user_id" });
+    }
+
     // optional: check email format
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
     }
 
     const connection = await connectToDB();
-    const id = generateId('ticket');
+    const id = generateId("ticket");
 
     await connection.execute(
       `INSERT INTO support_tickets
-        (id, subject, message, status, support_type, email, phone)
-       VALUES (?, ?, ?, 'open', ?, ?, ?)`,
-      [id, subject, message, support_type, email || null, phone || null]
+        (id, user_id, subject, message, status, support_type, email, phone)
+       VALUES (?, ?, ?, ?, 'open', ?, ?, ?)`,
+      [id, user_id, subject, message, support_type, email || null, phone || null]
     );
 
     const [rows] = await connection.execute(

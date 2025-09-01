@@ -6,15 +6,17 @@ const getTicketById = require("../api/supportTickets/getTicketByIdController");
 const updateTicket = require("../api/supportTickets/updateTicketController");
 const deleteTicket = require("../api/supportTickets/deleteTicketController");
 const getSupportStats = require("../api/supportTickets/getSupportStatsController");
-
+const verifyToken = require("../middleware/verifyToken");
 
 /**
  * @swagger
  * /api/supportTickets:
  *   post:
  *     summary: Create a new support ticket
- *     description: Allows an authenticated user or guide to create a support ticket.
+ *     description: Allows an authenticated tourist or guide to create a support ticket.
  *     tags: [Support Tickets]
+ *     security:
+ *       - bearerAuth: []   # Yêu cầu JWT Bearer token
  *     requestBody:
  *       required: true
  *       content:
@@ -46,12 +48,13 @@ const getSupportStats = require("../api/supportTickets/getSupportStatsController
  *       201:
  *         description: Support ticket created successfully
  *       400:
- *         description: Missing required fields
+ *         description: Missing required fields or invalid input
+ *       401:
+ *         description: Unauthorized - missing or invalid token
  *       500:
  *         description: Internal server error
  */
-router.post("/", createTicket);
-
+router.post("/", verifyToken, createTicket);
 
 /**
  * @swagger

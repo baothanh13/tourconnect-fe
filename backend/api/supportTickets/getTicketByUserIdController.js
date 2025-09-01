@@ -2,12 +2,12 @@ const { connectToDB } = require("../../config/db");
 
 module.exports = async function getTicketById(req, res) {
   try {
-    const { id } = req.params;
+    const { user_id } = req.params;
     const connection = await connectToDB();
 
     const [rows] = await connection.execute(
-      `SELECT * FROM support_tickets WHERE id = ?`,
-      [id]
+      `SELECT * FROM support_tickets WHERE user_id = ?`,
+      [user_id]
     );
 
     if (!rows.length) {
@@ -16,7 +16,7 @@ module.exports = async function getTicketById(req, res) {
 
     return res.json(rows[0]);
   } catch (err) {
-    console.error("getTicketById error:", err);
+    console.error("getTicketByUserId error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };

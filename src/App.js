@@ -41,6 +41,7 @@ import GuideProfileForm from "./components/guide/GuideProfileForm";
 import GuideManagement from "./components/guide/GuideManagement";
 import FindGuideByUser from "./components/guide/FindGuideByUser";
 import GuideProfileEditor from "./components/guide/GuideProfileEditor";
+import GuideReviews from "./components/guide/GuideReviews";
 
 // Tourist components
 import TouristBookings from "./components/tourist/TouristBookings";
@@ -193,7 +194,7 @@ function App() {
             path="/guide/reviews"
             element={
               <ProtectedRoute allowedRoles={["guide"]}>
-                <div>Reviews - Coming Soon</div>
+                <GuideReviews />
               </ProtectedRoute>
             }
           />

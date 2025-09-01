@@ -369,14 +369,14 @@ const TouristReviews = () => {
               </div>
 
               <div className="form-group">
-                <label>Tour ID</label>
+                <label>Tour Title</label>
                 <input
                   type="text"
-                  value={newReview.tour_id}
+                  value={newReview.tour_title}
                   onChange={(e) =>
-                    setNewReview({ ...newReview, tour_id: e.target.value })
+                    setNewReview({ ...newReview, tour_title: e.target.value })
                   }
-                  placeholder="Enter tour ID"
+                  placeholder="Enter tour title"
                   required
                 />
               </div>

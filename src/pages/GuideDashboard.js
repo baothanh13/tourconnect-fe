@@ -353,12 +353,12 @@ const GuideDashboard = () => {
           </button>
           <button
             className={`nav-button ${
-              activeView === "earnings" ? "active" : ""
+              activeView === "reviews" ? "active" : ""
             }`}
-            onClick={() => navigate("/guide/earnings")}
+            onClick={() => navigate("/guide/reviews")}
           >
-            <FaDollarSign />
-            <span>Earnings</span>
+            <FaStar />
+            <span>My Reviews</span>
           </button>
         </div>
 

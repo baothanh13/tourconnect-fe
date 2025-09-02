@@ -13,7 +13,6 @@ const getUserById = async (req, res) => {
 
     res.json(rows[0]);
   } catch (err) {
-    console.error("Error fetching user:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 };

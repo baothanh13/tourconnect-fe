@@ -1,213 +1,159 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import Loading from "../components/Loading";
+import LoadingSpinner from "../components/LoadingSpinner";
 import GuideCard from "../components/GuideCard";
+import guidesService from "../services/guidesService";
 import "./GuidesListPage.css";
 
-// Mock guides data (no changes here)
-const mockGuides = [
-  {
-    id: 1,
-    name: "Sarah Chen",
-    location: "Ho Chi Minh City",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108755-2616b612b372?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
-    rating: 4.9,
-    reviewCount: 124,
-    pricePerHour: 25,
-    specialties: ["Food Tours", "Cultural Tours"],
-    languages: ["English", "Vietnamese"],
-    description:
-      "Passionate local guide with 5+ years experience showing the hidden gems of Saigon.",
-    isVerified: true,
-    totalTours: 156,
-    yearsExperience: 5,
-  },
-  {
-    id: 2,
-    name: "Ahmed Hassan",
-    location: "Hanoi",
-    avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
-    rating: 4.8,
-    reviewCount: 89,
-    pricePerHour: 30,
-    specialties: ["Historical Sites", "Architecture"],
-    languages: ["English", "Vietnamese", "French"],
-    description:
-      "History enthusiast ready to share the fascinating stories of Vietnam's capital.",
-    isVerified: true,
-    totalTours: 98,
-    yearsExperience: 4,
-  },
-  {
-    id: 3,
-    name: "Maria Rodriguez",
-    location: "Hoi An",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
-    rating: 4.9,
-    reviewCount: 167,
-    pricePerHour: 35,
-    specialties: ["Photography", "Art & Culture"],
-    languages: ["English", "Spanish", "Vietnamese"],
-    description:
-      "Professional photographer and cultural enthusiast who loves capturing Hoi An's magic.",
-    isVerified: true,
-    totalTours: 203,
-    yearsExperience: 6,
-  },
-  {
-    id: 4,
-    name: "Duc Nguyen",
-    location: "Da Nang",
-    avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
-    rating: 4.7,
-    reviewCount: 76,
-    pricePerHour: 28,
-    specialties: ["Adventure", "Nature"],
-    languages: ["English", "Vietnamese"],
-    description:
-      "Adventure guide specializing in Ba Na Hills and Marble Mountain expeditions.",
-    isVerified: true,
-    totalTours: 112,
-    yearsExperience: 3,
-  },
-  {
-    id: 5,
-    name: "Emily Thompson",
-    location: "Hue",
-    avatar:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
-    rating: 4.8,
-    reviewCount: 134,
-    pricePerHour: 32,
-    specialties: ["Historical Sites", "Royal Heritage"],
-    languages: ["English", "Vietnamese", "German"],
-    description:
-      "Former historian turned guide, expert in Imperial City and royal tombs.",
-    isVerified: true,
-    totalTours: 145,
-    yearsExperience: 7,
-  },
-  {
-    id: 6,
-    name: "Linh Pham",
-    location: "Nha Trang",
-    avatar:
-      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
-    rating: 4.9,
-    reviewCount: 92,
-    pricePerHour: 26,
-    specialties: ["Beach Activities", "Water Sports"],
-    languages: ["English", "Vietnamese", "Korean"],
-    description:
-      "Marine biologist turned guide, perfect for beach and underwater adventures.",
-    isVerified: true,
-    totalTours: 87,
-    yearsExperience: 4,
-  },
-];
+// Custom debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
 
 const GuidesListPage = () => {
   const [guides, setGuides] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [totalResults, setTotalResults] = useState(0);
   const [searchParams] = useSearchParams();
 
   const initialFilters = {
     location: searchParams.get("location") || "",
-    priceRange: [0, 100],
+    priceRange: [10, 100], // Set realistic default range
     languages: [],
     specialties: [],
     rating: 0,
     searchQuery: "",
+    page: 1,
+    limit: 20,
   };
 
   // State for the filters that are ACTIVELY applied to the search
   const [filters, setFilters] = useState(initialFilters);
 
-  // --- CHANGE 1: New state to hold the CURRENT form values ---
+  // --- New state to hold the CURRENT form values ---
   const [formFilters, setFormFilters] = useState(initialFilters);
 
   const [sortBy, setSortBy] = useState("rating");
 
+  // Debounce the filters to prevent excessive API calls
+  const debouncedFilters = useDebounce(filters, 500);
+
   useEffect(() => {
-    // This useEffect now ONLY runs when the active `filters` or `sortBy` change
+    // This useEffect now calls the real API when debouncedFilters or sortBy change
     const loadGuides = async () => {
       setLoading(true);
-      setTimeout(() => {
-        let filteredGuides = [...mockGuides];
+      setError(null);
 
-        // Filtering logic remains the same
-        if (filters.location) {
-          filteredGuides = filteredGuides.filter((guide) =>
-            guide.location
-              .toLowerCase()
-              .includes(filters.location.toLowerCase())
-          );
+      try {
+        // Prepare API filters
+        const apiFilters = {
+          page: debouncedFilters.page,
+          limit: debouncedFilters.limit,
+        };
+
+        // Location filter
+        if (debouncedFilters.location.trim()) {
+          apiFilters.location = debouncedFilters.location.trim();
         }
-        if (filters.searchQuery) {
-          filteredGuides = filteredGuides.filter(
+
+        // Languages filter
+        if (debouncedFilters.languages.length > 0) {
+          apiFilters.language = JSON.stringify(debouncedFilters.languages);
+        }
+
+        // Specialties filter (categories)
+        if (debouncedFilters.specialties.length > 0) {
+          apiFilters.category = JSON.stringify(debouncedFilters.specialties);
+        }
+
+        // Rating filter
+        if (debouncedFilters.rating > 0) {
+          apiFilters.minRating = debouncedFilters.rating;
+        }
+
+        // Price range filter - always send if user has modified it
+        if (
+          debouncedFilters.priceRange[0] > 0 ||
+          debouncedFilters.priceRange[1] < 100
+        ) {
+          apiFilters.priceRange = `${debouncedFilters.priceRange[0]}-${debouncedFilters.priceRange[1]}`;
+        }
+
+        // Only available guides
+        apiFilters.available = "true";
+
+        // Call the real API
+        const response = await guidesService.getGuides(apiFilters);
+
+        let guidesData = response.guides || [];
+
+        // Apply search query filter (since API doesn't have full text search yet)
+        if (debouncedFilters.searchQuery.trim()) {
+          const searchTerm = debouncedFilters.searchQuery.toLowerCase().trim();
+          guidesData = guidesData.filter(
             (guide) =>
-              guide.name
-                .toLowerCase()
-                .includes(filters.searchQuery.toLowerCase()) ||
-              guide.specialties.some((specialty) =>
-                specialty
-                  .toLowerCase()
-                  .includes(filters.searchQuery.toLowerCase())
+              guide.user_name?.toLowerCase().includes(searchTerm) ||
+              guide.description?.toLowerCase().includes(searchTerm) ||
+              (guide.specialties || []).some((specialty) =>
+                specialty.toLowerCase().includes(searchTerm)
+              ) ||
+              (guide.languages || []).some((lang) =>
+                lang.toLowerCase().includes(searchTerm)
               )
           );
         }
-        if (filters.languages.length > 0) {
-          filteredGuides = filteredGuides.filter((guide) =>
-            filters.languages.some((lang) => guide.languages.includes(lang))
-          );
-        }
-        if (filters.specialties.length > 0) {
-          filteredGuides = filteredGuides.filter((guide) =>
-            filters.specialties.some((specialty) =>
-              guide.specialties.includes(specialty)
-            )
-          );
-        }
-        if (filters.rating > 0) {
-          filteredGuides = filteredGuides.filter(
-            (guide) => guide.rating >= filters.rating
-          );
-        }
-        filteredGuides = filteredGuides.filter(
-          (guide) =>
-            guide.pricePerHour >= filters.priceRange[0] &&
-            guide.pricePerHour <= filters.priceRange[1]
-        );
 
-        // Sorting logic remains the same
+        // Apply client-side sorting (since API doesn't support all sort options)
         switch (sortBy) {
           case "rating":
-            filteredGuides.sort((a, b) => b.rating - a.rating);
+            guidesData.sort((a, b) => (b.rating || 0) - (a.rating || 0));
             break;
           case "price-low":
-            filteredGuides.sort((a, b) => a.pricePerHour - b.pricePerHour);
+            guidesData.sort(
+              (a, b) => (a.price_per_hour || 0) - (b.price_per_hour || 0)
+            );
             break;
           case "price-high":
-            filteredGuides.sort((a, b) => b.pricePerHour - a.pricePerHour);
+            guidesData.sort(
+              (a, b) => (b.price_per_hour || 0) - (a.price_per_hour || 0)
+            );
             break;
           case "reviews":
-            filteredGuides.sort((a, b) => b.reviewCount - a.reviewCount);
+            guidesData.sort(
+              (a, b) => (b.total_reviews || 0) - (a.total_reviews || 0)
+            );
             break;
           default:
             break;
         }
 
-        setGuides(filteredGuides);
+        setGuides(guidesData);
+        setTotalResults(response.total || guidesData.length);
+      } catch (err) {
+        console.error("❌ Error loading guides:", err);
+        setError(err.message || "Failed to load guides");
+        setGuides([]);
+        setTotalResults(0);
+      } finally {
         setLoading(false);
-      }, 500);
+      }
     };
 
     loadGuides();
-  }, [filters, sortBy]);
+  }, [debouncedFilters, sortBy]);
 
   // --- CHANGE 2: All input handlers now update the temporary `formFilters` state ---
   const handleFilterChange = (filterType, value) => {
@@ -269,7 +215,7 @@ const GuidesListPage = () => {
   ];
 
   if (loading) {
-    return <Loading />;
+    return <LoadingSpinner message="Finding amazing guides for you..." />;
   }
 
   return (
@@ -316,21 +262,42 @@ const GuidesListPage = () => {
           <div className="filter-group">
             <label>Price Range ($/hour)</label>
             <div className="price-range">
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={formFilters.priceRange[1]}
-                onChange={(e) =>
-                  handleFilterChange("priceRange", [
-                    0,
-                    parseInt(e.target.value),
-                  ])
-                }
-                className="price-slider"
-              />
+              <div className="price-inputs">
+                <div className="price-input-group">
+                  <label>Min: ${formFilters.priceRange[0]}</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={formFilters.priceRange[0]}
+                    onChange={(e) =>
+                      handleFilterChange("priceRange", [
+                        parseInt(e.target.value),
+                        formFilters.priceRange[1],
+                      ])
+                    }
+                    className="price-slider"
+                  />
+                </div>
+                <div className="price-input-group">
+                  <label>Max: ${formFilters.priceRange[1]}</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="200"
+                    value={formFilters.priceRange[1]}
+                    onChange={(e) =>
+                      handleFilterChange("priceRange", [
+                        formFilters.priceRange[0],
+                        parseInt(e.target.value),
+                      ])
+                    }
+                    className="price-slider"
+                  />
+                </div>
+              </div>
               <div className="price-display">
-                $0 - ${formFilters.priceRange[1]}
+                ${formFilters.priceRange[0]} - ${formFilters.priceRange[1]}
               </div>
             </div>
           </div>
@@ -398,39 +365,80 @@ const GuidesListPage = () => {
         </aside>
 
         <main className="results-panel">
-          <div className="results-header">
-            <div className="results-info">
-              <span>{guides.length} guides found</span>
-            </div>
-            <div className="sort-controls">
-              <label>Sort by:</label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="sort-select"
+          {error && (
+            <div className="error-message">
+              <h3>❌ Error Loading Guides</h3>
+              <p>{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="btn-primary"
               >
-                <option value="rating">Highest Rated</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="reviews">Most Reviews</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="guides-grid">
-            {guides.map((guide) => (
-              <GuideCard key={guide.id} guide={guide} />
-            ))}
-          </div>
-
-          {guides.length === 0 && (
-            <div className="no-results">
-              <h3>No guides found</h3>
-              <p>Try adjusting your filters or search criteria</p>
-              <button onClick={clearFilters} className="btn-primary">
-                Clear Filters
+                Try Again
               </button>
             </div>
+          )}
+
+          {!error && (
+            <>
+              <div className="results-header">
+                <div className="results-info">
+                  <span>{totalResults} guides found</span>
+                </div>
+                <div className="sort-controls">
+                  <label>Sort by:</label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="sort-select"
+                  >
+                    <option value="rating">Highest Rated</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="reviews">Most Reviews</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="guides-grid">
+                {guides.map((guide) => (
+                  <GuideCard
+                    key={guide.id}
+                    guide={{
+                      // API field mapping - keep original field names
+                      id: guide.id,
+                      user_name: guide.user_name,
+                      user_email: guide.user_email,
+                      phone: guide.phone,
+                      location: guide.location,
+                      current_location: guide.current_location,
+                      avatar_url:
+                        guide.avatar_url ||
+                        "https://images.unsplash.com/photo-1494790108755-2616b612b372?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
+                      rating: guide.rating,
+                      total_reviews: guide.total_reviews,
+                      price_per_hour: guide.price_per_hour,
+                      experience_years: guide.experience_years,
+                      description: guide.description,
+                      languages: guide.languages || [],
+                      specialties: guide.specialties || [],
+                      certificates: guide.certificates || [],
+                      is_available: guide.is_available,
+                      verification_status: guide.verification_status,
+                    }}
+                  />
+                ))}
+              </div>
+
+              {guides.length === 0 && !loading && (
+                <div className="no-results">
+                  <h3>No guides found</h3>
+                  <p>Try adjusting your filters or search criteria</p>
+                  <button onClick={clearFilters} className="btn-primary">
+                    Clear Filters
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </main>
       </div>

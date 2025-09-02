@@ -86,7 +86,6 @@ const confirmOTP = async (req, res) => {
       email: decoded.email,
     });
   } catch (error) {
-    console.error("Error:", error.message);
     return res.status(400).json({
       message: "Token has expired or is invalid!",
       error: error.message,

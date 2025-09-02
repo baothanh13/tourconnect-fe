@@ -282,7 +282,6 @@ const PaymentForm = ({
         throw new Error(result.error || "Payment failed");
       }
     } catch (error) {
-      console.error("Payment error:", error);
       setErrors({
         payment: error.message || "Payment failed. Please try again.",
       });

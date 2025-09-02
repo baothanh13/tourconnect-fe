@@ -48,7 +48,7 @@ module.exports = async (req, res) => {
         image_url,
         category,
         tour_date,
-        tour_time
+        tour_time,
       ]
     );
 

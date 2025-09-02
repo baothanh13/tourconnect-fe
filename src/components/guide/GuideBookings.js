@@ -86,7 +86,6 @@ const GuideBookings = () => {
         }
       }
     } catch (error) {
-      console.error("Error fetching bookings:", error);
     } finally {
       setLoading(false);
     }
@@ -143,8 +142,7 @@ const GuideBookings = () => {
         setSelectedBooking(null);
       }
     } catch (error) {
-      console.error("Error updating booking status:", error);
-      alert(error.message || "Failed to update booking status");
+     
     } finally {
       setActionLoading(null);
     }
@@ -157,9 +155,7 @@ const GuideBookings = () => {
       setSelectedBooking(detailedBooking.booking || booking);
       setShowModal(true);
     } catch (error) {
-      console.error("Error fetching booking details:", error);
-      setSelectedBooking(booking);
-      setShowModal(true);
+      
     }
   };
 

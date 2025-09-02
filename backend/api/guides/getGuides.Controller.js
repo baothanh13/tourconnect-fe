@@ -68,6 +68,13 @@ async function getGuides(req, res) {
 
     // Date filter (TODO)
     if (date) {
+      // Ví dụ: Kiểm tra xem guide có sẵn vào ngày cụ thể không
+      // query += ` AND g.id NOT IN (
+      //     SELECT DISTINCT g2.id FROM guides g2
+      //     JOIN bookings b ON g2.id = b.guide_id
+      //     WHERE DATE(b.tour_date) = ? AND b.status IN ('confirmed', 'pending')
+      // )`;
+      // params.push(date);
       console.log("📅 Date filter requested:", date, "(chưa implement)");
     }
 
@@ -115,9 +122,29 @@ async function getGuides(req, res) {
       totalPages: Math.ceil(total / safeLimit),
     });
   } catch (err) {
-    console.error("Error fetching guides:", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error("❌ Error fetching guides:", err);
+    return res.status(500).json({ message: "Server error" });
   }
+};
+
+// Helper to safely parse JSON fields
+function parseJSONField(value) {
+  // If value is already an array/object (MySQL JSON field), return as-is
+  if (Array.isArray(value) || (value && typeof value === "object")) {
+    return value;
+  }
+
+  // If it's a string, try to parse it
+  if (typeof value === "string") {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return [];
+    }
+  }
+
+  // Default to empty array for null/undefined
+  return [];
 }
 
 module.exports = getGuides;

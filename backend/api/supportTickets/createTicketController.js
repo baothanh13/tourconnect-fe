@@ -50,7 +50,6 @@ module.exports = async function createTicket(req, res) {
 
     return res.status(201).json(rows[0]);
   } catch (err) {
-    console.error("createTicket error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };

@@ -1,4 +1,4 @@
-const { pool } = require('../../config/db');
+const { pool } = require("../../config/db");
 
 const getBookingByGuideId = async (req, res) => {
   const guideId = req.params.id;
@@ -17,10 +17,9 @@ const getBookingByGuideId = async (req, res) => {
       bookings: results || [],
     });
   } catch (err) {
-    console.error('Get Booking Error:', err);
     return res.status(500).json({
       success: false,
-      message: 'Server error',
+      message: "Server error",
       error: err.message,
     });
   }

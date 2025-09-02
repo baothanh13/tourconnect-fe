@@ -37,7 +37,6 @@ const sendForgotPasswordOTP = async (req, res) => {
       otpToken,
     });
   } catch (err) {
-    console.error("Forgot Password Error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -63,10 +62,13 @@ const resetPassword = async (req, res) => {
       [password_hash, decoded.email]
     );
 
-    return res.status(200).json({ message: "Password has been reset successfully!" });
+    return res
+      .status(200)
+      .json({ message: "Password has been reset successfully!" });
   } catch (err) {
-    console.error("Reset Password Error:", err);
-    return res.status(400).json({ message: "Token expired or invalid!", error: err.message });
+    return res
+      .status(400)
+      .json({ message: "Token expired or invalid!", error: err.message });
   }
 };
 

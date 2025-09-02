@@ -14,6 +14,7 @@ import {
   FaList,
   FaFileAlt,
   FaCalendarAlt,
+  FaCalendarAlt,
 } from "react-icons/fa";
 import "./CreateTour.css";
 
@@ -30,6 +31,8 @@ const CreateTour = () => {
     price: 25.0,
     image_url: "",
     category: "cultural",
+    tour_date: "",
+    tour_time: "",
     tour_date: "",
     tour_time: "",
   });
@@ -108,12 +111,10 @@ const CreateTour = () => {
 
       // Create the tour
       const response = await toursService.createTour(tourData);
-      console.log("Tour created:", response);
 
       // Navigate back to tours list
       navigate("/guide/tours");
     } catch (error) {
-      console.error("Error creating tour:", error);
       setError(error.message || "Failed to create tour");
     } finally {
       setLoading(false);

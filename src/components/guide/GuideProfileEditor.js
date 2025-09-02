@@ -116,7 +116,6 @@ const GuideProfileEditor = ({
           });
         }
       } catch (error) {
-        console.error("Error loading guide data:", error);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -214,7 +213,6 @@ const GuideProfileEditor = ({
         navigate("/guide/dashboard");
       }
     } catch (error) {
-      console.error("Error saving guide profile:", error);
       setError(error.message || "Failed to save guide profile");
     } finally {
       setSaving(false);

@@ -68,7 +68,6 @@ const updateUserProfile = async (req, res) => {
 
     return res.json({ message: "Profile updated successfully" });
   } catch (err) {
-    console.error("Error updating profile:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

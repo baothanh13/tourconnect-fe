@@ -36,7 +36,6 @@ const TouristBookings = () => {
       setBookings(bookingsData);
     } catch (err) {
       setError("Failed to load bookings. Please try again.");
-      console.error("Error loading bookings:", err);
     } finally {
       setLoading(false);
     }
@@ -57,7 +56,6 @@ const TouristBookings = () => {
       alert("Booking cancelled successfully!");
     } catch (err) {
       alert("Failed to cancel booking. Please try again.");
-      console.error("Error cancelling booking:", err);
     }
   };
 

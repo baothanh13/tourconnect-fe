@@ -39,7 +39,6 @@ export const toursService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching tours:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch tours."
       );
@@ -79,7 +78,6 @@ export const toursService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching tours by guide:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch guide tours."
       );
@@ -92,7 +90,6 @@ export const toursService = {
       const response = await apiClient.get(`/${tourId}`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching tour by ID:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch tour details."
       );
@@ -105,7 +102,6 @@ export const toursService = {
       const response = await apiClient.post("/", tourData);
       return response.data;
     } catch (error) {
-      console.error("Error creating tour:", error);
       throw new Error(
         error.response?.data?.message || "Failed to create tour."
       );
@@ -118,7 +114,6 @@ export const toursService = {
       const response = await apiClient.put(`/${tourId}`, tourData);
       return response.data;
     } catch (error) {
-      console.error("Error updating tour:", error);
       throw new Error(
         error.response?.data?.message || "Failed to update tour."
       );
@@ -131,7 +126,6 @@ export const toursService = {
       const response = await apiClient.delete(`/${tourId}`);
       return response.data;
     } catch (error) {
-      console.error("Error deleting tour:", error);
       throw new Error(
         error.response?.data?.message || "Failed to delete tour."
       );
@@ -144,7 +138,6 @@ export const toursService = {
       const response = await apiClient.get(`/guide/${guideId}/stats`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching tour stats:", error);
       // Return empty stats if endpoint doesn't exist
       return {
         totalTours: 0,

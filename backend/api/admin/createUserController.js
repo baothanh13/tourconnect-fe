@@ -14,11 +14,20 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
  */
 const createUserController = async (req, res) => {
   try {
-    const { email, password, role, name, phone = null, avatar_url = null } = req.body || {};
+    const {
+      email,
+      password,
+      role,
+      name,
+      phone = null,
+      avatar_url = null,
+    } = req.body || {};
 
     // 1) Validate đầu vào
     if (!email || !password || !role || !name) {
-      return res.status(400).json({ message: "email, password, role, name are required" });
+      return res
+        .status(400)
+        .json({ message: "email, password, role, name are required" });
     }
     if (!EMAIL_REGEX.test(email)) {
       return res.status(400).json({ message: "Invalid email format" });
@@ -27,7 +36,9 @@ const createUserController = async (req, res) => {
       return res.status(400).json({ message: "Invalid role" });
     }
     if (String(password).length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters" });
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
     }
 
     const conn = await connectToDB();
@@ -64,11 +75,10 @@ const createUserController = async (req, res) => {
         role,
         name,
         phone,
-        avatar_url
-      }
+        avatar_url,
+      },
     });
   } catch (error) {
-    console.error("CreateUser (Admin) error:", error);
     // Phòng trường hợp race condition với unique email
     if (error?.code === "ER_DUP_ENTRY") {
       return res.status(409).json({ message: "Email already exists" });

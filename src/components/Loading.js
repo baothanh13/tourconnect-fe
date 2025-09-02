@@ -14,7 +14,7 @@ const Loading = ({
     large: "loading-large",
   };
 
-  const LoadingSpinner = () => (
+  const LoadingComponent = () => (
     <div className={`loading-container ${sizeClasses[size]} ${className}`}>
       <div className="loading-spinner" style={{ borderTopColor: color }}></div>
       {text && <p className="loading-text">{text}</p>}
@@ -24,12 +24,12 @@ const Loading = ({
   if (overlay) {
     return (
       <div className="loading-overlay">
-        <LoadingSpinner />
+        <LoadingComponent />
       </div>
     );
   }
 
-  return <LoadingSpinner />;
+  return <LoadingComponent />;
 };
 
 export default Loading;

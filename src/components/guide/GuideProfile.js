@@ -36,20 +36,15 @@ const GuideProfile = () => {
       setLoading(true);
       setError(null);
       if (user?.id) {
-        console.log("Fetching profile for user:", user.id);
         const profileData = await guidesService.getGuideByUserId(user.id);
-        console.log("Profile data received:", profileData);
         setProfile(profileData);
       }
     } catch (error) {
-      console.error("Error fetching profile:", error);
-
       // If guide not found (404), it means no profile exists - this is normal for new guides
       if (
         error.message?.includes("Guide not found") ||
         error.message?.includes("404")
       ) {
-        console.log("No profile found - guide needs to create profile");
         setProfile(null); // This will trigger the create form
         setError(null); // Clear error since this is expected
       } else {
@@ -144,7 +139,6 @@ const GuideProfile = () => {
     return (
       <GuideProfileForm
         onProfileCreated={async (newProfile) => {
-          console.log("Profile created:", newProfile);
           // Extract the guide object from response
           const profileData = newProfile.guide || newProfile;
           setProfile(profileData);
@@ -160,7 +154,6 @@ const GuideProfile = () => {
       <GuideProfileForm
         initialData={profile}
         onProfileCreated={async (updatedProfile) => {
-          console.log("Profile updated:", updatedProfile);
           setEditing(false);
 
           // Force a fresh fetch from server to ensure we have the latest data

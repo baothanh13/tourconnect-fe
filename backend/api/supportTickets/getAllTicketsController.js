@@ -2,7 +2,15 @@ const { connectToDB } = require("../../config/db");
 
 module.exports = async function getAllTickets(req, res) {
   try {
-    const { status, support_type, q, page = 1, limit = 20, sort = "created_at", order = "desc" } = req.query;
+    const {
+      status,
+      support_type,
+      q,
+      page = 1,
+      limit = 20,
+      sort = "created_at",
+      order = "desc",
+    } = req.query;
 
     const allowedStatus = ["open", "pending", "closed", "resolved"];
     const allowedTypes = ["user", "guide"];
@@ -20,7 +28,9 @@ module.exports = async function getAllTickets(req, res) {
       params.push(support_type);
     }
     if (q && q.trim()) {
-      where.push(`(subject LIKE ? OR message LIKE ? OR email LIKE ? OR phone LIKE ?)`);
+      where.push(
+        `(subject LIKE ? OR message LIKE ? OR email LIKE ? OR phone LIKE ?)`
+      );
       const like = `%${q.trim()}%`;
       params.push(like, like, like, like);
     }
@@ -59,7 +69,6 @@ module.exports = async function getAllTickets(req, res) {
       totalPages: limit > 0 ? Math.ceil(total / limit) : 1,
     });
   } catch (err) {
-    console.error("getAllTickets error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };

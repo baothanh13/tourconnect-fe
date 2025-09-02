@@ -1,9 +1,19 @@
-const { pool } = require('../../config/db');
+const { pool } = require("../../config/db");
 
 module.exports = async (req, res) => {
   const { guideId } = req.params;
-  const page = Math.max(Number.isInteger(parseInt(req.query.page, 10)) ? parseInt(req.query.page, 10) : 1, 1);
-  const limit = Math.max(Number.isInteger(parseInt(req.query.limit, 10)) ? parseInt(req.query.limit, 10) : 20, 1);
+  const page = Math.max(
+    Number.isInteger(parseInt(req.query.page, 10))
+      ? parseInt(req.query.page, 10)
+      : 1,
+    1
+  );
+  const limit = Math.max(
+    Number.isInteger(parseInt(req.query.limit, 10))
+      ? parseInt(req.query.limit, 10)
+      : 20,
+    1
+  );
   const offset = (page - 1) * limit;
 
   try {
@@ -42,14 +52,14 @@ module.exports = async (req, res) => {
       reviews: rows || [],
       total,
       page,
-      limit
+      limit,
     });
   } catch (err) {
-    console.error('getGuideReviews error:', err);
+    console.error("getGuideReviews error:", err);
     return res.status(500).json({
       success: false,
-      message: 'Server error',
-      error: err.message
+      message: "Server error",
+      error: err.message,
     });
   }
 };

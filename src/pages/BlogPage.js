@@ -83,15 +83,7 @@ const BlogPage = () => {
 
   return (
     <div className="blog-page">
-      <div className="blog-hero">
-        <div className="blog-hero-content">
-          <h1>Travel Blog</h1>
-          <p>
-            Discover inspiring stories, expert tips, and hidden gems from around
-            the world
-          </p>
-        </div>
-      </div>
+      <div className="blog-hero"></div>
 
       <div className="blog-container">
         <div className="blog-filters">

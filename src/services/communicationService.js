@@ -32,7 +32,6 @@ class CommunicationService {
       },
       disconnect: () => {
         this.isConnected = false;
-        console.log("Socket disconnected");
       },
     };
 

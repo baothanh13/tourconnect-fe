@@ -36,11 +36,9 @@ const GuideManagement = () => {
       } else if (data.data && Array.isArray(data.data)) {
         setGuides(data.data);
       } else {
-        console.warn("Unexpected response format:", data);
         setGuides([]);
       }
     } catch (error) {
-      console.error("Error fetching guides:", error);
       alert(
         "Failed to fetch guides. Please check your connection and try again."
       );
@@ -85,7 +83,6 @@ const GuideManagement = () => {
       alert(`Guide ${status} successfully`);
       fetchGuides(); // Refresh the list
     } catch (error) {
-      console.error("Error updating guide verification:", error);
       alert(
         `Failed to update guide verification: ${
           error.message || "Unknown error"

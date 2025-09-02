@@ -45,7 +45,6 @@ const BookingPage = () => {
         const guideData = await guidesService.getGuideById(id);
         setGuide(guideData);
       } catch (error) {
-        console.error("Error loading guide:", error);
         setError("Failed to load guide information. Please try again.");
       } finally {
         setLoading(false);
@@ -119,7 +118,6 @@ const BookingPage = () => {
 
       alert(`Booking created successfully! Booking ID: ${result.id}`);
     } catch (error) {
-      console.error("Error creating booking:", error);
       setError(error.message);
       alert(`Booking failed: ${error.message}`);
     } finally {

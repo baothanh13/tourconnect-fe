@@ -94,7 +94,7 @@ connectToDB()
       },
       tourRoutes
     );
-    
+
     app.use(
       "/api/reviews",
       (req, res, next) => {
@@ -103,7 +103,7 @@ connectToDB()
       },
       reviewRoutes
     );
-    
+
     app.use(
       "/api/tourist",
       (req, res, next) => {
@@ -114,11 +114,6 @@ connectToDB()
     );
 
     // ✅ Chỉ listen một lần
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running at http://localhost:${PORT}`);
-      console.log(`📚 Swagger: http://localhost:${PORT}/api-docs`);
-    });
+    app.listen(PORT, () => {});
   })
-  .catch((err) => {
-    console.error("❌ DB connection error:", err);
-  });
+  .catch((err) => {});

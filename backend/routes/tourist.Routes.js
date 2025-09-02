@@ -1,21 +1,28 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const addFavGuidesController = require("../api/tourist/addFavGuides.Controller");
-const getFavGuidesController = require("../api/tourist/getFavGuides.Controller");
-const removeFavGuideController = require("../api/tourist/removeFavGuides.Controller");
-const getWishlistController = require("../api/tourist/getWishlistTour.Controller");
-const addWishlistController = require("../api/tourist/addWishListTour.Controller");
-const removeWishlistController = require("../api/tourist/removeWishlistTour.Controller");
-const verifyToken = require("../middleware/verifyToken"); // Import middleware
+const getTouristStats = require("../api/tourist/getTouristStats.Controller");
+const {
+  getTouristUpcomingTours,
+} = require("../api/tourist/getUpcomingTours.Controller");
+const {
+  getTouristRecentActivities,
+} = require("../api/tourist/getTouristRecentActivities.Controller");
+
+const verifyToken = require("../middleware/verifyToken");
 
 /**
  * @swagger
- * /api/tourist/guides:
- *   post:
- *     summary: Thêm guide vào danh sách yêu thích
- *     description: Cho phép tourist thêm một guide vào danh sách yêu thích của mình. 
- *                  Nếu guide đã tồn tại thì trả về lỗi.
+ * tags:
+ *   - name: Tourist
+ *     description: Tourist dashboard and profile APIs
+ */
+
+/**
+ * @swagger
+ * /api/tourist/stats/{touristId}:
+ *   get:
+ *     summary: Get tourist dashboard statistics
  *     tags: [Tourist]
  *     security:
  *       - bearerAuth: []   # Yêu cầu JWT token
@@ -65,7 +72,7 @@ const verifyToken = require("../middleware/verifyToken"); // Import middleware
  *                   type: string
  *                   example: Server error
  */
-router.post("/guides", verifyToken, addFavGuidesController);
+//router.post("/guides", verifyToken, addFavGuidesController);
 
 /**
  * @swagger
@@ -143,7 +150,7 @@ router.post("/guides", verifyToken, addFavGuidesController);
  *       500:
  *         description: Lỗi server
  */
-router.get("/guides", verifyToken, getFavGuidesController);
+//router.get("/guides", verifyToken, getFavGuidesController);
 
 /**
  * @swagger
@@ -168,23 +175,9 @@ router.get("/guides", verifyToken, getFavGuidesController);
  *                 example: 12
  *     responses:
  *       200:
- *         description: Xóa guide thành công khỏi favourites
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Guide removed from favourites
- *       404:
- *         description: Không tìm thấy guide trong favourites
- *       401:
- *         description: Unauthorized (thiếu hoặc token sai)
- *       500:
- *         description: Lỗi server
+ *         description: List of upcoming tours
  */
-router.delete("/guides", verifyToken, removeFavGuideController);
+router.get("/upcoming-tours/:touristId", verifyToken, getTouristUpcomingTours);
 
 /**
  * @swagger
@@ -197,50 +190,40 @@ router.delete("/guides", verifyToken, removeFavGuideController);
  *       - bearerAuth: []   # yêu cầu JWT token
  *     responses:
  *       200:
- *         description: Danh sách tours trong wishlist
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 wishlistTours:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       tour_id:
- *                         type: string
- *                         example: 10
- *                       tour_name:
- *                         type: string
- *                         example: "Ha Long Bay Adventure"
- *                       location:
- *                         type: string
- *                         example: "Quang Ninh"
- *                       price:
- *                         type: number
- *                         example: 150.0
- *                       duration:
- *                         type: string
- *                         example: "3 days 2 nights"
- *                       added_at:
- *                         type: string
- *                         format: date-time
- *                         example: "2025-08-29T10:00:00Z"
- *       401:
- *         description: Unauthorized (thiếu hoặc token sai)
- *       500:
- *         description: Lỗi server
+ *         description: List of recent activities
  */
-router.get("/wishlist", verifyToken, getWishlistController);
+router.get(
+  "/recent-activities/:touristId",
+  verifyToken,
+  getTouristRecentActivities
+);
+
+/**
+ * @swagger
+ * /api/tourist/wishlist/{touristId}:
+ *   get:
+ *     summary: Get tourist's wishlist
+ *     tags: [Tourist]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: touristId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Tourist ID
+ *     responses:
+ *       200:
+ *         description: Tourist's wishlist
+ */
+//router.get("/wishlist", verifyToken, getWishlistController);
 
 /**
  * @swagger
  * /api/tourist/wishlist:
  *   post:
- *     summary: Thêm tour vào wishlist
- *     description: Cho phép tourist thêm một tour vào wishlist của mình. 
- *                  Nếu tour đã tồn tại thì trả về lỗi.
+ *     summary: Add tour to wishlist
  *     tags: [Tourist]
  *     security:
  *       - bearerAuth: []
@@ -274,7 +257,7 @@ router.get("/wishlist", verifyToken, getWishlistController);
  *       500:
  *         description: Lỗi server
  */
-router.post("/wishlist", verifyToken, addWishlistController);
+//router.post("/wishlist", verifyToken, addWishlistController);
 
 /**
  * @swagger
@@ -315,6 +298,6 @@ router.post("/wishlist", verifyToken, addWishlistController);
  *       500:
  *         description: Lỗi server
  */
-router.delete("/wishlist", verifyToken, removeWishlistController);
+//router.delete("/wishlist", verifyToken, removeWishlistController);
 
 module.exports = router;

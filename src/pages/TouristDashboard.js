@@ -86,7 +86,6 @@ const TouristDashboard = () => {
             const statsData = await touristService.getTouristStats(user.id);
             setStats(statsData);
           } catch (error) {
-            console.error("Error fetching tourist stats:", error);
             // Set default stats on error
             setStats({
               totalBookings: 0,
@@ -109,7 +108,6 @@ const TouristDashboard = () => {
           try {
             // Recent bookings will be handled by the TouristBookings component
           } catch (error) {
-            console.error("Error fetching recent bookings:", error);
           }
         };
 
@@ -118,7 +116,6 @@ const TouristDashboard = () => {
             const upcomingData = await touristService.getUpcomingTours(user.id);
             setUpcomingTours(upcomingData);
           } catch (error) {
-            console.error("Error fetching upcoming tours:", error);
             setUpcomingTours([]);
           }
         };
@@ -130,7 +127,6 @@ const TouristDashboard = () => {
             );
             setRecentActivities(activitiesData);
           } catch (error) {
-            console.error("Error fetching recent activities:", error);
             setRecentActivities([]);
           }
         };
@@ -139,7 +135,6 @@ const TouristDashboard = () => {
           try {
             // Favorite guides will be handled by a separate component
           } catch (error) {
-            console.error("Error fetching favorite guides:", error);
           }
         };
 
@@ -147,7 +142,6 @@ const TouristDashboard = () => {
           try {
             // Wishlist tours will be handled by a separate component
           } catch (error) {
-            console.error("Error fetching wishlist tours:", error);
           }
         };
 
@@ -170,7 +164,6 @@ const TouristDashboard = () => {
 
         setLoading(false);
       } catch (error) {
-        console.error("Error loading tourist data:", error);
         setError("Failed to load dashboard data. Please try again.");
         setLoading(false);
       }

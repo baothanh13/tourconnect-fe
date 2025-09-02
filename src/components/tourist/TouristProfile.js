@@ -90,7 +90,6 @@ const TouristProfile = () => {
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError("Failed to update profile. Please try again.");
-      console.error("Error updating profile:", err);
     } finally {
       setLoading(false);
     }

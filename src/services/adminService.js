@@ -24,7 +24,6 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error.response?.data || error.message);
     if (error.response?.status === 401) {
       // Token expired or invalid - redirect to login
       localStorage.removeItem("tourconnect_token");
@@ -54,7 +53,6 @@ export const adminService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching users:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch users."
       );
@@ -66,7 +64,6 @@ export const adminService = {
       const response = await apiClient.get(`/admin/users/${userId}`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching user:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch user details."
       );
@@ -81,7 +78,6 @@ export const adminService = {
       );
       return response.data;
     } catch (error) {
-      console.error("Error updating user profile:", error);
       throw new Error(
         error.response?.data?.message || "Failed to update user profile."
       );
@@ -95,7 +91,6 @@ export const adminService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Error verifying user:", error);
       throw new Error(
         error.response?.data?.message || "Failed to verify user."
       );
@@ -107,7 +102,6 @@ export const adminService = {
       const response = await apiClient.delete(`/admin/users/${userId}`);
       return response.data;
     } catch (error) {
-      console.error("Error deleting user:", error);
       throw new Error(
         error.response?.data?.message || "Failed to delete user."
       );
@@ -119,7 +113,6 @@ export const adminService = {
       const response = await apiClient.post("/admin/users", userData);
       return response.data;
     } catch (error) {
-      console.error("Error creating user:", error);
       throw new Error(
         error.response?.data?.message || "Failed to create user."
       );
@@ -145,7 +138,6 @@ export const adminService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching guides:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch guides."
       );
@@ -162,7 +154,6 @@ export const adminService = {
       );
       return response.data;
     } catch (error) {
-      console.error("Error verifying guide:", error);
       throw new Error(
         error.response?.data?.message || "Failed to verify guide."
       );
@@ -175,7 +166,6 @@ export const adminService = {
       const response = await apiClient.get("/admin/stats");
       return response.data;
     } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
       // Return mock data as fallback
       return {
         total_users: 0,
@@ -202,7 +192,6 @@ export const adminService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching bookings:", error);
       return []; // Return empty array as fallback
     }
   },
@@ -213,7 +202,6 @@ export const adminService = {
       const response = await apiClient.get(`/admin/activities?limit=${limit}`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching activities:", error);
       // Return mock activities as fallback that match the backend structure
       return {
         activities: [
@@ -250,7 +238,6 @@ export const adminService = {
         monthly_revenue: parseFloat(data.monthly_revenue || 0),
       };
     } catch (error) {
-      console.error("Error fetching revenue stats:", error);
       // Return mock revenue data
       return {
         total_revenue: 125780,
@@ -265,7 +252,6 @@ export const adminService = {
       const response = await apiClient.get(`/admin/users/${userId}`);
       return response.data;
     } catch (error) {
-      console.error(`Error fetching user ${userId}:`, error);
       return null;
     }
   },
@@ -276,7 +262,6 @@ export const adminService = {
       const response = await apiClient.get(`/guides/${guideId}`);
       return response.data;
     } catch (error) {
-      console.error(`Error fetching guide ${guideId}:`, error);
       return null;
     }
   },
@@ -327,7 +312,6 @@ export const adminService = {
 
       return bookingsWithDetails;
     } catch (error) {
-      console.error("Error fetching bookings with details:", error);
       // Fallback to regular booking fetch
       return this.getAllBookings(filters);
     }

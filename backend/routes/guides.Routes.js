@@ -17,7 +17,6 @@ const {
 } = require("../api/guides/guideDashboard.Controller");
 const verifyToken = require("../middleware/verifyToken"); // Import middleware
 
-// GET /api/guides - Danh sách guides với filter query
 /**
  * @swagger
  * /api/guides:
@@ -29,17 +28,17 @@ const verifyToken = require("../middleware/verifyToken"); // Import middleware
  *         name: location
  *         schema:
  *           type: string
- *         description: Filter by location
+ *         description: Filter by location (partial match)
  *       - in: query
- *         name: language
+ *         name: languages
  *         schema:
  *           type: string
- *         description: Filter by language
+ *         description: Filter by languages (comma-separated, e.g. "English,French")
  *       - in: query
- *         name: category
+ *         name: specialties
  *         schema:
  *           type: string
- *         description: Filter by specialty category
+ *         description: Filter by specialties (comma-separated, e.g. "Hiking,Cooking")
  *       - in: query
  *         name: minRating
  *         schema:
@@ -70,7 +69,6 @@ const verifyToken = require("../middleware/verifyToken"); // Import middleware
  *         description: List of guides
  */
 router.get("/", getGuides);
-
 /**
  * @swagger
  * /api/guides/{guideId}:

@@ -46,7 +46,6 @@ module.exports = async (req, res) => {
       SELECT
         id,
         title,
-        description,
         category,
         tour_date,
         tour_time

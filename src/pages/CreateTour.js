@@ -13,6 +13,7 @@ import {
   FaUsers,
   FaList,
   FaFileAlt,
+  FaCalendarAlt,
 } from "react-icons/fa";
 import "./CreateTour.css";
 
@@ -29,6 +30,8 @@ const CreateTour = () => {
     price: 25.0,
     image_url: "",
     category: "cultural",
+    tour_date: "",
+    tour_time: "",
   });
 
   const categories = [
@@ -46,10 +49,23 @@ const CreateTour = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "number" ? parseFloat(value) || 0 : value,
-    }));
+    
+    // Handle tour_time to ensure it has seconds (HH:MM:SS format)
+    if (name === "tour_time" && value) {
+      // If time input only provides HH:MM, add :00 for seconds
+      const timeValue = value.includes(':') && value.split(':').length === 2 
+        ? `${value}:00` 
+        : value;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: timeValue,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: type === "number" ? parseFloat(value) || 0 : value,
+      }));
+    }
   };
 
   const validateForm = () => {
@@ -59,6 +75,8 @@ const CreateTour = () => {
     if (formData.duration_hours <= 0) return "Duration must be greater than 0";
     if (formData.max_people <= 0)
       return "Max participants must be greater than 0";
+    if (!formData.tour_date.trim()) return "Tour date is required";
+    if (!formData.tour_time.trim()) return "Tour time is required";
     return null;
   };
 
@@ -248,6 +266,37 @@ const CreateTour = () => {
               step="0.01"
               required
             />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="tour_date">
+                <FaCalendarAlt /> Tour Date (YYYY-MM-DD) *
+              </label>
+              <input
+                type="date"
+                id="tour_date"
+                name="tour_date"
+                value={formData.tour_date}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="tour_time">
+                <FaClock /> Tour Time (HH:MM) *
+              </label>
+              <input
+                type="time"
+                id="tour_time"
+                name="tour_time"
+                value={formData.tour_time}
+                onChange={handleInputChange}
+                step="60"
+                required
+              />
+            </div>
           </div>
         </div>
 

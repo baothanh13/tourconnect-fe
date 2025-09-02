@@ -3,6 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toursService } from "../services/toursService";
 import { guidesService } from "../services/guidesService";
+import { bookingsService } from "../services/bookingsService";
 import Loading from "../components/Loading";
 import {
   FaArrowLeft,
@@ -10,7 +11,6 @@ import {
   FaCalendarAlt,
   FaClock,
   FaMapMarkerAlt,
-  FaPlus,
   FaExclamationTriangle
 } from "react-icons/fa";
 import "./GuideSchedule.css";
@@ -25,7 +25,7 @@ const GuideSchedule = () => {
   const [weekInfo, setWeekInfo] = useState({ start: "", end: "" });
   const [error, setError] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [autoRefresh] = useState(true);
 
   // Load guide profile and weekly tours
   useEffect(() => {
@@ -108,14 +108,6 @@ const GuideSchedule = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const formatDateForDisplay = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    });
-  };
 
   const formatTime = (timeString) => {
     if (!timeString) return "";
@@ -266,19 +258,9 @@ const GuideSchedule = () => {
               {formatCurrentDate()}
             </div>
           </div>
-          <button className="today-btn"
-            onClick={() => navigateWeek("prev")}
-          >
-            <FaArrowLeft />
-          </button>
           <button className="today-btn" onClick={goToToday}>
               Today
             </button>
-            <button className="today-btn"
-            onClick={() => navigateWeek("next")}
-          >
-            <FaArrowRight />
-          </button>
         </div>
       </div>
 
@@ -331,12 +313,11 @@ const GuideSchedule = () => {
                           <span>{formatTime(tour.tour_time)}</span>
                         </div>
                         
-                        <div className="tour-category-guide">
+                      </div>
+                      <div className="tour-category-guide">
                           <FaMapMarkerAlt />
                           <span>{tour.category}</span>
                         </div>
-                      </div>
-                      
                       </div>
                     );
                   })
@@ -350,33 +331,29 @@ const GuideSchedule = () => {
             </div>
           );
         })}
-      </div>
+     </div>
 
-      {/* Summary */}
-      <div className="schedule-summary">
+
         <div className="summary-card">
-          <h3>Week Summary</h3>
           <div className="summary-stats">
+              
+            <button className="stat-btn"
+              onClick={() => navigateWeek("prev")}
+            >
+              <FaArrowLeft />
+            </button>
             <div className="stat">
               <span className="stat-number">{weeklyTours.length}</span>
               <span className="stat-label">Total Tours</span>
-            </div>
-            <div className="stat">
-              <span className="stat-number">
-                {weeklyTours.filter(tour => tour.status === "active").length}
-              </span>
-              <span className="stat-label">Active Tours</span>
-            </div>
-            <div className="stat">
-              <span className="stat-number">
-                {weeklyTours.filter(tour => tour.status === "draft").length}
-              </span>
-              <span className="stat-label">Draft Tours</span>
+            </div> 
+              <button className="stat-btn"
+                  onClick={() => navigateWeek("next")}
+                >
+                <FaArrowRight />
+              </button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
   );
 };
 

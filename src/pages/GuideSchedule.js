@@ -11,13 +11,7 @@ import {
   FaClock,
   FaMapMarkerAlt,
   FaPlus,
-  FaEdit,
-  FaTrash,
-  FaEye,
-  FaSpinner,
-  FaExclamationTriangle,
-  FaCheckCircle,
-  FaTimes,
+  FaExclamationTriangle
 } from "react-icons/fa";
 import "./GuideSchedule.css";
 
@@ -250,10 +244,10 @@ const GuideSchedule = () => {
       <div className="schedule-header">
         <div className="header-left">
           <button
-            className="back-btn"
+            className="back-btn-guide"
             onClick={() => navigate("/guide/dashboard")}
           >
-            <FaArrowLeft />
+            <FaArrowLeft style={{ marginRight: "8px" }}/>
             Back to Dashboard
           </button>
           <div className="header-title">
@@ -272,67 +266,23 @@ const GuideSchedule = () => {
               {formatCurrentDate()}
             </div>
           </div>
-          <button
-            className="btn-primary"
-            onClick={() => navigate("/guide/tours/new")}
-          >
-            <FaPlus />
-            Create New Tour
-          </button>
-        </div>
-      </div>
-
-      {/* Week Navigation */}
-      <div className="week-navigation">
-        <div className="week-controls">
-          <button
-            className="nav-btn"
+          <button className="today-btn"
             onClick={() => navigateWeek("prev")}
           >
             <FaArrowLeft />
           </button>
-          
-          <div className="week-info">
-            <h2>
-              {weekInfo.start && weekInfo.end
-                ? `${formatDateForDisplay(weekInfo.start)} - ${formatDateForDisplay(weekInfo.end)}`
-                : (() => {
-                    // Fallback: calculate week from currentDate
-                    const startDate = new Date(currentDate);
-                    const dayOfWeek = startDate.getDay();
-                    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-                    startDate.setDate(startDate.getDate() + diffToMonday);
-                    
-                    const endDate = new Date(startDate);
-                    endDate.setDate(startDate.getDate() + 6);
-                    
-                    return `${formatDateForDisplay(formatDateForAPI(startDate))} - ${formatDateForDisplay(formatDateForAPI(endDate))}`;
-                  })()}
-            </h2>
-            <button className="today-btn" onClick={goToToday}>
+          <button className="today-btn" onClick={goToToday}>
               Today
             </button>
-            <div className="auto-refresh-toggle">
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={autoRefresh}
-                  onChange={(e) => setAutoRefresh(e.target.checked)}
-                />
-                <span className="slider"></span>
-              </label>
-              <span className="toggle-label">Auto-refresh</span>
-            </div>
-          </div>
-          
-          <button
-            className="nav-btn"
+            <button className="today-btn"
             onClick={() => navigateWeek("next")}
           >
             <FaArrowRight />
           </button>
         </div>
       </div>
+
+    
 
       {/* Error Message */}
       {error && (
@@ -369,22 +319,19 @@ const GuideSchedule = () => {
                     return (
                       <div 
                         key={tour.id} 
-                        className={`tour-card ${getStatusColor(tour.status)} ${isHappening ? 'tour-happening' : ''} ${isUpcoming ? 'tour-upcoming' : ''}`}
+                        className={`tour-card-guide ${getStatusColor(tour.status)} ${isHappening ? 'tour-happening' : ''} ${isUpcoming ? 'tour-upcoming' : ''}`}
                       >
-                        <div className="tour-header">
-                          <h4 className="tour-title">{tour.title}</h4>
-                          <div className="tour-actions">
-              
-                          </div>
+                        <div className="tour-header-guide">
+                          <h4 className="tour-title-guide">{tour.title}</h4>
                         </div>
                       
-                      <div className="tour-details">
-                        <div className="tour-time">
+                      <div className="tour-details-guide">
+                        <div className="tour-time-guide">
                           <FaClock />
                           <span>{formatTime(tour.tour_time)}</span>
                         </div>
                         
-                        <div className="tour-category">
+                        <div className="tour-category-guide">
                           <FaMapMarkerAlt />
                           <span>{tour.category}</span>
                         </div>

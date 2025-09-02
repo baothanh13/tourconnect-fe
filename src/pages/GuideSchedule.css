@@ -49,22 +49,18 @@
   flex-shrink: 0;
 }
 
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #f8f9fa;
+.back-btn-guide {
+  background: var(--success);
+  color: white;
   border: none;
-  border-radius: 8px;
-  padding: 8px 14px;
-  color: var(--muted);
-  font-size: 14px;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 20px;
   cursor: pointer;
-  white-space: nowrap;
   transition: all 0.3s ease;
 }
-.back-btn:hover { background: #e9ecef; color: var(--muted-2); }
-.back-btn:focus { outline: 3px solid var(--primary); outline-offset: 2px; }
+.back-btn-guide:hover { background: #e9ecef; color: var(--muted-2); }
+.back-btn-guide:focus { outline: 3px solid var(--primary); outline-offset: 2px; }
 
 .header-title {
   display: flex;
@@ -157,12 +153,10 @@
 }
 
 .nav-btn {
-  background: #f8f9fa;
+  background: #17e87c;
   border: none;
   border-radius: 50%;
   width: 40px; height: 40px;
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
   color: var(--muted);
   cursor: pointer;
@@ -184,7 +178,7 @@
   border: none;
   border-radius: 6px;
   padding: 6px 12px;
-  font-size: 12px;
+  font-size: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -290,33 +284,35 @@ input:checked + .slider::before { transform: translateX(20px); }
    Tour card (CỐ ĐỊNH KÍCH THƯỚC)
    =============================== */
 
-.tour-card {
+.tour-card-guide {
   flex: 0 0 auto;
-  height: 180px;             /* chỉnh theo ý: 160–220px */
+  min-height: 130px;                /* gọn hơn như ảnh */
+  max-height: 180px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
 
-  background: white;
-  border-radius: 8px;
-  padding: 12px;
-  border-left: 4px solid #dee2e6;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  background: #eef4ff;             /* xanh rất nhạt */
+  border-radius: 10px;
+  padding: 10px 12px;
+  border-left: 3px solid #2f80ed;  /* viền xanh dương */
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+  transition: transform .2s ease, box-shadow .2s ease;
 }
-.tour-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); }
 
-.tour-card.status-active { border-left-color: var(--success); }
-.tour-card.status-draft { border-left-color: var(--warning); }
-.tour-card.status-completed { border-left-color: #6c757d; }
-.tour-card.status-default { border-left-color: #dee2e6; }
 
-.tour-card.tour-happening {
+.tour-card-guide.status-active { border-left-color: var(--success); }
+.tour-card-guide.status-draft { border-left-color: var(--warning); }
+.tour-card-guide.status-completed { border-left-color: #6c757d; }
+.tour-card-guide.status-default { border-left-color: #dee2e6; }
+
+.tour-card-guide.tour-happening {
   border-left-color: var(--danger);
   background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
   animation: pulse 2s infinite;
 }
-.tour-card.tour-upcoming {
+.tour-card-guide.tour-upcoming {
   border-left-color: var(--info);
   background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
 }
@@ -327,7 +323,7 @@ input:checked + .slider::before { transform: translateX(20px); }
   100% { box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2); }
 }
 
-.tour-header {
+.tour-header-guide {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -355,11 +351,11 @@ input:checked + .slider::before { transform: translateX(20px); }
 @keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
 
 /* Title dài → xuống dòng, clamp 2 dòng, không lấn layout */
-.tour-title {
+.tour-title-guide {
   margin: 0;
-  font-size: 14px;
-  font-weight: 700;
-  color: #2c3e50;
+  font-size: 13px;                  /* nhỏ gọn */
+  font-weight: 5000;
+  color: #0a0a0a;                   /* xanh ngọc giống ảnh */
 
   white-space: normal;
   overflow-wrap: anywhere;
@@ -367,37 +363,27 @@ input:checked + .slider::before { transform: translateX(20px); }
 
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 /* Nội dung phần dưới chiếm phần còn lại, không đẩy card cao lên */
-.tour-details {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: hidden; /* hoặc overflow: auto; nếu muốn cuộn phần details */
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
 
-.tour-time, .tour-category {
+
+.tour-time-guide, .tour-category-guide {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: var(--muted);
+  color: #183b56;                    /* chữ đậm vừa phải */
   flex-wrap: wrap;
 }
 .tour-time svg, .tour-category svg { font-size: 10px; }
 
-.tour-description {
-  font-size: 11px;
-  color: var(--muted);
-  line-height: 1.4;
-  overflow: auto; /* cuộn nếu mô tả dài */
-}
+
+
 
 /* ===============================
    Empty Day

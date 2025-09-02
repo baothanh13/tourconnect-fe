@@ -33,7 +33,7 @@ const TouristSupport = () => {
   const [newTicket, setNewTicket] = useState({
     subject: "",
     message: "",
-    support_type: "tourist",
+    support_type: user?.role === "guide" ? "guide" : "tourist",
     email: "",
     phone: "",
   });
@@ -70,7 +70,7 @@ const TouristSupport = () => {
       setNewTicket({
         subject: "",
         message: "",
-        support_type: "tourist",
+        support_type: user?.role === "guide" ? "guide" : "tourist",
         email: "",
         phone: "",
       });
@@ -163,7 +163,7 @@ const TouristSupport = () => {
       <div className="page-header">
         <button
           className="back-button"
-          onClick={() => navigate("/tourist/dashboard")}
+          onClick={() => navigate(user?.role === "guide" ? "/guide/dashboard" : "/tourist/dashboard")}
         >
           <FaArrowLeft />
         </button>

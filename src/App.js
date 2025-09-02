@@ -98,6 +98,16 @@ function App() {
             }
           />
 
+          {/* Guide Support (reuse TouristSupport UI, guide role) */}
+          <Route
+            path="/guide/support"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <TouristSupport />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Tourist Routes */}
           <Route
             path="/tourist/bookings"

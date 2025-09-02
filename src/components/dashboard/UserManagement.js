@@ -55,11 +55,9 @@ const UserManagement = () => {
       } else if (data.data && Array.isArray(data.data)) {
         setUsers(data.data);
       } else {
-        console.warn("Unexpected response format:", data);
         setUsers([]);
       }
     } catch (error) {
-      console.error("Error fetching users:", error);
       // Show user-friendly error message
       alert(
         "Failed to fetch users. Please check your connection and try again."
@@ -126,19 +124,11 @@ const UserManagement = () => {
         return;
       }
 
-      console.log("Creating new user:", createFormData);
       const result = await adminService.createUser(createFormData);
-      console.log("Create user result:", result);
       alert("User created successfully!");
       setShowCreateModal(false);
       fetchUsers(); // Refresh the list
     } catch (error) {
-      console.error("Error creating user:", error);
-      console.error("Error details:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
       alert("Failed to create user: " + (error.message || "Unknown error"));
     }
   };
@@ -154,22 +144,14 @@ const UserManagement = () => {
 
   const handleUpdateProfile = async () => {
     try {
-      console.log(`Updating profile for user ${selectedUser.id}`, editFormData);
       const result = await adminService.updateUserProfile(
         selectedUser.id,
         editFormData
       );
-      console.log("Update result:", result);
       alert("User profile updated successfully!");
       setShowEditModal(false);
       fetchUsers(); // Refresh the list
     } catch (error) {
-      console.error("Error updating user profile:", error);
-      console.error("Error details:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
       alert(
         "Failed to update user profile: " + (error.message || "Unknown error")
       );
@@ -184,23 +166,13 @@ const UserManagement = () => {
       }
 
       const newStatus = currentVerified ? "rejected" : "verified";
-      console.log(
-        `Updating guide verification for user ${userId} to ${newStatus}`
-      );
 
       // Call the guide verification API
       const result = await adminService.verifyGuide(userId, newStatus);
-      console.log("Guide verification result:", result);
       alert(`Guide ${newStatus} successfully!`);
 
       fetchUsers(); // Refresh the list
     } catch (error) {
-      console.error("Error updating guide verification:", error);
-      console.error("Error details:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
       alert(
         "Failed to update guide verification: " +
           (error.message || "Unknown error")
@@ -210,12 +182,10 @@ const UserManagement = () => {
 
   const handleStatusUpdate = async (userId, newStatus) => {
     try {
-      console.log(`Updating user ${userId} status to ${newStatus}`);
       // Use updateUserProfile to update user status
       const result = await adminService.updateUserProfile(userId, {
         is_active: newStatus === "active" ? 1 : 0,
       });
-      console.log("Status update result:", result);
       alert(`User status updated to ${newStatus} successfully!`);
 
       // Close the modal if it's open
@@ -225,12 +195,7 @@ const UserManagement = () => {
 
       fetchUsers(); // Refresh the list
     } catch (error) {
-      console.error("Error updating user status:", error);
-      console.error("Error details:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
+   
       alert(
         "Failed to update user status: " + (error.message || "Unknown error")
       );
@@ -244,8 +209,7 @@ const UserManagement = () => {
         alert("User deleted successfully");
         fetchUsers(); // Refresh the list
       } catch (error) {
-        console.error("Error deleting user:", error);
-        alert("Failed to delete user");
+        
       }
     }
   };

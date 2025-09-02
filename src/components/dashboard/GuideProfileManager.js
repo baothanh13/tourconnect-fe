@@ -39,7 +39,6 @@ const GuideProfileManager = () => {
           setGuideBookings(bookings.bookings || []);
         }
       } catch (error) {
-        console.error("Error fetching guide data:", error);
         setError(error.message);
       } finally {
         setLoading(false);

@@ -41,7 +41,6 @@ const FindGuideByUser = () => {
       setGuideProfile(guide);
       setView("view");
     } catch (error) {
-      console.error("Error finding guide by user ID:", error);
       if (error.message.includes("not found")) {
         setError(`No guide profile found for User ID: ${userId}`);
         setGuideProfile(null);

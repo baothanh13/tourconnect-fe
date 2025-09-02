@@ -17,9 +17,7 @@ class TouristService {
           `/reviews/tourist/${touristId}`
         );
         reviews = reviewsResponse.reviews || [];
-      } catch (reviewError) {
-        console.warn("Reviews endpoint not available:", reviewError);
-      }
+      } catch (reviewError) {}
 
       // Calculate stats from real data
       const now = new Date();
@@ -79,33 +77,26 @@ class TouristService {
         growthPercentage: 0, // Will be calculated with historical data
       };
     } catch (error) {
-      console.error("Error fetching tourist stats:", error);
-
       // Return default stats on error
       if (
         error.message.includes("403") ||
         error.message.includes("401") ||
         error.message.includes("token")
-      ) {
-        console.warn(
-          "Authentication issue when fetching stats, returning defaults"
-        );
-      }
-
-      return {
-        totalBookings: 0,
-        completedTours: 0,
-        upcomingTours: 0,
-        totalSpent: 0,
-        favoriteGuides: 0,
-        savedWishlist: 0,
-        averageRating: 0,
-        totalReviews: 0,
-        membershipsLevel: "Beginner Explorer",
-        rewardPoints: 0,
-        monthlySpent: 0,
-        growthPercentage: 0,
-      };
+      )
+        return {
+          totalBookings: 0,
+          completedTours: 0,
+          upcomingTours: 0,
+          totalSpent: 0,
+          favoriteGuides: 0,
+          savedWishlist: 0,
+          averageRating: 0,
+          totalReviews: 0,
+          membershipsLevel: "Beginner Explorer",
+          rewardPoints: 0,
+          monthlySpent: 0,
+          growthPercentage: 0,
+        };
     }
   }
 
@@ -151,7 +142,6 @@ class TouristService {
               };
             }
           } catch (err) {
-            console.warn(`Failed to enrich booking ${booking.id}:`, err);
             return {
               ...booking,
               tourTitle: booking.tour_title || "Unknown Tour",
@@ -164,17 +154,12 @@ class TouristService {
 
       return enrichedBookings;
     } catch (error) {
-      console.error("Error fetching tourist bookings:", error);
-
       // Return empty array instead of throwing for auth errors
       if (
         error.message.includes("403") ||
         error.message.includes("401") ||
         error.message.includes("token")
       ) {
-        console.warn(
-          "Authentication issue when fetching bookings, returning empty array"
-        );
         return [];
       }
 
@@ -184,6 +169,17 @@ class TouristService {
 
   // Get upcoming tours
   async getUpcomingTours(touristId) {
+    try {
+      // Try new backend API first
+      const response = await apiService.get(
+        `/tourist/upcoming-tours/${touristId}`
+      );
+      if (response.success) {
+        return response.upcomingTours || [];
+      }
+    } catch (error) {}
+
+    // Fallback to old method
     try {
       const bookings = await this.getTouristBookings(touristId);
 
@@ -199,13 +195,23 @@ class TouristService {
         (a, b) => new Date(a.booking_date) - new Date(b.booking_date)
       );
     } catch (error) {
-      console.error("Error fetching upcoming tours:", error);
       throw error;
     }
   }
 
   // Get recent activities
   async getRecentActivities(touristId) {
+    try {
+      // Try new backend API first
+      const response = await apiService.get(
+        `/tourist/recent-activities/${touristId}`
+      );
+      if (response.success) {
+        return response.activities || [];
+      }
+    } catch (error) {}
+
+    // Fallback to old method
     try {
       const [bookings, reviews] = await Promise.all([
         this.getTouristBookings(touristId),
@@ -245,7 +251,6 @@ class TouristService {
         .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
         .slice(0, 10);
     } catch (error) {
-      console.error("Error fetching recent activities:", error);
       throw error;
     }
   }
@@ -259,7 +264,6 @@ class TouristService {
       );
       return response.reviews || [];
     } catch (error) {
-      console.error("Error fetching tourist reviews:", error);
       throw error;
     }
   }
@@ -316,7 +320,6 @@ class TouristService {
 
       return favoriteGuides;
     } catch (error) {
-      console.error("Error fetching favorite guides:", error);
       throw error;
     }
   }
@@ -330,7 +333,6 @@ class TouristService {
       });
       return response.tours || [];
     } catch (error) {
-      console.error("Error fetching available tours:", error);
       throw error;
     }
   }
@@ -349,7 +351,6 @@ class TouristService {
       const response = await apiService.post("/bookings", bookingData);
       return response;
     } catch (error) {
-      console.error("Error creating booking:", error);
       throw error;
     }
   }
@@ -363,7 +364,6 @@ class TouristService {
       );
       return response;
     } catch (error) {
-      console.error("Error updating booking:", error);
       throw error;
     }
   }
@@ -376,7 +376,6 @@ class TouristService {
       });
       return response;
     } catch (error) {
-      console.error("Error cancelling booking:", error);
       throw error;
     }
   }
@@ -387,7 +386,6 @@ class TouristService {
       const response = await apiService.post("/reviews", reviewData);
       return response;
     } catch (error) {
-      console.error("Error creating review:", error);
       throw error;
     }
   }
@@ -398,7 +396,6 @@ class TouristService {
       const response = await apiService.put(`/reviews/${reviewId}`, reviewData);
       return response;
     } catch (error) {
-      console.error("Error updating review:", error);
       throw error;
     }
   }
@@ -409,7 +406,6 @@ class TouristService {
       const response = await apiService.delete(`/reviews/${reviewId}`);
       return response;
     } catch (error) {
-      console.error("Error deleting review:", error);
       throw error;
     }
   }

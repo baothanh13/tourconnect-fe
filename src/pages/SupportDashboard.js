@@ -136,7 +136,6 @@ const SupportDashboard = () => {
 
       setLoading(false);
     } catch (error) {
-      console.error("Error loading support data:", error);
       setError("Failed to load dashboard data. Please try again.");
       
       // Fallback to mock data if API fails

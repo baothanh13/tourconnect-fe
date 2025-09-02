@@ -1,10 +1,10 @@
-const { pool } = require('../../config/db');
+const { pool } = require("../../config/db");
 
 // GET /api/tours/guide/:guideId?page=1&limit=20
 const getToursByGuide = async (req, res) => {
   const guideId = req.params.guideId; // varchar, giữ nguyên string
-  const page = Math.max(parseInt(req.query.page || '1', 10), 1);
-  const limit = Math.max(parseInt(req.query.limit || '20', 10), 1);
+  const page = Math.max(parseInt(req.query.page || "1", 10), 1);
+  const limit = Math.max(parseInt(req.query.limit || "20", 10), 1);
   const offset = (page - 1) * limit;
 
   try {
@@ -36,10 +36,10 @@ const getToursByGuide = async (req, res) => {
       limit,
     });
   } catch (err) {
-    console.error('getToursByGuide error:', err);
+    console.error("getToursByGuide error:", err);
     return res.status(500).json({
       success: false,
-      message: 'Server error',
+      message: "Server error",
       error: err.message,
     });
   }

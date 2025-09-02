@@ -18,12 +18,9 @@ const pool = mysql.createPool(config);
 async function connectToDB() {
   try {
     const connection = await pool.getConnection();
-    console.log("Connected to MySQL");
     connection.release(); // Always release the connection back to pool
     return pool; // Return the pool for queries
-  } catch (err) {
-    console.error("Database connection failed: ", err);
-  }
+  } catch (err) {}
 }
 
 // Export the pool directly for queries

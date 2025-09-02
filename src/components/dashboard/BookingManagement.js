@@ -42,7 +42,6 @@ const BookingManagement = () => {
       } else if (data.data && Array.isArray(data.data)) {
         bookingsData = data.data;
       } else {
-        console.warn("Unexpected response format:", data);
         bookingsData = [];
       }
 
@@ -66,7 +65,6 @@ const BookingManagement = () => {
       setAllBookings(enhancedBookings);
       setFilteredBookings(enhancedBookings); // Initially show all bookings
     } catch (error) {
-      console.error("Error fetching bookings:", error);
       alert("Failed to fetch bookings. Please check your connection.");
       setAllBookings([]);
       setFilteredBookings([]);

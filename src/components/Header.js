@@ -33,6 +33,7 @@ const Header = ({ toggleSidebar }) => {
 
       <nav className="nav-menu">
         <Link to="/guides">Find Guides</Link>
+        <Link to="/tours">Tours</Link>
         <Link to="/blog">Blog</Link>
         <Link to="/help">Help</Link>
         <Link to="/careers">Careers</Link>

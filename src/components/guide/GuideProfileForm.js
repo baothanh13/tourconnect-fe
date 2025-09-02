@@ -155,14 +155,12 @@ const GuideProfileForm = ({ onProfileCreated, initialData, onCancel }) => {
           const freshData = await guidesService.getGuideByUserId(user.id);
           onProfileCreated(freshData);
         } catch (fetchError) {
-          console.error("Error fetching fresh profile data:", fetchError);
           onProfileCreated(response);
         }
       } else {
         navigate("/guide/dashboard");
       }
     } catch (error) {
-      console.error("Error saving guide profile:", error);
       setError(error.message || "Failed to create guide profile");
     } finally {
       setLoading(false);

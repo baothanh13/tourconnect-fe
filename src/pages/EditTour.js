@@ -10,6 +10,7 @@ import {
   FaUsers,
   FaList,
   FaFileAlt,
+  FaCalendarAlt,
 } from "react-icons/fa";
 import Loading from "../components/Loading";
 import "./CreateTour.css";
@@ -28,6 +29,8 @@ const EditTour = () => {
     price: 25.0,
     image_url: "",
     category: "cultural",
+    tour_date: "",
+    tour_time: "",
   });
 
   const categories = [
@@ -46,9 +49,7 @@ const EditTour = () => {
   const loadTour = async () => {
     try {
       setLoading(true);
-      console.log("Loading tour with ID:", tourId);
       const tourData = await toursService.getTourById(tourId);
-      console.log("Received tour data:", tourData);
       setFormData({
         title: tourData.title || "",
         description: tourData.description || "",
@@ -57,9 +58,10 @@ const EditTour = () => {
         price: tourData.price || 25.0,
         image_url: tourData.image_url || "",
         category: tourData.category || "cultural",
+        tour_date: tourData.tour_date || "",
+        tour_time: tourData.tour_time ? tourData.tour_time.substring(0, 5) : "",
       });
     } catch (error) {
-      console.error("Error in loadTour:", error);
       setError("Failed to load tour details");
     } finally {
       setLoading(false);
@@ -260,6 +262,35 @@ const EditTour = () => {
               step="0.01"
               required
             />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="tour_date">
+                <FaCalendarAlt /> Tour Date
+              </label>
+              <input
+                type="date"
+                id="tour_date"
+                name="tour_date"
+                value={formData.tour_date}
+                onChange={handleInputChange}
+                min={new Date().toISOString().split("T")[0]}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="tour_time">
+                <FaClock /> Tour Time
+              </label>
+              <input
+                type="time"
+                id="tour_time"
+                name="tour_time"
+                value={formData.tour_time}
+                onChange={handleInputChange}
+              />
+            </div>
           </div>
         </div>
 

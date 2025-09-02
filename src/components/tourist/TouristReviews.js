@@ -42,7 +42,6 @@ const TouristReviews = () => {
       setReviews(reviewsData);
     } catch (err) {
       setError("Failed to load reviews. Please try again.");
-      console.error("Error loading reviews:", err);
     } finally {
       setLoading(false);
     }
@@ -54,10 +53,10 @@ const TouristReviews = () => {
 
   const handleCreateReview = async (e) => {
     e.preventDefault();
-      try {
-        const reviewData = {
-        user_id: user.id,   // lấy id từ token hoặc state user
-        ...newReview,       // spread toàn bộ dữ liệu review nhập form
+    try {
+      const reviewData = {
+        user_id: user.id, // lấy id từ token hoặc state user
+        ...newReview, // spread toàn bộ dữ liệu review nhập form
       };
 
       await touristService.createReview(reviewData); // chỉ truyền 1 object
@@ -71,7 +70,6 @@ const TouristReviews = () => {
       loadReviews();
     } catch (err) {
       setError("Failed to create review. Please try again.");
-      console.error("Error creating review:", err);
     }
   };
 
@@ -87,7 +85,6 @@ const TouristReviews = () => {
       loadReviews();
     } catch (err) {
       setError("Failed to update review. Please try again.");
-      console.error("Error updating review:", err);
     }
   };
 
@@ -101,7 +98,6 @@ const TouristReviews = () => {
       loadReviews();
     } catch (err) {
       setError("Failed to delete review. Please try again.");
-      console.error("Error deleting review:", err);
     }
   };
 

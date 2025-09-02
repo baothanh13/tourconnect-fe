@@ -11,6 +11,7 @@ import RegisterPage from "./pages/RegisterPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import VerifyOtpPage from "./pages/VerifyOtpPage";
 import GuidesListPage from "./pages/GuidesListPage";
+import ToursListPage from "./pages/ToursListPage";
 import BlogPage from "./pages/BlogPage";
 import CareersPage from "./pages/CareersPage";
 import HelpCenterPage from "./pages/HelpCenterPage";
@@ -27,13 +28,14 @@ import GuideDashboard from "./pages/GuideDashboard";
 import TouristDashboard from "./pages/TouristDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import SupportDashboard from "./pages/SupportDashboard";
+import GuideDetailPage from "./pages/GuideDetailPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Guide components
 import GuideTours from "./pages/GuideTours";
 import CreateTour from "./pages/CreateTour";
 import EditTour from "./pages/EditTour";
-import TourDetail from "./pages/TourDetail";
+import TourDetailPage from "./pages/TourDetailPage";
 import GuideBookings from "./components/guide/GuideBookings";
 import GuideEarnings from "./components/guide/GuideEarnings";
 import GuideProfile from "./components/guide/GuideProfile";
@@ -63,6 +65,8 @@ function App() {
             <Route path="forgot-password" element={<ForgotPasswordPage />} />
             <Route path="verify-otp" element={<VerifyOtpPage />} />
             <Route path="guides" element={<GuidesListPage />} />
+            <Route path="guides/:id" element={<GuideDetailPage />} />
+            <Route path="tours" element={<ToursListPage />} />
             <Route path="blog" element={<BlogPage />} />
             <Route path="faq" element={<FAQ />} />
             <Route path="help" element={<HelpCenterPage />} />
@@ -158,7 +162,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/tours/:tourId" element={<TourDetail />} />
+          <Route path="/tours/:tourId" element={<TourDetailPage />} />
           <Route
             path="/guide/bookings"
             element={

@@ -107,7 +107,6 @@ const BookTourPage = () => {
       });
       setSelectedGuide(null);
     } catch (error) {
-      console.error("Booking error:", error);
       alert("Error submitting booking. Please try again.");
     } finally {
       setLoading(false);

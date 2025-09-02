@@ -79,7 +79,9 @@ const getGuideDashboardStats = async (req, res) => {
     const previousMonth = prevMonthEarnings[0].prev_monthly_earnings || 0;
     let growthPercentage = 0;
     if (previousMonth > 0) {
-      growthPercentage = Math.round(((currentMonth - previousMonth) / previousMonth) * 100);
+      growthPercentage = Math.round(
+        ((currentMonth - previousMonth) / previousMonth) * 100
+      );
     } else if (currentMonth > 0) {
       growthPercentage = 100;
     }

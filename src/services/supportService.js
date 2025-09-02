@@ -42,7 +42,6 @@ export const supportService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching support tickets:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch support tickets."
       );
@@ -68,7 +67,6 @@ export const supportService = {
       const response = await apiClient.get(`/supportTickets/${ticketId}`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching support ticket:", error);
       throw new Error(
         error.response?.data?.message ||
           "Failed to fetch support ticket details."
@@ -85,7 +83,6 @@ export const supportService = {
       const response = await apiClient.post("/supportTickets", ticketDataWithoutUserId);
       return response.data;
     } catch (error) {
-      console.error("Error creating support ticket:", error);
       throw new Error(
         error.response?.data?.message || "Failed to create support ticket."
       );
@@ -95,10 +92,12 @@ export const supportService = {
   // Update support ticket
   async updateTicket(ticketId, updateData) {
     try {
-      const response = await apiClient.put(`/supportTickets/${ticketId}`, updateData);
+      const response = await apiClient.put(
+        `/supportTickets/${ticketId}`,
+        updateData
+      );
       return response.data;
     } catch (error) {
-      console.error("Error updating support ticket:", error);
       throw new Error(
         error.response?.data?.message || "Failed to update support ticket."
       );
@@ -111,7 +110,6 @@ export const supportService = {
       const response = await apiClient.delete(`/supportTickets/${ticketId}`);
       return response.data;
     } catch (error) {
-      console.error("Error deleting support ticket:", error);
       throw new Error(
         error.response?.data?.message || "Failed to delete support ticket."
       );
@@ -122,15 +120,14 @@ export const supportService = {
   async getSupportStats() {
     try {
       const response = await apiClient.get("/supportTickets/stats");
-      
+
       // Validate response data
       if (!response.data) {
         throw new Error("No data received from API");
       }
-      
+
       return response.data;
     } catch (error) {
-      console.error("Error fetching support stats:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch support statistics."
       );
@@ -140,10 +137,11 @@ export const supportService = {
   // Update ticket status
   async updateTicketStatus(ticketId, status) {
     try {
-      const response = await apiClient.put(`/supportTickets/${ticketId}`, { status });
+      const response = await apiClient.put(`/supportTickets/${ticketId}`, {
+        status,
+      });
       return response.data;
     } catch (error) {
-      console.error("Error updating ticket status:", error);
       throw new Error(
         error.response?.data?.message || "Failed to update ticket status."
       );
@@ -158,7 +156,6 @@ export const supportService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Error assigning staff:", error);
       throw new Error(
         error.response?.data?.message || "Failed to assign staff to ticket."
       );
@@ -174,7 +171,6 @@ export const supportService = {
       });
       return result.data;
     } catch (error) {
-      console.error("Error adding response:", error);
       throw new Error(
         error.response?.data?.message || "Failed to add response to ticket."
       );

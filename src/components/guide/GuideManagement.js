@@ -42,7 +42,6 @@ const GuideManagement = () => {
       const response = await guidesService.getGuides();
       setGuides(response.data.guides ?? response);
     } catch (error) {
-      console.error("Error loading guides:", error);
       setError("Failed to load guides");
       setGuides([]);
     } finally {
@@ -58,7 +57,6 @@ const GuideManagement = () => {
       setSelectedGuide(guide);
       setView("view");
     } catch (error) {
-      console.error("Error loading guide:", error);
       alert("Failed to load guide details");
     } finally {
       setLoading(false);
@@ -73,7 +71,6 @@ const GuideManagement = () => {
       setSelectedGuide(guide);
       setView("edit");
     } catch (error) {
-      console.error("Error loading guide:", error);
       alert("Failed to load guide details");
     } finally {
       setLoading(false);
@@ -92,7 +89,6 @@ const GuideManagement = () => {
       alert("Guide profile deleted successfully!");
       loadGuides(); // Reload the list
     } catch (error) {
-      console.error("Error deleting guide:", error);
       alert("Failed to delete guide profile");
     }
   };

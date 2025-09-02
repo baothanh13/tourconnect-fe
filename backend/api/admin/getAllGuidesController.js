@@ -1,11 +1,11 @@
 const { connectToDB } = require("../../config/db");
 
 const getAllGuides = async (req, res) => {
-    try {
-        const connection = await connectToDB();
+  try {
+    const connection = await connectToDB();
 
-        const [rows] = await connection.execute(
-            `SELECT 
+    const [rows] = await connection.execute(
+      `SELECT 
                 g.id,
                 u.name AS user_name, 
                 u.email AS user_email,
@@ -24,16 +24,15 @@ const getAllGuides = async (req, res) => {
                 g.verification_status
             FROM guides g
             JOIN users u ON g.user_id = u.id`
-        );
+    );
 
-        res.status(200).json(rows);
-    } catch (err) {
-        console.error("Error fetching guides:", err);
-        res.status(500).json({ 
-            message: "Error fetching guides", 
-            error: err.message 
-        });
-    }
+    res.status(200).json(rows);
+  } catch (err) {
+    res.status(500).json({
+      message: "Error fetching guides",
+      error: err.message,
+    });
+  }
 };
 
 module.exports = getAllGuides;

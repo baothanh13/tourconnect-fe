@@ -42,7 +42,6 @@ export const guidesService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching guides:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch guides."
       );
@@ -55,7 +54,6 @@ export const guidesService = {
       const response = await apiClient.get(`/${guideId}`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching guide by ID:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch guide details."
       );
@@ -72,7 +70,6 @@ export const guidesService = {
       );
       return response.data;
     } catch (error) {
-      console.error("Error fetching guide by user ID:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch guide profile."
       );
@@ -85,7 +82,6 @@ export const guidesService = {
       const response = await apiClient.post("/", guideData);
       return response.data;
     } catch (error) {
-      console.error("Error creating guide:", error);
       throw new Error(
         error.response?.data?.message || "Failed to create guide profile."
       );
@@ -98,7 +94,6 @@ export const guidesService = {
       const response = await apiClient.put(`/${guideId}`, guideData);
       return response.data;
     } catch (error) {
-      console.error("Error updating guide:", error);
       throw new Error(
         error.response?.data?.message || "Failed to update guide profile."
       );
@@ -111,7 +106,6 @@ export const guidesService = {
       const response = await apiClient.delete(`/${guideId}`);
       return response.data;
     } catch (error) {
-      console.error("Error deleting guide:", error);
       throw new Error(
         error.response?.data?.message || "Failed to delete guide profile."
       );
@@ -139,7 +133,6 @@ export const guidesService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error searching guides:", error);
       throw new Error(error.response?.data?.message || "Search failed.");
     }
   },
@@ -161,7 +154,6 @@ export const guidesService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching all guides:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch all guides."
       );
@@ -191,7 +183,6 @@ export const guidesService = {
 
       return response.data;
     } catch (error) {
-      console.error("Error uploading guide images:", error);
       throw new Error(
         error.response?.data?.message || "Failed to upload images."
       );
@@ -206,7 +197,6 @@ export const guidesService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Error updating guide availability:", error);
       throw new Error(
         error.response?.data?.message || "Failed to update availability."
       );
@@ -217,11 +207,10 @@ export const guidesService = {
   async updateCertificateImage(userId, certificateImgUrl) {
     try {
       const response = await apiClient.put(`/certificate/${userId}`, {
-        certificate_img: certificateImgUrl
+        certificate_img: certificateImgUrl,
       });
       return response.data;
     } catch (error) {
-      console.error("Error updating certificate image:", error);
       throw new Error(
         error.response?.data?.message || "Failed to update certificate image."
       );
@@ -244,13 +233,11 @@ export const guidesService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching guide reviews:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch reviews."
       );
     }
   },
 };
-
 
 export default guidesService;

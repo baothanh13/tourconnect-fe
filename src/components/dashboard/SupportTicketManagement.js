@@ -40,7 +40,6 @@ const SupportTicketManagement = ({ onTicketUpdate = () => {} }) => {
         : [];
       setTickets(rows);
     } catch (error) {
-      console.error("Error fetching support tickets:", error);
       alert("Failed to fetch support tickets");
     } finally {
       setLoading(false);
@@ -99,7 +98,6 @@ const SupportTicketManagement = ({ onTicketUpdate = () => {} }) => {
           onTicketUpdate();
         }
       } catch (error) {
-        console.error("Error deleting ticket:", error);
         alert("Failed to delete ticket");
       }
     }
@@ -148,7 +146,7 @@ const SupportTicketManagement = ({ onTicketUpdate = () => {} }) => {
           >
             <option value="">All Status</option>
             <option value="open">Open</option>
-                         <option value="pending">Pending</option>
+            <option value="pending">Pending</option>
             <option value="resolved">Resolved</option>
             <option value="closed">Closed</option>
           </select>

@@ -36,13 +36,9 @@ export const bookingsService = {
         totalPrice: bookingData.totalPrice || 0,
       };
 
-      console.log("Sending booking data to backend:", backendBookingData);
-
       const response = await apiClient.post("/", backendBookingData);
       return response.data;
     } catch (error) {
-      console.error("Error creating booking:", error);
-      console.error("Error response:", error.response?.data);
       throw new Error(
         error.response?.data?.message || "Failed to create booking."
       );
@@ -67,10 +63,7 @@ export const bookingsService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching bookings:", error);
-      throw new Error(
-        error.response?.data?.message || "Failed to fetch bookings."
-      );
+      throw new Error();
     }
   },
   // Get booking by ID
@@ -79,7 +72,6 @@ export const bookingsService = {
       const response = await apiClient.get(`/${bookingId}`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching booking by ID:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch booking details."
       );
@@ -91,7 +83,6 @@ export const bookingsService = {
       const response = await apiClient.put(`/${bookingId}`, updateData);
       return response.data;
     } catch (error) {
-      console.error("Error updating booking:", error);
       throw new Error(
         error.response?.data?.message || "Failed to update booking."
       );
@@ -107,7 +98,6 @@ export const bookingsService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Error updating booking status:", error);
       throw new Error(
         error.response?.data?.message || "Failed to update booking status."
       );
@@ -122,7 +112,6 @@ export const bookingsService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Error cancelling booking:", error);
       throw new Error(
         error.response?.data?.message || "Failed to cancel booking."
       );
@@ -146,7 +135,6 @@ export const bookingsService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching tourist bookings:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch your bookings."
       );
@@ -170,7 +158,6 @@ export const bookingsService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching guide bookings:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch guide bookings."
       );
@@ -194,7 +181,6 @@ export const bookingsService = {
       const response = await apiClient.get(url);
       return response.data;
     } catch (error) {
-      console.error("Error fetching all bookings:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch all bookings."
       );
@@ -207,7 +193,6 @@ export const bookingsService = {
       const response = await apiClient.get("/admin/stats");
       return response.data;
     } catch (error) {
-      console.error("Error fetching booking statistics:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch booking statistics."
       );
@@ -223,7 +208,6 @@ export const bookingsService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Error rating tourist:", error);
       throw new Error(
         error.response?.data?.message || "Failed to rate tourist."
       );
@@ -239,7 +223,6 @@ export const bookingsService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Error rating guide:", error);
       throw new Error(error.response?.data?.message || "Failed to rate guide.");
     }
   },
@@ -250,7 +233,6 @@ export const bookingsService = {
       const response = await apiClient.get(`/${bookingId}/reviews`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching booking reviews:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch reviews."
       );
@@ -265,7 +247,6 @@ export const bookingsService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Error marking booking as completed:", error);
       throw new Error(
         error.response?.data?.message || "Failed to mark booking as completed."
       );

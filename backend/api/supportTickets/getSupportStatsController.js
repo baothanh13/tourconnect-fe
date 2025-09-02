@@ -4,7 +4,7 @@ module.exports = async function getSupportStats(req, res) {
   try {
     const connection = await connectToDB();
 
-    const [[open]]   = await connection.execute(
+    const [[open]] = await connection.execute(
       `SELECT COUNT(*) AS c FROM support_tickets WHERE status = 'open'`
     );
     const [[pending]] = await connection.execute(
@@ -32,7 +32,6 @@ module.exports = async function getSupportStats(req, res) {
       total_guides: totalGuides.c,
     });
   } catch (err) {
-    console.error("getSupportStats error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };

@@ -91,7 +91,6 @@ const AdminDashboard = () => {
           Array.isArray(activitiesArray) ? activitiesArray : []
         );
       } catch (error) {
-        console.error("Error loading admin data:", error);
         setError("Failed to load dashboard data. Using fallback data.");
 
         // Fallback to mock data if API fails

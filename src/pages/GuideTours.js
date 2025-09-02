@@ -18,6 +18,7 @@ import {
   FaPause,
   FaPlay,
   FaEdit,
+  FaCalendarAlt,
 } from "react-icons/fa";
 import "./GuideTours.css";
 
@@ -32,6 +33,19 @@ const GuideTours = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [deleting, setDeleting] = useState(null);
+  const [selectedTour, setSelectedTour] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  // Modal handlers
+  const handleViewDetail = (tour) => {
+    setSelectedTour(tour);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedTour(null);
+  };
 
   // Helper function to simulate status since database doesn't have status field
   const getSimulatedStatus = (tour) => {
@@ -252,8 +266,9 @@ const GuideTours = () => {
         {filteredTours.length > 0 ? (
           <div className="tours-grid">
             {filteredTours.map((tour) => (
-              <div key={tour.id} className="tour-card">
-                <div className="tour-image">
+              <div key={tour.id} className="tour-card-modern">
+                {/* Compact Image Section */}
+                <div className="tour-card-image-modern">
                   {tour.image_url ? (
                     <img
                       src={tour.image_url}
@@ -261,102 +276,74 @@ const GuideTours = () => {
                       onError={(e) => {
                         e.target.style.display = "none";
                         e.target.parentElement.querySelector(
-                          ".no-image"
+                          ".no-image-placeholder"
                         ).style.display = "flex";
                       }}
                     />
-                  ) : null}
-                  <div
-                    className="no-image"
-                    style={{ display: tour.image_url ? "none" : "flex" }}
-                  >
-                    <FaMapMarkerAlt />
-                    <span>No Image</span>
-                  </div>
-                  <div className="tour-status">
-                    <span
-                      className={`status-badge ${getStatusColor(
-                        getSimulatedStatus(tour)
-                      )}`}
-                    >
-                      {getSimulatedStatus(tour) === "active" && <FaPlay />}
-                      {getSimulatedStatus(tour) === "paused" && <FaPause />}
-                      {getSimulatedStatus(tour) === "draft" && <FaEdit />}
-                      {getSimulatedStatus(tour) === "active"
-                        ? "Active"
-                        : getSimulatedStatus(tour)}
-                    </span>
+                  ) : (
+                    <div className="no-image-placeholder">
+                      <FaMapMarkerAlt />
+                    </div>
+                  )}
+                  <div className="tour-status-badge-modern">
+                    {getSimulatedStatus(tour) === "active" ? "Active" : "Draft"}
                   </div>
                 </div>
 
-                <div className="tour-content">
-                  <div className="tour-header">
-                    <h3 className="tour-title">{tour.title}</h3>
-                    <p className="tour-description">
-                      {tour.description?.length > 120
-                        ? `${tour.description.substring(0, 120)}...`
-                        : tour.description || "No description available"}
-                    </p>
-                  </div>
+                {/* Compact Content */}
+                <div className="tour-card-content-modern">
+                  <h3 className="tour-title-modern">{tour.title}</h3>
 
-                  <div className="tour-details">
-                    <div className="detail-item">
-                      <FaDollarSign />
-                      <span className="tour-price">
-                        {formatCurrency(tour.price)}
-                      </span>
+                  <div className="tour-details-compact">
+                    <div className="detail-item-compact">
+                      <FaDollarSign className="detail-icon" />
+                      <span>${tour.price}</span>
                     </div>
-                    <div className="detail-item">
-                      <FaClock />
+                    <div className="detail-item-compact">
+                      <FaClock className="detail-icon" />
                       <span>{tour.duration_hours || 2}h</span>
                     </div>
-                    <div className="detail-item">
-                      <FaUsers />
-                      <span>Max {tour.max_people || 10}</span>
+                    <div className="detail-item-compact">
+                      <FaUsers className="detail-icon" />
+                      <span>{tour.max_people || 10}</span>
                     </div>
-                    <div className="detail-item">
-                      <span className="label">Category:</span>
+                    <div className="detail-item-compact">
+                      <FaMapMarkerAlt className="detail-icon" />
                       <span>{tour.category || "General"}</span>
                     </div>
                   </div>
-
-                  <div className="tour-stats">
-                    <span>
-                      Created: {new Date(tour.created_at).toLocaleDateString()}
-                    </span>
-                    {tour.total_bookings && (
-                      <span>{tour.total_bookings} bookings</span>
-                    )}
-                  </div>
                 </div>
 
-                <div className="tour-actions">
-                  <button
-                    className="action-btn view-btn"
-                    onClick={() => navigate(`/tours/${tour.id}`)}
-                    title="View tour details"
-                  >
-                    <FaEye />
-                    <span>View</span>
-                  </button>
-                  <button
-                    className="action-btn delete-btn"
-                    onClick={() => handleDeleteTour(tour.id)}
-                    disabled={deleting === tour.id}
-                    title="Delete tour permanently"
-                  >
-                    {deleting === tour.id ? (
-                      <>
-                        <FaSpinner className="spinner" />
-                        <span>Deleting...</span>
-                      </>
-                    ) : (
-                      <>
+                {/* Compact Footer */}
+                <div className="tour-card-footer-modern">
+                  <div className="tour-actions-modern">
+                    <button
+                      className="action-btn-compact view-btn-compact"
+                      onClick={() => handleViewDetail(tour)}
+                      title="View Details"
+                    >
+                      <FaEye />
+                    </button>
+                    <button
+                      className="action-btn-compact edit-btn-compact"
+                      onClick={() => navigate(`/guide/tours/${tour.id}/edit`)}
+                      title="Edit Tour"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      className="action-btn-compact delete-btn-compact"
+                      onClick={() => handleDeleteTour(tour.id)}
+                      disabled={deleting === tour.id}
+                      title="Delete Tour"
+                    >
+                      {deleting === tour.id ? (
+                        <FaSpinner className="spinner-icon" />
+                      ) : (
                         <FaTrash />
-                        <span>Delete</span>
-                      </>
-                    )}
-                  </button>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -388,6 +375,121 @@ const GuideTours = () => {
           </div>
         )}
       </div>
+
+      {/* Beautiful Tour Details Modal */}
+      {showModal && selectedTour && (
+        <div className="tour-modal-overlay" onClick={handleCloseModal}>
+          <div
+            className="tour-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <div className="modal-header-content">
+                <div className="modal-title-section">
+                  <h2 className="modal-title">{selectedTour.title}</h2>
+                  <span className="tour-category-badge">
+                    {selectedTour.category || "General"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-body">
+              <div className="modal-image-section">
+                <img
+                  src={selectedTour.image_url || "/api/placeholder/600/300"}
+                  alt={selectedTour.title}
+                  className="modal-tour-image"
+                />
+              </div>
+
+              <div className="modal-content-section">
+                <div className="tour-description">
+                  <h3>Description</h3>
+                  <p>
+                    {selectedTour.description || "No description available."}
+                  </p>
+                </div>
+
+                <div className="tour-details-grid">
+                  <div className="detail-card">
+                    <div className="detail-header">
+                      <FaDollarSign className="detail-icon-large" />
+                      <span className="detail-label">Price</span>
+                    </div>
+                    <div className="detail-value">${selectedTour.price}</div>
+                  </div>
+
+                  <div className="detail-card">
+                    <div className="detail-header">
+                      <FaClock className="detail-icon-large" />
+                      <span className="detail-label">Duration</span>
+                    </div>
+                    <div className="detail-value">
+                      {selectedTour.duration_hours} hours
+                    </div>
+                  </div>
+
+                  <div className="detail-card">
+                    <div className="detail-header">
+                      <FaUsers className="detail-icon-large" />
+                      <span className="detail-label">Max People</span>
+                    </div>
+                    <div className="detail-value">
+                      {selectedTour.max_people} people
+                    </div>
+                  </div>
+
+                  {selectedTour.tour_date && (
+                    <div className="detail-card">
+                      <div className="detail-header">
+                        <FaCalendarAlt className="detail-icon-large" />
+                        <span className="detail-label">Tour Date</span>
+                      </div>
+                      <div className="detail-value">
+                        {new Date(selectedTour.tour_date).toLocaleDateString()}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedTour.tour_time && (
+                    <div className="detail-card">
+                      <div className="detail-header">
+                        <FaClock className="detail-icon-large" />
+                        <span className="detail-label">Tour Time</span>
+                      </div>
+                      <div className="detail-value">
+                        {selectedTour.tour_time
+                          ? selectedTour.tour_time.substring(0, 5)
+                          : "Not set"}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="modal-actions">
+                  <button
+                    className="btn-secondary-modern"
+                    onClick={handleCloseModal}
+                  >
+                    Close
+                  </button>
+                  <button
+                    className="btn-primary-modern"
+                    onClick={() => {
+                      handleCloseModal();
+                      navigate(`/guide/tours/${selectedTour.id}/edit`);
+                    }}
+                  >
+                    <FaEdit />
+                    Edit Tour
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

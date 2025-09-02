@@ -13,6 +13,7 @@ import {
   FaUsers,
   FaList,
   FaFileAlt,
+  FaCalendarAlt,
 } from "react-icons/fa";
 import "./CreateTour.css";
 
@@ -29,6 +30,8 @@ const CreateTour = () => {
     price: 25.0,
     image_url: "",
     category: "cultural",
+    tour_date: "",
+    tour_time: "",
   });
 
   const categories = [
@@ -90,12 +93,10 @@ const CreateTour = () => {
 
       // Create the tour
       const response = await toursService.createTour(tourData);
-      console.log("Tour created:", response);
 
       // Navigate back to tours list
       navigate("/guide/tours");
     } catch (error) {
-      console.error("Error creating tour:", error);
       setError(error.message || "Failed to create tour");
     } finally {
       setLoading(false);
@@ -248,6 +249,35 @@ const CreateTour = () => {
               step="0.01"
               required
             />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="tour_date">
+                <FaCalendarAlt /> Tour Date
+              </label>
+              <input
+                type="date"
+                id="tour_date"
+                name="tour_date"
+                value={formData.tour_date}
+                onChange={handleInputChange}
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="tour_time">
+                <FaClock /> Tour Time
+              </label>
+              <input
+                type="time"
+                id="tour_time"
+                name="tour_time"
+                value={formData.tour_time}
+                onChange={handleInputChange}
+              />
+            </div>
           </div>
         </div>
 

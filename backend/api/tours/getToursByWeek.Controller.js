@@ -5,7 +5,9 @@ module.exports = async (req, res) => {
     const { date, guide_id } = req.query;
 
     if (!date || !guide_id) {
-      return res.status(400).json({ message: "Thiếu tham số date hoặc guide_id" });
+      return res
+        .status(400)
+        .json({ message: "Thiếu tham số date hoặc guide_id" });
     }
 
     // Hàm parse date an toàn, không bị lệch timezone
@@ -16,7 +18,9 @@ module.exports = async (req, res) => {
 
     const inputDate = parseDate(date);
     if (isNaN(inputDate.getTime())) {
-      return res.status(400).json({ message: "Ngày không hợp lệ (YYYY-MM-DD)" });
+      return res
+        .status(400)
+        .json({ message: "Ngày không hợp lệ (YYYY-MM-DD)" });
     }
 
     // Tính thứ Hai và Chủ Nhật trong tuần
@@ -61,14 +65,18 @@ module.exports = async (req, res) => {
     conn.release();
 
     if (rows.length === 0) {
-      console.log("⚠️ No tours found for these params!");
-      return res.status(404).json({ message: "Không có tour nào trong tuần này" });
+      return res
+        .status(404)
+        .json({ message: "Không có tour nào trong tuần này" });
     }
 
     // ✅ Format lại tour_date và tour_time
     const formattedRows = rows.map((tour) => {
       const d = new Date(tour.tour_date);
-      const formattedDate = `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}-${d.getFullYear()}`;
+      const formattedDate = `${String(d.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}-${String(d.getDate()).padStart(2, "0")}-${d.getFullYear()}`;
 
       const time = tour.tour_time ? tour.tour_time.slice(0, 5) : null; // HH:mm:ss -> HH:mm
 
@@ -82,7 +90,7 @@ module.exports = async (req, res) => {
     return res.json({
       week: { start: startDate, end: endDate },
       guide_id,
-       tours: formattedRows,
+      tours: formattedRows,
     });
   } catch (err) {
     console.error("getToursByWeek error:", err);

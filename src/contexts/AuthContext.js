@@ -104,7 +104,6 @@ export const AuthProvider = ({ children }) => {
     try {
       await usersService.logout();
     } catch (error) {
-      console.error("Logout API error:", error);
     } finally {
       setUser(null);
       setToken(null);

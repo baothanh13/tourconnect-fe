@@ -281,7 +281,7 @@ const GuideBookings = () => {
       </div>
 
       {/* Filters and Search */}
-      <div className="bookings-controls">
+      <div className="bookings-controls-guide">
         <div className="search-section">
           <label className="search-label">Search Bookings</label>
           <div className="search-input-wrapper">
@@ -295,7 +295,7 @@ const GuideBookings = () => {
           </div>
         </div>
 
-        <div className="filter-section">
+        <div className="filter-section-guide">
           <div className="filter-group">
             <label>Filter Status</label>
             <select

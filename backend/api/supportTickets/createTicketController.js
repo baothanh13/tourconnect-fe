@@ -6,9 +6,13 @@ const ALLOWED_TYPES = ["tourist", "guide"];
 
 module.exports = async function createTicket(req, res) {
   try {
-    const { subject, message, support_type, email, phone } = req.body;
-    // Lấy user_id từ middleware auth (ví dụ passport/jwt)
-    const user_id = req.user?.id; // hoặc const { user_id } = req.body;
+    const { subject, message, support_type, email, phone} = req.body;
+    const user_id = req.user?.user_id;
+    
+    // Debug logging
+    console.log("Request body:", req.body);
+    console.log("Request user:", req.user);
+    console.log("Extracted user_id:", user_id); 
 
     if (!subject || !message || !support_type) {
       return res.status(400).json({ message: "Missing required fields" });

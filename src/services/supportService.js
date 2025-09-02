@@ -52,7 +52,7 @@ export const supportService = {
   // Get support tickets by user ID
   async getTicketsByUserId(userId) {
     try {
-      const response = await apiClient.get(`/supportTickets/user/${userId}`);
+      const response = await apiClient.get(`/supportTickets/${userId}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching user support tickets:", error);
@@ -62,27 +62,37 @@ export const supportService = {
     }
   },
 
-  // Get support ticket by ID
-  async getTicketById(ticketId) {
-    try {
-      const response = await apiClient.get(`/supportTickets/${ticketId}`);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching support ticket:", error);
-      throw new Error(
-        error.response?.data?.message ||
-          "Failed to fetch support ticket details."
-      );
-    }
-  },
 
   // Create new support ticket
   async createTicket(ticketData) {
     try {
-      // Remove user_id from ticketData since backend will get it from auth token
-      const { user_id, ...ticketDataWithoutUserId } = ticketData;
+      // Get user_id from localStorage (stored user data)
+      const storedUser = localStorage.getItem("tourconnect_user");
+      let user_id = null;
       
-      const response = await apiClient.post("/supportTickets", ticketDataWithoutUserId);
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        user_id = parsedUser.user_id || parsedUser.id;
+      }
+      
+      // Debug logging
+      console.log("Stored user:", storedUser);
+      console.log("Parsed user:", storedUser ? JSON.parse(storedUser) : null);
+      console.log("Extracted user_id:", user_id);
+      
+      if (!user_id) {
+        throw new Error("User not authenticated. Please login again.");
+      }
+      
+      // Include user_id in the request data
+      const ticketDataWithUserId = {
+        ...ticketData,
+        user_id: user_id
+      };
+      
+      console.log("Sending ticket data:", ticketDataWithUserId);
+      
+      const response = await apiClient.post("/supportTickets", ticketDataWithUserId);
       return response.data;
     } catch (error) {
       console.error("Error creating support ticket:", error);

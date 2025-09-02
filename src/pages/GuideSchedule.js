@@ -373,20 +373,6 @@ const GuideSchedule = () => {
                       >
                         <div className="tour-header">
                           <h4 className="tour-title">{tour.title}</h4>
-                          <div className="tour-status-indicators">
-                            {isHappening && (
-                              <span className="status-indicator happening">
-                                <FaSpinner className="spinning" />
-                                Live
-                              </span>
-                            )}
-                            {isUpcoming && !isHappening && (
-                              <span className="status-indicator upcoming">
-                                <FaClock />
-                                Upcoming
-                              </span>
-                            )}
-                          </div>
                           <div className="tour-actions">
               
                           </div>

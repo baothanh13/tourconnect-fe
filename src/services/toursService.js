@@ -46,6 +46,23 @@ export const toursService = {
     }
   },
 
+  // Get tours by week for schedule view
+  async getToursByWeek(date, guideId) {
+    try {
+      const params = new URLSearchParams();
+      params.append("guide_id", guideId);
+      params.append("date", date);
+
+      const response = await apiClient.get(`/week?${params.toString()}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching tours by week:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch weekly tours."
+      );
+    }
+  },
+
   // Get tours by guide ID
   async getToursByGuide(guideId, filters = {}) {
     try {
@@ -139,6 +156,7 @@ export const toursService = {
       };
     }
   },
+
 };
 
 export default toursService;

@@ -24,6 +24,7 @@ import CancellationPolicyPage from "./pages/CancellationPolicyPage";
 import AffiliatesPage from "./pages/AffiliatesPage";
 import PartnershipsPage from "./pages/PartnershipsPage";
 import GuideDashboard from "./pages/GuideDashboard";
+import GuideSchedule from "./pages/GuideSchedule";
 import TouristDashboard from "./pages/TouristDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import SupportDashboard from "./pages/SupportDashboard";
@@ -204,6 +205,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["guide"]}>
                 <GuideReviews />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/guide/schedule"
+            element={
+              <ProtectedRoute allowedRoles={["guide"]}>
+                <GuideSchedule />
               </ProtectedRoute>
             }
           />

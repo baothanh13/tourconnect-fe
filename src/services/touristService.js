@@ -10,7 +10,7 @@ class TouristService {
       });
       const bookings = bookingsResponse.bookings || [];
 
-      // Get reviews for stats calculation - handle if endpoint doesn't exist
+      // Get reviews for stats calculation
       let reviews = [];
       try {
         const reviewsResponse = await apiService.get(
@@ -26,12 +26,6 @@ class TouristService {
           booking.status === "completed" ||
           (booking.status === "confirmed" &&
             new Date(booking.booking_date) < now)
-      ).length;
-
-      const upcomingTours = bookings.filter(
-        (booking) =>
-          booking.status === "confirmed" &&
-          new Date(booking.booking_date) >= now
       ).length;
 
       const totalSpent = bookings.reduce((sum, booking) => {
@@ -65,19 +59,17 @@ class TouristService {
       return {
         totalBookings: bookings.length,
         completedTours,
-        upcomingTours,
         totalSpent,
-        favoriteGuides: 0, // Will be calculated separately
-        savedWishlist: 0, // Will be implemented with wishlist feature
+        favoriteGuides: 0,
+        savedWishlist: 0,
         averageRating: Math.round(averageRating * 10) / 10,
         totalReviews: reviews.length,
         membershipsLevel: this.calculateMembershipLevel(totalSpent),
-        rewardPoints: Math.floor(totalSpent / 10), // 1 point per $10 spent
+        rewardPoints: Math.floor(totalSpent / 10),
         monthlySpent,
-        growthPercentage: 0, // Will be calculated with historical data
+        growthPercentage: 0,
       };
     } catch (error) {
-      // Return default stats on error
       if (
         error.message.includes("403") ||
         error.message.includes("401") ||
@@ -86,7 +78,6 @@ class TouristService {
         return {
           totalBookings: 0,
           completedTours: 0,
-          upcomingTours: 0,
           totalSpent: 0,
           favoriteGuides: 0,
           savedWishlist: 0,
@@ -100,6 +91,26 @@ class TouristService {
     }
   }
 
+  // ✅ API: Get profile
+  async getProfile() {
+    try {
+      const response = await apiService.get("/tourist/me");
+      return response.user || null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // ✅ API: Update profile
+  async updateProfile(profileData) {
+    try {
+      const response = await apiService.put("/tourist/profile", profileData);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Get tourist bookings
   async getTouristBookings(touristId, params = {}) {
     try {
@@ -107,15 +118,11 @@ class TouristService {
         user_id: touristId,
         ...params,
       });
-
-      // Transform bookings data to include additional info
       const bookings = response.bookings || [];
 
-      // For each booking, get tour and guide details
       const enrichedBookings = await Promise.all(
         bookings.map(async (booking) => {
           try {
-            // Get tour details if tour_id exists
             if (booking.tour_id) {
               const tourResponse = await apiService.get(
                 `/tours/${booking.tour_id}`
@@ -154,7 +161,6 @@ class TouristService {
 
       return enrichedBookings;
     } catch (error) {
-      // Return empty array instead of throwing for auth errors
       if (
         error.message.includes("403") ||
         error.message.includes("401") ||
@@ -162,47 +168,15 @@ class TouristService {
       ) {
         return [];
       }
-
       throw error;
     }
   }
 
-  // Get upcoming tours
-  async getUpcomingTours(touristId) {
-    try {
-      // Try new backend API first
-      const response = await apiService.get(
-        `/tourist/upcoming-tours/${touristId}`
-      );
-      if (response.success) {
-        return response.upcomingTours || [];
-      }
-    } catch (error) {}
-
-    // Fallback to old method
-    try {
-      const bookings = await this.getTouristBookings(touristId);
-
-      const now = new Date();
-      const upcomingBookings = bookings.filter(
-        (booking) =>
-          booking.status === "confirmed" &&
-          new Date(booking.booking_date) >= now
-      );
-
-      // Sort by booking date
-      return upcomingBookings.sort(
-        (a, b) => new Date(a.booking_date) - new Date(b.booking_date)
-      );
-    } catch (error) {
-      throw error;
-    }
-  }
+  // ⛔️ Bỏ hoàn toàn getUpcomingTours
 
   // Get recent activities
   async getRecentActivities(touristId) {
     try {
-      // Try new backend API first
       const response = await apiService.get(
         `/tourist/recent-activities/${touristId}`
       );
@@ -211,7 +185,6 @@ class TouristService {
       }
     } catch (error) {}
 
-    // Fallback to old method
     try {
       const [bookings, reviews] = await Promise.all([
         this.getTouristBookings(touristId),
@@ -220,7 +193,6 @@ class TouristService {
 
       const activities = [];
 
-      // Add booking activities
       bookings.slice(0, 5).forEach((booking) => {
         activities.push({
           id: `booking-${booking.id}`,
@@ -233,7 +205,6 @@ class TouristService {
         });
       });
 
-      // Add review activities
       reviews.slice(0, 3).forEach((review) => {
         activities.push({
           id: `review-${review.id}`,
@@ -246,7 +217,6 @@ class TouristService {
         });
       });
 
-      // Sort by timestamp (newest first)
       return activities
         .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
         .slice(0, 10);
@@ -268,63 +238,8 @@ class TouristService {
     }
   }
 
-  // Get favorite guides (based on bookings and reviews)
-  async getFavoriteGuides(touristId) {
-    try {
-      const [bookings, reviews] = await Promise.all([
-        this.getTouristBookings(touristId),
-        this.getTouristReviews(touristId),
-      ]);
 
-      // Count interactions with guides
-      const guideStats = {};
-
-      bookings.forEach((booking) => {
-        if (booking.guide_id) {
-          if (!guideStats[booking.guide_id]) {
-            guideStats[booking.guide_id] = {
-              guideId: booking.guide_id,
-              guideName: booking.guideName,
-              guideAvatar: booking.guideAvatar,
-              bookingCount: 0,
-              totalSpent: 0,
-              averageRating: 0,
-              reviewCount: 0,
-            };
-          }
-          guideStats[booking.guide_id].bookingCount++;
-          guideStats[booking.guide_id].totalSpent += booking.total_price || 0;
-        }
-      });
-
-      // Add review data
-      reviews.forEach((review) => {
-        if (review.guide_id && guideStats[review.guide_id]) {
-          guideStats[review.guide_id].reviewCount++;
-          const currentAvg = guideStats[review.guide_id].averageRating;
-          const count = guideStats[review.guide_id].reviewCount;
-          guideStats[review.guide_id].averageRating =
-            (currentAvg * (count - 1) + review.rating) / count;
-        }
-      });
-
-      // Convert to array and sort by interaction frequency
-      const favoriteGuides = Object.values(guideStats)
-        .map((guide) => ({
-          ...guide,
-          totalInteractions: guide.bookingCount + guide.reviewCount,
-          averageRating: Math.round(guide.averageRating * 10) / 10,
-        }))
-        .sort((a, b) => b.totalInteractions - a.totalInteractions)
-        .slice(0, 10);
-
-      return favoriteGuides;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  // Get available tours for wishlist
+  // Get available tours
   async getAvailableTours(params = {}) {
     try {
       const response = await apiService.get("/tours", {
@@ -337,7 +252,7 @@ class TouristService {
     }
   }
 
-  // Calculate membership level based on spending
+  // Membership level
   calculateMembershipLevel(totalSpent) {
     if (totalSpent >= 5000) return "VIP Explorer";
     if (totalSpent >= 2000) return "Advanced Explorer";
@@ -345,7 +260,7 @@ class TouristService {
     return "Beginner Explorer";
   }
 
-  // Create a booking
+  // Booking CRUD
   async createBooking(bookingData) {
     try {
       const response = await apiService.post("/bookings", bookingData);
@@ -355,7 +270,6 @@ class TouristService {
     }
   }
 
-  // Update booking
   async updateBooking(bookingId, updateData) {
     try {
       const response = await apiService.put(
@@ -368,7 +282,6 @@ class TouristService {
     }
   }
 
-  // Cancel booking
   async cancelBooking(bookingId) {
     try {
       const response = await apiService.put(`/bookings/${bookingId}/status`, {
@@ -380,7 +293,7 @@ class TouristService {
     }
   }
 
-  // Create review
+  // Review CRUD
   async createReview(reviewData) {
     try {
       const response = await apiService.post("/reviews", reviewData);
@@ -390,7 +303,6 @@ class TouristService {
     }
   }
 
-  // Update review
   async updateReview(reviewId, reviewData) {
     try {
       const response = await apiService.put(`/reviews/${reviewId}`, reviewData);
@@ -400,7 +312,6 @@ class TouristService {
     }
   }
 
-  // Delete review
   async deleteReview(reviewId) {
     try {
       const response = await apiService.delete(`/reviews/${reviewId}`);

@@ -498,7 +498,6 @@
 
 /* Enhanced Activities List */
 .activities-list {
-  display: flex;
   flex-direction: column;
   gap: 1rem;
   max-height: 400px;

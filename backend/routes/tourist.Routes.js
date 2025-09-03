@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
+const { getTouristProfile, updateTouristProfile } = require('../api/tourist/touristProfile.Controller');
 const getTouristStats = require("../api/tourist/getTouristStats.Controller");
 const {
   getTouristUpcomingTours,
@@ -17,6 +18,81 @@ const verifyToken = require("../middleware/verifyToken");
  *   - name: Tourist
  *     description: Tourist dashboard and profile APIs
  */
+
+
+/**
+ * @swagger
+ * /api/tourist/me:
+ *   get:
+ *     summary: Get user profile
+ *     tags: [Tourist]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile fetched successfully
+ */
+router.get('/me', verifyToken, getTouristProfile);
+
+/**
+ * @swagger
+ * /api/tourist/profile:
+ *   put:
+ *     summary: Update user profile
+ *     tags: [Tourist]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *               phone:
+ *                 type: string
+ *                 example: "+84 123456789"
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *               example:
+ *                 message: Profile updated successfully
+ *       400:
+ *         description: Bad request (e.g., missing fields)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *               example:
+ *                 message: Invalid input data
+ *       401:
+ *         description: Unauthorized (missing or invalid token)
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *               example:
+ *                 message: Server error
+ */
+router.put('/profile', verifyToken, updateTouristProfile);
 
 /**
  * @swagger

@@ -4,7 +4,6 @@ const router = express.Router();
 const login = require('../api/auth/login.Controller');
 const register = require('../api/auth/register.Controller');
 const logout = require('../api/auth/logout.Controller');
-const { getProfile, updateProfile } = require('../api/auth/profile.Controller');
 const verifyToken = require('../middleware/verifyToken');  // Import middleware
 const confirmOTP = require('../api/auth/confirmOTP.Controller');
 const { sendForgotPasswordOTP, resetPassword } = require('../api/auth/forgotPassword.Controller');
@@ -119,49 +118,6 @@ router.post('/register', register);
  */
 router.post('/logout', logout);
 
-/**
- * @swagger
- * /api/auth/me:
- *   get:
- *     summary: Get user profile
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: User profile fetched successfully
- */
-router.get('/me', verifyToken, getProfile);
-
-/**
- * @swagger
- * /api/auth/me:
- *   get:
- *     summary: Get user profile
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []   
- *     responses:
- *       200:
- *         description: User profile fetched successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                     name:
- *                       type: string
- *                     email:
- *                       type: string
- *                     role:
- *                       type: string
- */
-router.put('/profile', verifyToken, updateProfile);
 
 
 /**

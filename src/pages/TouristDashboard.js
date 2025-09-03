@@ -8,12 +8,9 @@ import {
   FaHome,
   FaCalendarCheck,
   FaStar,
-  FaMapMarkerAlt,
   FaDollarSign,
   FaRoute,
-  FaUsers,
   FaClock,
-  FaEye,
   FaComments,
   FaSearch,
   FaBell,
@@ -21,6 +18,8 @@ import {
   FaArrowDown,
   FaExclamationTriangle,
   FaHeadset,
+  FaCheck,
+  FaTimes,
 } from "react-icons/fa";
 import "./DashboardStyles.css";
 import "./ModernDashboard.css";
@@ -30,15 +29,15 @@ const TouristDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
   const [loading, setLoading] = useState(true);
   const [activeView, setActiveView] = useState("dashboard");
   const [error, setError] = useState(null);
 
-  // Tourist-specific state
+  // Stats
   const [stats, setStats] = useState({
     totalBookings: 0,
     completedTours: 0,
-    upcomingTours: 0,
     totalSpent: 0,
     favoriteGuides: 0,
     savedWishlist: 0,
@@ -50,7 +49,18 @@ const TouristDashboard = () => {
     growthPercentage: 0,
   });
 
-  const [upcomingTours, setUpcomingTours] = useState([]);
+  // Profile (từ /tourist/me)
+  const [profile, setProfile] = useState(null);
+
+  // Form update profile
+  const [editName, setEditName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
+  const [updating, setUpdating] = useState(false);
+
+  // Modal
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  // Recent activities
   const [recentActivities, setRecentActivities] = useState([]);
 
   const handleLogout = () => {
@@ -62,9 +72,7 @@ const TouristDashboard = () => {
 
   useEffect(() => {
     const tab = searchParams.get("tab");
-    if (tab) {
-      setActiveView(tab);
-    }
+    if (tab) setActiveView(tab);
   }, [searchParams]);
 
   useEffect(() => {
@@ -78,16 +86,29 @@ const TouristDashboard = () => {
         setLoading(true);
         setError(null);
 
+        // Load stats
         const fetchTouristStats = async () => {
           try {
             const statsData = await touristService.getTouristStats(user.id);
-            setStats(statsData);
-          } catch (error) {
-            // Set default stats on error
+            setStats(
+              statsData || {
+                totalBookings: 0,
+                completedTours: 0,
+                totalSpent: 0,
+                favoriteGuides: 0,
+                savedWishlist: 0,
+                averageRating: 0,
+                totalReviews: 0,
+                membershipsLevel: "Beginner Explorer",
+                rewardPoints: 0,
+                monthlySpent: 0,
+                growthPercentage: 0,
+              }
+            );
+          } catch {
             setStats({
               totalBookings: 0,
               completedTours: 0,
-              upcomingTours: 0,
               totalSpent: 0,
               favoriteGuides: 0,
               savedWishlist: 0,
@@ -101,66 +122,37 @@ const TouristDashboard = () => {
           }
         };
 
-        const fetchRecentBookings = async () => {
+        // Load profile
+        const fetchProfile = async () => {
           try {
-            // Recent bookings will be handled by the TouristBookings component
-          } catch (error) {
+            const me = await touristService.getProfile();
+            setProfile(me);
+            setEditName(me?.name || "");
+            setEditPhone(me?.phone || "");
+          } catch {
+            setProfile(null);
           }
         };
 
-        const fetchUpcomingTours = async () => {
-          try {
-            const upcomingData = await touristService.getUpcomingTours(user.id);
-            setUpcomingTours(upcomingData);
-          } catch (error) {
-            setUpcomingTours([]);
-          }
-        };
-
+        // Load activities
         const fetchRecentActivities = async () => {
           try {
             const activitiesData = await touristService.getRecentActivities(
               user.id
             );
-            setRecentActivities(activitiesData);
-          } catch (error) {
+            setRecentActivities(activitiesData || []);
+          } catch {
             setRecentActivities([]);
           }
         };
 
-        const fetchFavoriteGuides = async () => {
-          try {
-            // Favorite guides will be handled by a separate component
-          } catch (error) {
-          }
-        };
-
-        const fetchWishlistTours = async () => {
-          try {
-            // Wishlist tours will be handled by a separate component
-          } catch (error) {
-          }
-        };
-
-        // Load data with timeout to prevent infinite loading
-        const loadPromises = [
+        await Promise.allSettled([
           fetchTouristStats(),
-          fetchRecentBookings(),
-          fetchUpcomingTours(),
+          fetchProfile(),
           fetchRecentActivities(),
-          fetchFavoriteGuides(),
-          fetchWishlistTours(),
-        ];
-
-        // Add timeout of 10 seconds
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Loading timeout")), 10000)
-        );
-
-        await Promise.race([Promise.allSettled(loadPromises), timeoutPromise]);
-
+        ]);
         setLoading(false);
-      } catch (error) {
+      } catch (err) {
         setError("Failed to load dashboard data. Please try again.");
         setLoading(false);
       }
@@ -169,21 +161,39 @@ const TouristDashboard = () => {
     loadTouristData();
   }, [user]);
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-US", {
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    if (!editName.trim()) {
+      alert("Name is required");
+      return;
+    }
+    setUpdating(true);
+    try {
+      await touristService.updateProfile({
+        name: editName.trim(),
+        phone: editPhone.trim(),
+      });
+      setProfile((prev) =>
+        prev
+          ? { ...prev, name: editName.trim(), phone: editPhone.trim() }
+          : { name: editName.trim(), phone: editPhone.trim() }
+      );
+      alert("Profile updated successfully!");
+      setShowEditModal(false);
+    } catch (err) {
+      console.error(err);
+      alert("Update failed!");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const formatCurrency = (amount) =>
+    new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
-    }).format(amount);
-  };
+    }).format(amount || 0);
 
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  // Component for modern stat cards
   const StatCard = ({
     icon,
     title,
@@ -202,12 +212,12 @@ const TouristDashboard = () => {
     >
       <div className="stat-header">
         <div className="stat-icon">{icon}</div>
-        {trend && (
+        {typeof trend === "number" && !Number.isNaN(trend) ? (
           <div className={`trend ${trend > 0 ? "positive" : "negative"}`}>
             {trend > 0 ? <FaArrowUp /> : <FaArrowDown />}
             {Math.abs(trend)}%
           </div>
-        )}
+        ) : null}
       </div>
       <div className="stat-content">
         <h3 className="stat-title">{title}</h3>
@@ -217,14 +227,7 @@ const TouristDashboard = () => {
     </div>
   );
 
-  // Component for quick action cards
-  const QuickActionCard = ({
-    icon,
-    label,
-    description,
-    onClick,
-    className,
-  }) => (
+  const QuickActionCard = ({ icon, label, description, onClick, className }) => (
     <div className={`quick-action-card ${className || ""}`} onClick={onClick}>
       <div className="action-icon">{icon}</div>
       <div className="action-content">
@@ -249,7 +252,6 @@ const TouristDashboard = () => {
           icon={<FaCalendarCheck />}
           title="Total Bookings"
           value={stats.totalBookings}
-          subtitle={`${stats.upcomingTours} upcoming`}
           className="bookings-card"
           onClick={() => navigate("/tourist/bookings")}
           isLoading={loading}
@@ -281,8 +283,6 @@ const TouristDashboard = () => {
           isLoading={loading}
         />
       </div>
-
-     
 
       {/* Quick Actions */}
       <div className="dashboard-section">
@@ -326,43 +326,29 @@ const TouristDashboard = () => {
 
       {/* Dashboard Grid */}
       <div className="dashboard-grid-modern">
-       {/* Upcoming Bookings */}
+        {/* Tourist Profile */}
         <div className="dashboard-card">
           <div className="card-header">
-            <h3>Upcoming Bookings</h3>
-            <button
-                className="view-all-btn"
-                onClick={() => navigate("/tourist/bookings?filter=upcoming")}
-              >
-                View All
-              </button>
+            <h3>Tourist Profile</h3>
+            <button className="view-all-btn" onClick={() => setShowEditModal(true)}>
+              Edit Profile
+            </button>
+          </div>
+          <div className="card-content">
+            <div className="profile-info">
+              <p>
+                <strong>Name:</strong> {profile?.name || "N/A"}
+              </p>
+              <p>
+                <strong>Email:</strong> {profile?.email || "N/A"}
+              </p>
+              <p>
+                <strong>Phone:</strong> {profile?.phone || "N/A"}
+              </p>
+              <p>
+                <strong>Role:</strong> {profile?.role || "tourist"}
+              </p>
             </div>
-            <div className="card-content">
-              {upcomingTours.length > 0 ? (
-                <div className="bookings-list">
-                  {upcomingTours.map((tour) => (
-                    <div key={tour.booking_id} className="booking-item-modern">
-                      <div className="booking-date">
-                        <span className="date">{formatDate(tour.booking_date)}</span>
-                      </div>
-                      <div className="booking-details">
-                        <p className="booking-guide">Guide: {tour.guide.name}</p>
-                      </div>
-                      <div className="booking-actions">
-                        <button className="btn-small btn-view">
-                          <FaEye />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-              <div className="no-data">
-                <span>
-                  No upcoming bookings. Book your next adventure now!
-                </span>
-              </div>
-            )}
           </div>
         </div>
 
@@ -410,10 +396,67 @@ const TouristDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Edit Profile Modal */}
+      {showEditModal && (
+        <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Edit Tourist Profile</h3>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="close-btn"
+              >
+                ×
+              </button>
+            </div>
+            <form onSubmit={handleUpdateProfile}>
+              <div className="modal-body">
+                <div className="edit-form">
+                  <div className="form-group">
+                    <label htmlFor="name">Name:</label>
+                    <input
+                      type="text"
+                      id="name"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      placeholder="Enter your name"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="phone">Phone:</label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      value={editPhone}
+                      onChange={(e) => setEditPhone(e.target.value)}
+                      placeholder="Enter phone number"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="submit" className="btn btn-apply" disabled={updating}>
+                  <FaCheck style={{ marginRight: "8px" }} />
+                  {updating ? "Updating..." : "Save Changes"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="btn btn-cancel"
+                >
+                  <FaTimes style={{ marginRight: "8px" }} />
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 
-  // Early return for authentication checks
+  // Auth guard
   if (!user) {
     return (
       <div className="error-container">
@@ -429,7 +472,6 @@ const TouristDashboard = () => {
     );
   }
 
-  // Check if user is a tourist (optional role check)
   if (user.role && user.role !== "tourist") {
     return (
       <div className="error-container">
@@ -445,9 +487,7 @@ const TouristDashboard = () => {
     );
   }
 
-  if (loading) {
-    return <Loading />;
-  }
+  if (loading) return <Loading />;
 
   if (error) {
     return (
@@ -456,10 +496,7 @@ const TouristDashboard = () => {
           <FaExclamationTriangle className="error-icon" />
           <h2>Oops! Something went wrong</h2>
           <p>{error}</p>
-          <button
-            className="retry-btn"
-            onClick={() => window.location.reload()}
-          >
+          <button className="retry-btn" onClick={() => window.location.reload()}>
             Try Again
           </button>
         </div>
@@ -475,34 +512,30 @@ const TouristDashboard = () => {
           <h1>Tourist Dashboard</h1>
           <p>
             Welcome back,{" "}
-            <span className="user-name">{user?.name || "Traveler"}</span>! Ready
-            for your next adventure?
+            <span className="user-name">
+              {profile?.name || user?.name || "Traveler"}
+            </span>
+            ! Ready for your next adventure?
           </p>
         </div>
 
         <div className="header-navigation">
           <button
             onClick={() => setActiveView("dashboard")}
-            className={`nav-button ${
-              activeView === "dashboard" ? "active" : ""
-            }`}
+            className={`nav-button ${activeView === "dashboard" ? "active" : ""}`}
           >
             <FaHome />
             <span>Dashboard</span>
           </button>
           <button
-            className={`nav-button ${
-              activeView === "bookings" ? "active" : ""
-            }`}
+            className={`nav-button ${activeView === "bookings" ? "active" : ""}`}
             onClick={() => navigate("/tourist/bookings")}
           >
             <FaCalendarCheck />
             <span>My Bookings</span>
           </button>
           <button
-            className={`nav-button ${
-              activeView === "support" ? "active" : ""
-            }`}
+            className={`nav-button ${activeView === "support" ? "active" : ""}`}
             onClick={() => navigate("/tourist/support")}
           >
             <FaHeadset />

@@ -407,7 +407,7 @@
 }
 
 .dashboard-card .card-header h3 {
-  font-size: 1.125rem;
+  font-size: 1.325rem;
   font-weight: 600;
   color: var(--text-primary);
   margin: 0;
@@ -415,6 +415,7 @@
 
 .dashboard-card .card-content {
   padding: 1rem 1.5rem 1.5rem;
+  font-size: 1.525rem;
 }
 
 /* Trends */

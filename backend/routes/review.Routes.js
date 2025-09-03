@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const createReview = require('../api/reviews/createReview.Controller');
+const getAllReviews = require('../api/reviews/getAllReviews.Controller');
 const getTouristReviews = require('../api/reviews/getTouristReviews.Controller');
 const updateReview = require('../api/reviews/updateReview.Controller');
 const deleteReview = require('../api/reviews/deleteReview.Controller');
@@ -56,6 +57,9 @@ const deleteReview = require('../api/reviews/deleteReview.Controller');
  *         description: Duplicate review
  */
 router.post('/', createReview);
+
+// Get all reviews
+router.get('/', getAllReviews);
 
 /**
  * @swagger

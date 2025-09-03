@@ -15,6 +15,14 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.guide-management-admin{
+    padding: 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    background-color: #f8fafc;
+    min-height: 100vh;
+}
+
 .guide-management-header h2 {
   margin: 0;
   color: #333;
@@ -70,6 +78,9 @@
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #eee;
+  white-space: normal;   /* Cho phép xuống dòng */
+  word-break: break-word; /* Cắt từ nếu quá dài */
+  line-height: 1.4;      /* Thoáng chữ */
 }
 
 .guides-table th {

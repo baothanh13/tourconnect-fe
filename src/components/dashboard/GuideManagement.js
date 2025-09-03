@@ -114,7 +114,7 @@ const GuideManagement = () => {
   }
 
   return (
-    <div className="guide-management">
+    <div className="guide-management-admin">
       <div className="guide-management-header">
         <h2>Guide Management</h2>
         <div className="filters">
@@ -144,13 +144,12 @@ const GuideManagement = () => {
             <tr>
               <th>ID</th>
               <th>Name</th>
-              <th>Email</th>
               <th>Location</th>
               <th>Languages</th>
+              <th>Specialties</th>
               <th>Experience</th>
               <th>Verification Status</th>
               <th>Rating</th>
-              <th>Created</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -160,9 +159,9 @@ const GuideManagement = () => {
                 <tr key={guide.id}>
                   <td>{guide.id}</td>
                   <td>{guide.user_name}</td>
-                  <td>{guide.user_email}</td>
                   <td>{guide.location}</td>
                   <td>{guide.languages}</td>
+                  <td>{guide.specialties}</td>
                   <td>
                     {guide.experience_years
                       ? `${guide.experience_years} years`
@@ -178,7 +177,6 @@ const GuideManagement = () => {
                     </span>
                   </td>
                   <td>{guide.rating ? `${guide.rating}/5` : "N/A"}</td>
-                  <td>{new Date(guide.created_at).toLocaleDateString()}</td>
                   <td>
                     <div className="action-buttons">
                       <button

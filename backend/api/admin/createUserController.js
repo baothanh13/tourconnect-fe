@@ -1,4 +1,4 @@
-const { connectToDB } = require("../../config/db");
+const { query } = require("../../config/db");
 const bcrypt = require("bcrypt");
 const generateId = require("../../utils/generateId");
 
@@ -41,10 +41,8 @@ const createUserController = async (req, res) => {
         .json({ message: "Password must be at least 6 characters" });
     }
 
-    const conn = await connectToDB();
-
     // 2) Check email đã tồn tại (unique)
-    const [exists] = await conn.execute(
+    const exists = await query(
       "SELECT id FROM users WHERE email = ? LIMIT 1",
       [email]
     );
@@ -59,7 +57,7 @@ const createUserController = async (req, res) => {
     const id = generateId("user");
 
     // 5) Insert
-    await conn.execute(
+    await query(
       `INSERT INTO users
         (id, email, password_hash, role, name, phone, avatar_url)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,

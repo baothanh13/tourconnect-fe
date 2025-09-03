@@ -1,12 +1,10 @@
-const { connectToDB } = require("../../config/db");
+const { query } = require("../../config/db");
 
 const getSystemActivities = async (req, res) => {
     try {
-        const connection = await connectToDB();
-
         const limit = parseInt(req.query.limit) || 10;
 
-        const [activities] = await connection.execute(`
+        const activities = await query(`
            (
             SELECT 
                 CONCAT('user_create_', u.id) AS id,

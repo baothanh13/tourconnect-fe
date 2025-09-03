@@ -1,9 +1,8 @@
-const {connectToDB} = require('../../config/db');
+const { query } = require('../../config/db');
 const getFavGuides = async (req, res) => {
     const touristId = req.user.user_id; // Lấy user_id từ token đã decode
     try {
-        const connection = await connectToDB();
-        const [favGuides] = await connection.execute(
+        const favGuides = await query(
             `SELECT
                 g.id,
                 u.name AS user_name, 

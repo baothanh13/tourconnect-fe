@@ -19,11 +19,26 @@ async function connectToDB() {
     const connection = await pool.getConnection();
     connection.release(); // Always release the connection back to pool
     return pool; // Return the pool for queries
-  } catch (err) {}
+  } catch (err) {
+    console.error("❌ Database connection error:", err.message);
+    throw err;
+  }
+}
+
+// ✅ Helper query: luôn đảm bảo release connection
+async function query(sql, params) {
+  const connection = await pool.getConnection();
+  try {
+    const [results] = await connection.execute(sql, params);
+    return results;
+  } finally {
+    connection.release();
+  }
 }
 
 // Export the pool directly for queries
 module.exports = {
   connectToDB,
-  pool, // Export pool for direct use
+  pool,  // Export pool for direct use
+  query, // ✅ Export thêm helper query
 };

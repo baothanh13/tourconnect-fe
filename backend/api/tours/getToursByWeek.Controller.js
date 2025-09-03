@@ -1,4 +1,4 @@
-const { pool } = require("../../config/db");
+const { query } = require("../../config/db");
 
 module.exports = async (req, res) => {
   try {
@@ -44,8 +44,6 @@ module.exports = async (req, res) => {
     const startDate = formatDate(monday);
     const endDate = formatDate(sunday);
 
-    const conn = await pool.getConnection();
-
     const sql = `
       SELECT
         id,
@@ -59,9 +57,7 @@ module.exports = async (req, res) => {
       ORDER BY tour_date ASC
     `;
 
-    const [rows] = await conn.execute(sql, [guide_id, startDate, endDate]);
-
-    conn.release();
+    const rows = await query(sql, [guide_id, startDate, endDate]);
 
     if (rows.length === 0) {
       return res

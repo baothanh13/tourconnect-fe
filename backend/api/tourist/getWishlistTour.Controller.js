@@ -1,11 +1,9 @@
-const { connectToDB } = require('../../config/db');
+const { query } = require('../../config/db');
 
 const getWishlist = async (req, res) => {
   const touristId = req.user.user_id;
   try {
-    const connection = await connectToDB();
-
-    const [rows] = await connection.execute(
+    const rows = await query(
       `SELECT w.id, w.tour_id, t.name AS tour_name, w.created_at
        FROM wishlists w
        JOIN tours t ON w.tour_id = t.id

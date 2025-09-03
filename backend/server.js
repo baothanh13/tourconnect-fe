@@ -31,82 +31,26 @@ app.use(bodyParser.json());
 // Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Kết nối DB và gán routes
+// ✅ Kết nối DB 1 lần để đảm bảo pool hoạt động
 connectToDB()
-  .then((connection) => {
-    app.locals.db = connection;
-
-    app.use(
-      "/api/auth",
-      (req, res, next) => {
-        req.db = app.locals.db;
-        next();
-      },
-      authRoutes
-    );
-    app.use(
-      "/api/guides",
-      (req, res, next) => {
-        req.db = app.locals.db;
-        next();
-      },
-      guideRoutes
-    );
-    app.use(
-      "/api/bookings",
-      (req, res, next) => {
-        req.db = app.locals.db;
-        next();
-      },
-      bookingRoutes
-    );
-    app.use(
-      "/api/admin",
-      (req, res, next) => {
-        req.db = app.locals.db;
-        next();
-      },
-      adminRoutes
-    );
-    app.use(
-      "/api/supportTickets",
-      (req, res, next) => {
-        req.db = app.locals.db;
-        next();
-      },
-      supportTicketsRoutes
-    );
-    app.use(
-      "/api/tours",
-      (req, res, next) => {
-        req.db = app.locals.db;
-        next();
-      },
-      tourRoutes
-    );
-
-    app.use(
-      "/api/reviews",
-      (req, res, next) => {
-        req.db = app.locals.db;
-        next();
-      },
-      reviewRoutes
-    );
-
-    app.use(
-      "/api/tourist",
-      (req, res, next) => {
-        req.db = app.locals.db;
-        next();
-      },
-      touristRoutes
-    );
+  .then(() => {
+    // Routes
+    app.use("/api/auth", authRoutes);
+    app.use("/api/guides", guideRoutes);
+    app.use("/api/bookings", bookingRoutes);
+    app.use("/api/admin", adminRoutes);
+    app.use("/api/supportTickets", supportTicketsRoutes);
+    app.use("/api/tours", tourRoutes);
+    app.use("/api/reviews", reviewRoutes);
+    app.use("/api/tourist", touristRoutes);
 
     // ✅ Chỉ listen một lần
     app.listen(PORT, () => {
-       console.log(`🚀 Server is running at http://localhost:${PORT}`);
+      console.log(`🚀 Server is running at http://localhost:${PORT}`);
       console.log(`📖 Swagger UI available at http://localhost:${PORT}/api-docs`);
     });
   })
-  .catch((err) => {});
+  .catch((err) => {
+    console.error("❌ Failed to connect to DB:", err.message);
+    process.exit(1);
+  });

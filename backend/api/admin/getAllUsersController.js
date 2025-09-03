@@ -1,9 +1,8 @@
-const { connectToDB } = require("../../config/db");
+const { query } = require("../../config/db");
 
 const getAllUsers = async (req, res) => {
     try {
-        const connection = await connectToDB();
-        const [rows] = await connection.execute(
+        const rows = await query(
             "SELECT * FROM users WHERE role IN ('tourist', 'guide', 'support');"
         );
         res.status(200).json(rows);

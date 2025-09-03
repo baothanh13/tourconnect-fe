@@ -1,12 +1,10 @@
-const { pool } = require("../../config/db");
+const { query } = require("../../config/db");
 
 const getGuideById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const connection = await pool.getConnection();
-
-    const [guides] = await connection.execute(
+    const guides = await query(
       `SELECT 
               g.id,
               u.name AS user_name, 

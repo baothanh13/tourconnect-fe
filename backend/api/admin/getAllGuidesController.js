@@ -1,10 +1,8 @@
-const { connectToDB } = require("../../config/db");
+const { query } = require("../../config/db");
 
 const getAllGuides = async (req, res) => {
   try {
-    const connection = await connectToDB();
-
-    const [rows] = await connection.execute(
+    const rows = await query(
       `SELECT 
                 g.id,
                 u.name AS user_name, 

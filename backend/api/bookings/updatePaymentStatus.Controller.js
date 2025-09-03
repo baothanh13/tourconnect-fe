@@ -1,12 +1,11 @@
-const { connectToDB } = require("../../config/db");
+const { query } = require("../../config/db");
 
 const updateBookingStatus = async (req, res) => {
   const bookingId = req.params.id;
   const { status } = req.body;
 
   try {
-    const connection = await connectToDB();
-    await connection.execute(`UPDATE bookings SET payment_status = ? WHERE id = ?`, [
+    await query(`UPDATE bookings SET payment_status = ? WHERE id = ?`, [
       status,
       bookingId,
     ]);

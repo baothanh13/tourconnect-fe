@@ -1,11 +1,10 @@
-const { connectToDB } = require("../../config/db");
+const { query } = require("../../config/db");
 
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const db = await connectToDB(); // <-- tạo kết nối
-    const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
+    const rows = await query("SELECT * FROM users WHERE id = ?", [id]);
 
     if (rows.length === 0) {
       return res.status(404).json({ message: "User not found" });

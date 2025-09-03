@@ -1,4 +1,4 @@
-const { connectToDB } = require("../../config/db");
+const { query } = require("../../config/db");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
@@ -18,8 +18,7 @@ const sendForgotPasswordOTP = async (req, res) => {
   }
 
   try {
-    const connection = await connectToDB();
-    const [users] = await connection.execute(
+    const users = await query(
       `SELECT * FROM users WHERE email = ?`,
       [email]
     );
@@ -54,10 +53,9 @@ const resetPassword = async (req, res) => {
       return res.status(401).json({ message: "OTP is not correct!" });
     }
 
-    const connection = await connectToDB();
     const password_hash = await bcrypt.hash(newPassword, 10);
 
-    await connection.execute(
+    await query(
       `UPDATE users SET password_hash = ? WHERE email = ?`,
       [password_hash, decoded.email]
     );

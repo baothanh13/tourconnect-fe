@@ -1,12 +1,10 @@
-const { connectToDB } = require("../../config/db");
+const { query } = require("../../config/db");
 
 const getTouristProfile = async (req, res) => {
   const userId = req.user.user_id; // ✅ phải dùng user_id
 
   try {
-    const connection = await connectToDB();
-
-    const [users] = await connection.execute(
+    const users = await query(
       `SELECT email, name, phone, role, created_at, updated_at FROM users WHERE id = ?`,
       [userId]
     );
@@ -28,9 +26,7 @@ const updateTouristProfile = async (req, res) => {
   const { name, phone } = req.body;
 
   try {
-    const connection = await connectToDB();
-
-    await connection.execute(
+    await query(
       `UPDATE users 
        SET name = ?, phone = ?, updated_at = CURRENT_TIMESTAMP 
        WHERE id = ?`,

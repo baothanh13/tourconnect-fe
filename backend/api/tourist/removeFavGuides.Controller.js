@@ -1,13 +1,11 @@
-const { connectToDB } = require('../../config/db');
+const { query } = require('../../config/db');
 
 const removeFavGuide = async (req, res) => {
     const { guideId } = req.body;
     const touristId = req.user.user_id; // Lấy user_id từ token đã decode
 
     try {
-        const connection = await connectToDB();
-
-        const [result] = await connection.execute(
+        const result = await query(
             `DELETE FROM favourite_guides WHERE tourist_id = ? AND guide_id = ?`,
             [touristId, guideId]
         );

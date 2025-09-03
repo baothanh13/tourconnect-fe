@@ -1,4 +1,4 @@
-const { pool } = require("../../config/db");
+const { query } = require("../../config/db");
 
 module.exports = async (req, res) => {
   const page = Math.max(
@@ -36,17 +36,15 @@ module.exports = async (req, res) => {
   const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
 
   try {
-    const conn = await pool.getConnection();
-
     // Count tổng số tour theo filter
-    const [countRows] = await conn.execute(
+    const countRows = await query(
       `SELECT COUNT(*) AS total FROM tours t ${whereSql}`,
       params
     );
     const total = countRows[0]?.total || 0;
 
     // Lấy danh sách tour
-    const [rows] = await conn.execute(
+    const rows = await query(
       `
     SELECT
         t.id, t.guide_id, t.title, t.description, t.duration_hours, t.max_people,

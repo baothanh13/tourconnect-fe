@@ -1,4 +1,4 @@
-const { connectToDB } = require('../../config/db');
+const { query } = require('../../config/db');
 
 // GET /api/reviews
 module.exports = async (req, res) => {
@@ -18,8 +18,7 @@ module.exports = async (req, res) => {
       JOIN users ug ON g.user_id = ug.id
     `;
 
-    const conn = await connectToDB();
-    const [rows] = await conn.execute(sql);
+    const rows = await query(sql);
 
     return res.json({ reviews: rows });
   } catch (err) {

@@ -1,4 +1,4 @@
-const { connectToDB } = require("../../config/db");
+const { query } = require("../../config/db");
 
 module.exports = async function updateTicket(req, res) {
   try {
@@ -56,21 +56,19 @@ module.exports = async function updateTicket(req, res) {
       return res.status(400).json({ message: "No fields to update" });
     }
 
-    const connection = await connectToDB();
-
-    const [exists] = await connection.execute(
+    const exists = await query(
       `SELECT id FROM support_tickets WHERE id = ?`,
       [id]
     );
     if (!exists.length)
       return res.status(404).json({ message: "Ticket not found" });
 
-    await connection.execute(
+    await query(
       `UPDATE support_tickets SET ${set.join(", ")} WHERE id = ?`,
       [...params, id]
     );
 
-    const [rows] = await connection.execute(
+    const rows = await query(
       `SELECT * FROM support_tickets WHERE id = ?`,
       [id]
     );

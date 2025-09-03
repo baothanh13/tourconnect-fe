@@ -1,4 +1,4 @@
-const { connectToDB } = require("../../config/db");
+const { query } = require("../../config/db");
 
 // PUT /api/admin/users/:id/profile
 const updateUserProfile = async (req, res) => {
@@ -6,11 +6,8 @@ const updateUserProfile = async (req, res) => {
     const { id } = req.params; // lấy user id từ URL
     const { name, phone, avatar_url, is_active, is_verified, role } = req.body;
 
-    // Kết nối DB
-    const connection = await connectToDB();
-
     // Kiểm tra user tồn tại không
-    const [users] = await connection.execute(
+    const users = await query(
       "SELECT id FROM users WHERE id = ?",
       [id]
     );
@@ -63,8 +60,8 @@ const updateUserProfile = async (req, res) => {
     }
 
     // Update user
-    const query = `UPDATE users SET ${updateFields.join(", ")} WHERE id = ?`;
-    await connection.execute(query, updateValues);
+    const sql = `UPDATE users SET ${updateFields.join(", ")} WHERE id = ?`;
+    await query(sql, updateValues);
 
     return res.json({ message: "Profile updated successfully" });
   } catch (err) {

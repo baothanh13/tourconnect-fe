@@ -1,4 +1,4 @@
-const { connectToDB } = require('../../config/db');
+const { query } = require('../../config/db');
 
 // PUT /api/reviews/:id
 // body: { rating?: number(1..5), comment?: string }
@@ -31,10 +31,8 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const conn = await connectToDB();
-
     // Kiểm tra tồn tại
-    const [existRows] = await conn.execute(
+    const existRows = await query(
       `SELECT id FROM reviews WHERE id = ?`,
       [id]
     );
@@ -47,7 +45,7 @@ module.exports = async (req, res) => {
     const sql = `UPDATE reviews SET ${fields.join(', ')} WHERE id = ?`;
     values.push(id);
 
-    const [result] = await conn.execute(sql, values);
+    const result = await query(sql, values);
     if (result.affectedRows === 0) {
       return res.status(400).json({ message: 'Nothing updated' });
     }

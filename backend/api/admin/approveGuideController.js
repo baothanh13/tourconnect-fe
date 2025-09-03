@@ -1,4 +1,4 @@
-const { connectToDB } = require("../../config/db");
+const { query } = require("../../config/db");
 
 const approveGuide = async (req, res) => {
   try {
@@ -11,9 +11,7 @@ const approveGuide = async (req, res) => {
       });
     }
 
-    const connection = await connectToDB();
-
-    const [result] = await connection.execute(
+    const result = await query(
       `UPDATE guides 
              SET verification_status = ? 
              WHERE id = ?`,

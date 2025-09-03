@@ -26,11 +26,7 @@ const ToursListPage = () => {
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-    totalResults: 0,
-  });
+  const [totalResults, setTotalResults] = useState(0);
   const [searchParams] = useSearchParams();
 
   const initialFilters = {
@@ -134,20 +130,12 @@ const ToursListPage = () => {
         }
 
         setTours(toursData);
-        setPagination({
-          currentPage: 1,
-          totalPages: Math.ceil(toursData.length / 12),
-          totalResults: response.total || toursData.length,
-        });
+        setTotalResults(response.total || toursData.length);
       } catch (err) {
         console.error("❌ Error loading tours:", err);
         setError(err.message || "Failed to load tours");
         setTours([]);
-        setPagination({
-          currentPage: 1,
-          totalPages: 1,
-          totalResults: 0,
-        });
+        setTotalResults(0);
       } finally {
         setLoading(false);
       }
@@ -255,18 +243,13 @@ const ToursListPage = () => {
           {/* Location Filter */}
           <div className="filter-group">
             <label>Location</label>
-            <select
+            <input
+              type="text"
+              placeholder="City or region..."
               value={formFilters.location}
               onChange={(e) => handleFilterChange("location", e.target.value)}
               className="filter-input"
-            >
-              <option value="">All locations</option>
-              {availableLocations.map((location) => (
-                <option key={location} value={location}>
-                  {location}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           {/* Price Range Filter */}
@@ -320,7 +303,8 @@ const ToursListPage = () => {
               {availableCategories.map((category) => (
                 <label key={category} className="checkbox-item">
                   <input
-                    type="checkbox"
+                    type="radio"
+                    name="category"
                     checked={formFilters.category === category}
                     onChange={() => handleCategoryToggle(category)}
                   />
@@ -337,7 +321,8 @@ const ToursListPage = () => {
               {availableDurations.map((duration) => (
                 <label key={duration} className="checkbox-item">
                   <input
-                    type="checkbox"
+                    type="radio"
+                    name="duration"
                     checked={formFilters.duration === duration}
                     onChange={() => handleDurationToggle(duration)}
                   />
@@ -396,7 +381,7 @@ const ToursListPage = () => {
             <>
               <div className="results-header">
                 <div className="results-info">
-                  <span>{pagination.totalResults} tours found</span>
+                  <span>{totalResults} tours found</span>
                 </div>
                 <div className="sort-controls">
                   <label>Sort by:</label>

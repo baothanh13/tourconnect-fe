@@ -213,37 +213,8 @@
 
 .checkbox-item input[type="radio"],
 .checkbox-item input[type="checkbox"] {
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border: 2px solid var(--border-color);
-  border-radius: 3px;
   margin: 0;
   cursor: pointer;
-  position: relative;
-  transition: var(--transition);
-  flex-shrink: 0;
-}
-
-.checkbox-item input[type="checkbox"]:checked {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-}
-
-.checkbox-item input[type="checkbox"]:checked::after {
-  content: "✓";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 10px;
-  font-weight: bold;
-}
-
-.checkbox-item input[type="checkbox"]:hover {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
 }
 
 .checkbox-item span {

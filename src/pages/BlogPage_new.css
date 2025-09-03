@@ -32,7 +32,11 @@
 /* --- Hero Section --- */
 .blog-hero {
   position: relative;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 100%
+  );
   color: white;
   padding: 8rem 0 6rem;
   text-align: center;
@@ -46,8 +50,11 @@
   right: 0;
   bottom: 0;
   opacity: 0.1;
-  background-image: 
-    radial-gradient(circle at 25% 25%, white 2px, transparent 2px),
+  background-image: radial-gradient(
+      circle at 25% 25%,
+      white 2px,
+      transparent 2px
+    ),
     radial-gradient(circle at 75% 75%, white 2px, transparent 2px);
   background-size: 100px 100px, 60px 60px;
   animation: float 20s linear infinite;
@@ -63,9 +70,15 @@
 }
 
 @keyframes float {
-  0% { transform: translateY(0px) translateX(0px); }
-  50% { transform: translateY(-10px) translateX(5px); }
-  100% { transform: translateY(0px) translateX(0px); }
+  0% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-10px) translateX(5px);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
 }
 
 .hero-content {

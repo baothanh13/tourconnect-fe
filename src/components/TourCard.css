@@ -134,38 +134,45 @@
 .price-tag.budget {
   background: linear-gradient(135deg, #065f46 0%, #047857 100%);
   border-color: rgba(16, 185, 129, 0.2);
-  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2), 0 0 0 1px rgba(16, 185, 129, 0.1);
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2),
+    0 0 0 1px rgba(16, 185, 129, 0.1);
 }
 
 .price-tag.standard {
   background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
   border-color: rgba(59, 130, 246, 0.2);
-  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2), 0 0 0 1px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2),
+    0 0 0 1px rgba(59, 130, 246, 0.1);
 }
 
 .price-tag.premium {
   background: linear-gradient(135deg, #7c2d12 0%, #dc2626 100%);
   border-color: rgba(239, 68, 68, 0.2);
-  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.2), 0 0 0 1px rgba(239, 68, 68, 0.1);
+  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.2),
+    0 0 0 1px rgba(239, 68, 68, 0.1);
 }
 
 .modern-tour-card:hover .price-tag {
   transform: scale(1.05) translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.15);
 }
 
 .modern-tour-card:hover .price-tag.budget {
-  box-shadow: 0 12px 40px rgba(16, 185, 129, 0.3), 0 0 0 1px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 12px 40px rgba(16, 185, 129, 0.3),
+    0 0 0 1px rgba(16, 185, 129, 0.15);
   background: linear-gradient(135deg, #047857 0%, #059669 100%);
 }
 
 .modern-tour-card:hover .price-tag.standard {
-  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.3), 0 0 0 1px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.3),
+    0 0 0 1px rgba(59, 130, 246, 0.15);
   background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
 }
 
 .modern-tour-card:hover .price-tag.premium {
-  box-shadow: 0 12px 40px rgba(239, 68, 68, 0.3), 0 0 0 1px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 12px 40px rgba(239, 68, 68, 0.3),
+    0 0 0 1px rgba(239, 68, 68, 0.15);
   background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
 }
 

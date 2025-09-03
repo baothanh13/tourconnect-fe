@@ -1,191 +1,297 @@
 import React from "react";
-import "./About.css";
+import {
+  FaUsers,
+  FaHeart,
+  FaGlobe,
+  FaShieldAlt,
+  FaRocket,
+  FaHandshake,
+} from "react-icons/fa";
+import "./About_new.css";
 
 const About = () => {
-  return (
-    <div className="about-page">
-      <div className="container">
-        {/* Hero Section */}
-        <section className="about-hero">
-          <h1>About TourConnect</h1>
-          <p>Connecting travelers with passionate local guides worldwide</p>
-        </section>
+  const teamMembers = [
+    {
+      name: "Phan Quy Bao Thanh",
+      role: "Founder & CEO",
+      description:
+        "Visionary leader passionate about connecting travelers with authentic Vietnamese experiences",
+      image:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+      specialization: "Tourism Strategy & Business Development",
+    },
+    {
+      name: "Dang Minh Tien",
+      role: "CTO & Co-Founder",
+      description:
+        "Technology expert building innovative solutions for seamless travel experiences",
+      image:
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+      specialization: "Full-Stack Development & Platform Architecture",
+    },
+    {
+      name: "Pham Cong Tru",
+      role: "Head of Operations",
+      description:
+        "Operations specialist ensuring quality and safety standards across all Vietnamese tours",
+      image:
+        "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80",
+      specialization: "Tour Operations & Quality Assurance",
+    },
+  ];
 
-        {/* Our Story */}
-        <section className="our-story">
-          <div className="story-content">
-            <div className="story-text">
+  const companyValues = [
+    {
+      icon: <FaHeart />,
+      title: "Authentic Cultural Exchange",
+      description:
+        "We believe the best way to experience Vietnam is through the eyes and stories of passionate locals who call it home.",
+    },
+    {
+      icon: <FaUsers />,
+      title: "Community Empowerment",
+      description:
+        "Supporting Vietnamese guides and local communities by creating sustainable income opportunities through tourism.",
+    },
+    {
+      icon: <FaGlobe />,
+      title: "Sustainable Tourism",
+      description:
+        "Promoting responsible travel that preserves Vietnam's cultural heritage and natural beauty for future generations.",
+    },
+    {
+      icon: <FaShieldAlt />,
+      title: "Trust & Safety First",
+      description:
+        "Every guide is carefully verified with comprehensive insurance coverage ensuring safe, reliable experiences.",
+    },
+  ];
+
+  const milestones = [
+    {
+      year: "2025",
+      event: "TourConnect Founded",
+      description:
+        "Started with a vision to revolutionize Vietnam's local tourism",
+    },
+    {
+      year: "2025",
+      event: "First 50 Guides",
+      description:
+        "Onboarded passionate local guides across major Vietnamese cities",
+    },
+    {
+      year: "2025",
+      event: "1,000+ Tours",
+      description:
+        "Successfully connected travelers with authentic Vietnamese experiences",
+    },
+    {
+      year: "2025",
+      event: "Platform Launch",
+      description:
+        "Launched comprehensive booking platform for seamless tour discovery",
+    },
+  ];
+
+  return (
+    <div className="about-page-modern">
+      {/* Modern Hero Section */}
+      <section className="about-hero-modern">
+        <div className="hero-background-about">
+          <div className="hero-particles-about"></div>
+        </div>
+        <div className="about-hero-content">
+          <div className="hero-badge-about">
+            <FaRocket />
+            <span>Connecting Cultures Since 2025</span>
+          </div>
+          <h1>About TourConnect</h1>
+          <p>
+            We're revolutionizing Vietnam's tourism by connecting international
+            travelers with passionate local guides who share authentic cultural
+            experiences and hidden gems.
+          </p>
+          <div className="hero-stats-about">
+            <div className="stat-about">
+              <h3>200+</h3>
+              <p>Local Guides</p>
+            </div>
+            <div className="stat-about">
+              <h3>5,000+</h3>
+              <p>Happy Travelers</p>
+            </div>
+            <div className="stat-about">
+              <h3>15+</h3>
+              <p>Vietnamese Cities</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Story Section */}
+      <section className="story-section-modern">
+        <div className="story-container">
+          <div className="story-content-modern">
+            <div className="story-text-modern">
               <h2>Our Story</h2>
               <p>
-                Founded in 2025, TourConnect was born from a simple belief: that
-                the best way to experience a destination is through the eyes of
-                someone who truly knows and loves it. We started as a small team
-                of travel enthusiasts who wanted to create authentic,
-                personalized experiences for every traveler.
+                Founded in 2025 by three passionate Vietnamese entrepreneurs,
+                TourConnect was born from a simple yet powerful vision: to
+                showcase the real Vietnam through the eyes of locals who know
+                and love their homeland.
               </p>
               <p>
-                Today, we're proud to connect thousands of travelers with
-                verified local guides across Vietnam and around the world,
-                creating unforgettable memories one tour at a time.
+                We recognized that the best travel experiences come from
+                authentic connections with local people who can share not just
+                the famous attractions, but the hidden stories, secret spots,
+                and cultural nuances that make Vietnam truly special.
+              </p>
+              <p>
+                Today, we're proud to be Vietnam's leading platform connecting
+                travelers with verified local guides across Ho Chi Minh City,
+                Hanoi, Hoi An, Da Nang, and beyond.
               </p>
             </div>
-            <div className="story-image">
+            <div className="story-image-modern">
               <img
-                src="/assets/story.jpg"
-                alt="Our Story"
-                className="story-img"
+                src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                alt="Vietnamese local guide showing Hoi An to travelers"
               />
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Mission Section */}
-        <section className="mission-section">
-          <h2>Our Mission</h2>
-          <div className="mission-grid">
-            <div className="mission-card">
-              <div className="mission-icon">🎯</div>
-              <h3>Authentic Experiences</h3>
-              <p>
-                We connect you with local guides who share genuine passion for
-                their destinations, ensuring authentic and meaningful travel
-                experiences.
-              </p>
-            </div>
-            <div className="mission-card">
-              <div className="mission-icon">🤝</div>
-              <h3>Trust & Safety</h3>
-              <p>
-                All our guides are carefully verified and reviewed. We
-                prioritize your safety and satisfaction with comprehensive
-                insurance coverage.
-              </p>
-            </div>
-            <div className="mission-card">
-              <div className="mission-icon">🌟</div>
-              <h3>Personalization</h3>
-              <p>
-                Every tour is customizable to match your interests, pace, and
-                preferences. Your journey, your way.
-              </p>
-            </div>
+      {/* Values Section */}
+      <section className="values-section-modern">
+        <div className="values-container">
+          <div className="section-header-about">
+            <h2>Our Values</h2>
+            <p>The principles that guide everything we do at TourConnect</p>
           </div>
-        </section>
-
-        {/* Statistics Section */}
-        <section className="stats-section">
-          <h2>TourConnect by the Numbers</h2>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <div className="stat-number">10,000+</div>
-              <div className="stat-label">Happy Travelers</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-number">500+</div>
-              <div className="stat-label">Verified Guides</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-number">50+</div>
-              <div className="stat-label">Destinations</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-number">4.8★</div>
-              <div className="stat-label">Average Rating</div>
-            </div>
+          <div className="values-grid-modern">
+            {companyValues.map((value, index) => (
+              <div key={index} className="value-card-about">
+                <div className="value-icon-about">{value.icon}</div>
+                <h3>{value.title}</h3>
+                <p>{value.description}</p>
+              </div>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Values Section */}
-        <section className="values-section">
-          <h2>Our Values</h2>
-          <div className="values-list">
-            <div className="value-item">
-              <h3>🌍 Sustainability</h3>
-              <p>
-                We promote responsible tourism that benefits local communities
-                and preserves cultural heritage.
-              </p>
-            </div>
-            <div className="value-item">
-              <h3>💡 Innovation</h3>
-              <p>
-                We continuously improve our platform with cutting-edge
-                technology to enhance your booking experience.
-              </p>
-            </div>
-            <div className="value-item">
-              <h3>❤️ Community</h3>
-              <p>
-                We build lasting relationships between travelers and guides,
-                creating a global community of cultural exchange.
-              </p>
-            </div>
-            <div className="value-item">
-              <h3>🔒 Integrity</h3>
-              <p>
-                We operate with transparency, honesty, and fairness in all our
-                interactions with travelers and guides.
-              </p>
-            </div>
+      {/* Timeline Section */}
+      <section className="timeline-section-modern">
+        <div className="timeline-container">
+          <div className="section-header-about">
+            <h2>Our Journey</h2>
+            <p>
+              Key milestones in building Vietnam's premier local guide platform
+            </p>
           </div>
-        </section>
+          <div className="timeline-modern">
+            {milestones.map((milestone, index) => (
+              <div key={index} className="timeline-item-modern">
+                <div className="timeline-marker"></div>
+                <div className="timeline-content">
+                  <div className="timeline-year">{milestone.year}</div>
+                  <h3>{milestone.event}</h3>
+                  <p>{milestone.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        {/* Team Section */}
-        <section className="team-section">
-          <h2>Meet Our Team</h2>
-          <div className="team-grid">
-            <div className="team-member">
+      {/* Team Section */}
+      <section className="team-section-modern">
+        <div className="team-container">
+          <div className="section-header-about">
+            <h2>Meet Our Team</h2>
+            <p>The passionate minds behind TourConnect's mission</p>
+          </div>
+          <div className="team-grid-modern">
+            {teamMembers.map((member, index) => (
+              <div key={index} className="team-card-modern">
+                <div className="member-image-container">
+                  <img src={member.image} alt={member.name} />
+                  <div className="member-overlay">
+                    <div className="member-social">
+                      <FaHandshake />
+                    </div>
+                  </div>
+                </div>
+                <div className="member-info">
+                  <h3>{member.name}</h3>
+                  <div className="member-role">{member.role}</div>
+                  <p>{member.description}</p>
+                  <div className="member-specialization">
+                    <strong>Specialty:</strong> {member.specialization}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Impact Section */}
+      <section className="impact-section-modern">
+        <div className="impact-container">
+          <div className="impact-content">
+            <div className="impact-text">
+              <h2>Our Impact on Vietnamese Tourism</h2>
+              <p>
+                TourConnect is more than a booking platform - we're building
+                bridges between cultures and creating economic opportunities for
+                Vietnamese communities.
+              </p>
+              <div className="impact-stats">
+                <div className="impact-stat">
+                  <div className="impact-number">₫50M+</div>
+                  <div className="impact-label">Earned by Local Guides</div>
+                </div>
+                <div className="impact-stat">
+                  <div className="impact-number">95%</div>
+                  <div className="impact-label">Guide Satisfaction Rate</div>
+                </div>
+              </div>
+            </div>
+            <div className="impact-image">
               <img
-                src="/assets/member1.jpg"
-                alt="Nguyen Van A"
-                className="member-avatar"
+                src="https://images.unsplash.com/photo-1509923936403-148b60b94328?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                alt="Vietnamese guide and tourists exploring together"
               />
-              <h3>Nguyen Van A</h3>
-              <p>Founder & CEO</p>
-              <p>Passionate traveler with 10+ years in tourism industry</p>
-            </div>
-            <div className="team-member">
-              <img
-                src="/assets/member2.jpg"
-                alt="Tran Thi B"
-                className="member-avatar"
-              />
-              <h3>Tran Thi B</h3>
-              <p>CTO</p>
-              <p>
-                Technology expert focused on creating seamless user experiences
-              </p>
-            </div>
-            <div className="team-member">
-              <img
-                src="/assets/member3.jpg"
-                alt="Le Van C"
-                className="member-avatar"
-              />
-              <h3>Le Van C</h3>
-              <p>Head of Operations</p>
-              <p>Ensures quality and safety standards across all tours</p>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Call to Action */}
-        <section className="cta-section">
-          <h2>Join Our Community</h2>
-          <p>
-            Whether you're a traveler seeking authentic experiences or a local
-            guide ready to share your passion, we'd love to have you.
-          </p>
-          <div className="cta-buttons">
-            <a href="/guides" className="btn-primary">
-              Find Your Guide
-            </a>
-            <a href="/become-guide" className="btn-secondary">
-              Become a Guide
-            </a>
+      {/* CTA Section */}
+      <section className="cta-section-about">
+        <div className="cta-container-about">
+          <div className="cta-content-about">
+            <h2>Ready to Experience the Real Vietnam?</h2>
+            <p>
+              Join thousands of travelers who've discovered authentic Vietnamese
+              culture through our passionate local guides.
+            </p>
+            <div className="cta-buttons-about">
+              <a href="/guides" className="btn-primary-about">
+                <FaUsers />
+                Find Your Guide
+              </a>
+              <a href="/careers" className="btn-secondary-about">
+                <FaRocket />
+                Join Our Team
+              </a>
+            </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 };

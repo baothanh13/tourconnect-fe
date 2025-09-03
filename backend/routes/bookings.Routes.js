@@ -208,13 +208,13 @@ router.put('/:id/status', verifyToken, updateBookingStatus);
  *           schema:
  *             type: object
  *             properties:
- *               status:
+ *               payment_status:
  *                 type: string
  *                 enum: [pending, paid, refunded]
  *     responses:
  *       200:
  *         description: Trạng thái payment đã được cập nhật
  */
-router.put('/:id/status', verifyToken, updateBookingStatus);
+router.put('/:id/payment_status', verifyToken, updatePaymentStatus);
 
 module.exports = router;

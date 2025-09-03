@@ -28,16 +28,6 @@ app.use(
 
 app.use(bodyParser.json());
 
-// Health check
-app.get("/api/health", (req, res) => {
-  res.json({
-    status: "OK",
-    message: "TourConnect Backend is running!",
-    timestamp: new Date().toISOString(),
-    version: "1.0.0",
-  });
-});
-
 // Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -117,7 +107,6 @@ connectToDB()
     app.listen(PORT, () => {
        console.log(`🚀 Server is running at http://localhost:${PORT}`);
       console.log(`📖 Swagger UI available at http://localhost:${PORT}/api-docs`);
-      console.log(`💚 Health check: http://localhost:${PORT}/api/health`);
     });
   })
   .catch((err) => {});

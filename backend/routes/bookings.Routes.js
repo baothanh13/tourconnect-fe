@@ -7,6 +7,7 @@ const getBookingByGuideId = require('../api/bookings/getBookingsByGuideId');
 const getBookingById = require('../api/bookings/getBookingById.Controller');
 const updateBooking = require('../api/bookings/updateBooking.Controller');
 const updateBookingStatus = require('../api/bookings/updateBookingStatus.Controller');
+const updatePaymentStatus = require('../api/bookings/updatePaymentStatus.Controller');
 const verifyToken = require('../middleware/verifyToken');
 
 /**
@@ -182,6 +183,37 @@ router.put('/:id', verifyToken, updateBooking);
  *     responses:
  *       200:
  *         description: Trạng thái booking đã được cập nhật
+ */
+router.put('/:id/status', verifyToken, updateBookingStatus);
+
+/**
+ * @swagger
+ * /api/bookings/{id}/payment_status:
+ *   put:
+ *     summary: Cập nhật trạng thái booking
+ *     tags: [Bookings]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Booking ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [pending, paid, refunded]
+ *     responses:
+ *       200:
+ *         description: Trạng thái payment đã được cập nhật
  */
 router.put('/:id/status', verifyToken, updateBookingStatus);
 

@@ -40,7 +40,7 @@ const Header = ({ toggleSidebar }) => {
 
         {isAuthenticated && (
           <Link to="/book-tour" className="book-tour-link">
-            Book Tour
+            Booking
           </Link>
         )}
 

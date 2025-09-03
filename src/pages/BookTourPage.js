@@ -1,60 +1,88 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { useSearchParams } from "react-router-dom";
+import guidesService from "../services/guidesService";
+import bookingsService from "../services/bookingsService";
+import LoadingSpinner from "../components/LoadingSpinner";
 import "./BookTourPage.css";
 
 const BookTourPage = () => {
   const { isAuthenticated } = useAuth();
+  const [searchParams] = useSearchParams();
+  const guideId = searchParams.get("guideId");
+
   const [bookingData, setBookingData] = useState({
-    guideId: "",
+    guideId: guideId || "",
     date: "",
     time: "",
     duration: "2",
     numberOfTourists: "1",
     specialRequests: "",
   });
-  const [guides, setGuides] = useState([]);
+
   const [selectedGuide, setSelectedGuide] = useState(null);
+  const [guidesList, setGuidesList] = useState([]); 
   const [loading, setLoading] = useState(false);
+  const [guideLoading, setGuideLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadGuides();
-  }, []);
+    if (guideId) {
+      loadGuideById(guideId);
+    } else {
+      loadLatestGuides(); 
+    }
+  }, [guideId]);
 
-  const loadGuides = async () => {
-    // Mock guides data
-    const mockGuides = [
-      {
-        id: 1,
-        name: "Sarah Chen",
-        location: "Ho Chi Minh City",
-        avatar: "/api/placeholder/100/100",
-        rating: 4.8,
-        pricePerHour: 25,
-        specialties: ["Cultural Tours", "Food Tours"],
-        availability: "Available today",
-      },
-      {
-        id: 2,
-        name: "Ahmed Hassan",
-        location: "Hanoi",
-        avatar: "/api/placeholder/100/100",
-        rating: 4.9,
-        pricePerHour: 30,
-        specialties: ["Historical Sites", "Architecture"],
-        availability: "Available tomorrow",
-      },
-      {
-        id: 3,
-        name: "Maria Santos",
-        location: "Da Nang",
-        avatar: "/api/placeholder/100/100",
-        rating: 4.7,
-        pricePerHour: 22,
-        specialties: ["Beach Tours", "Adventure Tours"],
-        availability: "Available today",
-      },
-    ];
-    setGuides(mockGuides);
+  // Chuẩn hóa dữ liệu từ API
+  const transformGuide = (guide) => ({
+    id: guide.id,
+    name: guide.user_name,
+    location: guide.location,
+    avatar:
+      guide.avatar_url ||
+      "https://images.unsplash.com/photo-1494790108755-2616b612b372?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
+    rating: guide.rating || 0,
+    pricePerHour: guide.price_per_hour || 0,
+    specialties: Array.isArray(guide.specialties)
+      ? guide.specialties
+      : (guide.specialties ? guide.specialties.split(",") : []),
+    languages: Array.isArray(guide.languages)
+      ? guide.languages
+      : (guide.languages ? guide.languages.split(",") : []),
+    description: guide.description || "",
+    experienceYears: guide.experience_years || 0,
+    totalReviews: guide.total_reviews || 0,
+    availability: guide.is_available ? "Available today" : "Not available",
+  });
+
+  const loadGuideById = async (id) => {
+    try {
+      setGuideLoading(true);
+      setError(null);
+      const guide = await guidesService.getGuideById(id);
+      setSelectedGuide(transformGuide(guide));
+      setGuidesList([transformGuide(guide)]); // chỉ hiển thị guide này
+    } catch (err) {
+      console.error("Error loading guide:", err);
+      setError(err.message || "Failed to load guide information");
+    } finally {
+      setGuideLoading(false);
+    }
+  };
+
+  const loadLatestGuides = async () => {
+    try {
+      setGuideLoading(true);
+      setError(null);
+      const res = await guidesService.getGuides({ limit: 5 }); 
+      setGuidesList((res.guides || []).map(transformGuide));
+    } catch (err) {
+      console.error("Error loading guides list:", err);
+      setError(err.message || "Failed to load guides");
+    } finally {
+      setGuideLoading(false);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -86,28 +114,44 @@ const BookTourPage = () => {
       return;
     }
 
+    if (!selectedGuide) {
+      alert("Please select a guide first");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // Mock booking submission
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const totalPrice =
+        selectedGuide.pricePerHour * parseInt(bookingData.duration);
+
+      const bookingDataForAPI = {
+        guideId: bookingData.guideId,
+        date: bookingData.date,
+        timeSlot: bookingData.time,
+        duration: parseInt(bookingData.duration),
+        numberOfTourists: parseInt(bookingData.numberOfTourists),
+        specialRequests: bookingData.specialRequests,
+        totalPrice,
+      };
+
+      const response = await bookingsService.createBooking(bookingDataForAPI);
 
       alert(
-        "Booking request submitted successfully! You will receive a confirmation email shortly."
+        `Booking request submitted successfully! Booking ID: ${response.bookingId}`
       );
 
-      // Reset form
       setBookingData({
-        guideId: "",
+        guideId: guideId || "",
         date: "",
         time: "",
         duration: "2",
         numberOfTourists: "1",
         specialRequests: "",
       });
-      setSelectedGuide(null);
     } catch (error) {
-      alert("Error submitting booking. Please try again.");
+      console.error("Booking submission error:", error);
+      alert(`Error submitting booking: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -117,11 +161,19 @@ const BookTourPage = () => {
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDate = tomorrow.toISOString().split("T")[0];
 
+  if (guideLoading) {
+    return <LoadingSpinner message="Loading guide information..." />;
+  }
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
+
   return (
     <div className="book-tour-page">
       <div className="page-header">
         <div className="container">
-          <h1>Book Your Tour</h1>
+          <h1>Book Your Guide</h1>
           <p>Choose a guide and plan your perfect experience</p>
         </div>
       </div>
@@ -152,7 +204,7 @@ const BookTourPage = () => {
               <div className="guide-selection">
                 <h2>Step 1: Choose Your Guide</h2>
                 <div className="guides-grid">
-                  {guides.map((guide) => (
+                  {guidesList.map((guide) => (
                     <div
                       key={guide.id}
                       className={`guide-option ${

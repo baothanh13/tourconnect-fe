@@ -498,13 +498,6 @@ const GuideDashboard = () => {
                 className="action-schedule"
               />
               <QuickActionCard
-                icon={<FaChartLine />}
-                label="View Analytics"
-                description="Check performance and insights"
-                onClick={() => navigate("/guide/analytics")}
-                className="action-analytics"
-              />
-              <QuickActionCard
                 icon={<FaCamera />}
                 label="Upload Photos"
                 description="Add photos to your tours and profile"

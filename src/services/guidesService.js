@@ -27,8 +27,8 @@ export const guidesService = {
 
       // Add filters to query params
       if (filters.location) params.append("location", filters.location);
-      if (filters.language) params.append("language", filters.language);
-      if (filters.category) params.append("category", filters.category);
+      if (filters.languages) params.append("languages", filters.languages);
+      if (filters.specialties) params.append("specialties", filters.specialties);
       if (filters.minRating) params.append("minRating", filters.minRating);
       if (filters.priceRange) params.append("priceRange", filters.priceRange);
       if (filters.available !== undefined)

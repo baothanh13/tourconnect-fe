@@ -7,7 +7,6 @@ import {
   FaSignOutAlt,
   FaHome,
   FaCalendarCheck,
-  FaHeart,
   FaStar,
   FaMapMarkerAlt,
   FaDollarSign,
@@ -16,8 +15,6 @@ import {
   FaClock,
   FaEye,
   FaComments,
-  FaBookmark,
-  FaGift,
   FaSearch,
   FaBell,
   FaArrowUp,
@@ -285,30 +282,7 @@ const TouristDashboard = () => {
         />
       </div>
 
-      {/* Secondary Stats */}
-      <div className="secondary-stats">
-        <StatCard
-          icon={<FaHeart />}
-          title="Favorite Guides"
-          value={stats.favoriteGuides}
-          subtitle="Saved to favorites"
-          className="info"
-        />
-        <StatCard
-          icon={<FaBookmark />}
-          title="Wishlist"
-          value={stats.savedWishlist}
-          subtitle="Tours saved for later"
-          className="info"
-        />
-        <StatCard
-          icon={<FaGift />}
-          title="Reward Points"
-          value={stats.rewardPoints.toLocaleString()}
-          subtitle={`${stats.membershipsLevel} Level`}
-          className="warning"
-        />
-      </div>
+     
 
       {/* Quick Actions */}
       <div className="dashboard-section">
@@ -332,20 +306,6 @@ const TouristDashboard = () => {
             description="View and manage your bookings"
             onClick={() => navigate("/tourist/bookings")}
             className="action-bookings"
-          />
-          <QuickActionCard
-            icon={<FaHeart />}
-            label="Favorite Guides"
-            description="Connect with your preferred guides"
-            onClick={() => navigate("/tourist/favorites")}
-            className="action-favorites"
-          />
-          <QuickActionCard
-            icon={<FaBookmark />}
-            label="Wishlist"
-            description="Tours you want to experience"
-            onClick={() => navigate("/tourist/wishlist")}
-            className="action-wishlist"
           />
           <QuickActionCard
             icon={<FaComments />}

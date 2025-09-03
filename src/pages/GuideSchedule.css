@@ -215,7 +215,8 @@ input:checked + .slider::before { transform: translateX(20px); }
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 16px;
-  margin-bottom: 24px;
+  margin-top: 50px ;
+  margin-bottom: 50px;
   align-items: stretch; /* chiều cao các ô bằng nhau */
 }
 

@@ -326,54 +326,40 @@ const TouristDashboard = () => {
 
       {/* Dashboard Grid */}
       <div className="dashboard-grid-modern">
-        {/* Upcoming Tours */}
+       {/* Upcoming Bookings */}
         <div className="dashboard-card">
           <div className="card-header">
-            <h3>Upcoming Tours</h3>
+            <h3>Upcoming Bookings</h3>
             <button
-              className="view-all-btn"
-              onClick={() => navigate("/tourist/bookings?filter=upcoming")}
-            >
-              View All
-            </button>
-          </div>
-          <div className="card-content">
-            {upcomingTours.length > 0 ? (
-              <div className="tours-list">
-                {upcomingTours.map((tour) => (
-                  <div key={tour.id} className="tour-item-modern">
-                    <div className="tour-date">
-                      <span className="date">{formatDate(tour.date)}</span>
-                      <span className="time">{tour.time}</span>
-                    </div>
-                    <div className="tour-details">
-                      <h4 className="tour-title">{tour.title}</h4>
-                      <p className="tour-guide">Guide: {tour.guide}</p>
-                      <div className="tour-info">
-                        <span>
-                          <FaMapMarkerAlt /> {tour.location}
-                        </span>
-                        <span>
-                          <FaClock /> {tour.duration}
-                        </span>
-                        <span>
-                          <FaUsers /> {tour.groupSize} people
-                        </span>
+                className="view-all-btn"
+                onClick={() => navigate("/tourist/bookings?filter=upcoming")}
+              >
+                View All
+              </button>
+            </div>
+            <div className="card-content">
+              {upcomingTours.length > 0 ? (
+                <div className="bookings-list">
+                  {upcomingTours.map((tour) => (
+                    <div key={tour.booking_id} className="booking-item-modern">
+                      <div className="booking-date">
+                        <span className="date">{formatDate(tour.booking_date)}</span>
+                      </div>
+                      <div className="booking-details">
+                        <p className="booking-guide">Guide: {tour.guide.name}</p>
+                      </div>
+                      <div className="booking-actions">
+                        <button className="btn-small btn-view">
+                          <FaEye />
+                        </button>
                       </div>
                     </div>
-                    <div className="tour-actions">
-                      <button className="btn-small btn-view">
-                        <FaEye />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
+                  ))}
+                </div>
+              ) : (
               <div className="no-data">
                 <span>
-                  No upcoming tours. Browse our amazing tours to book your next
-                  adventure!
+                  No upcoming bookings. Book your next adventure now!
                 </span>
               </div>
             )}
@@ -403,7 +389,11 @@ const TouristDashboard = () => {
                         {activity.description}
                       </p>
                       <span className="activity-time">
-                        <FaClock /> {activity.timestamp.toLocaleDateString()}
+                        <FaClock />{" "}
+                        {new Date(activity.timestamp).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}
                       </span>
                     </div>
                   </div>

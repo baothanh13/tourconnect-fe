@@ -71,12 +71,12 @@ const GuidesListPage = () => {
 
         // Languages filter
         if (debouncedFilters.languages.length > 0) {
-          apiFilters.language = JSON.stringify(debouncedFilters.languages);
+          apiFilters.languages = debouncedFilters.languages.join(",");
         }
 
         // Specialties filter (categories)
         if (debouncedFilters.specialties.length > 0) {
-          apiFilters.category = JSON.stringify(debouncedFilters.specialties);
+          apiFilters.specialties = debouncedFilters.specialties.join(",");
         }
 
         // Rating filter

@@ -16,109 +16,90 @@ const getTouristUpcomingTours = async (req, res) => {
       return res.status(404).json({ message: "Tourist not found" });
     }
 
-    // Get total count of upcoming tours
+    // Count total upcoming bookings
     const [countResult] = await pool.execute(
       `SELECT COUNT(*) as total
        FROM bookings b
-       JOIN tours t ON b.tour_id = t.id
-       JOIN guides g ON b.guide_id = g.id
-       JOIN users gu ON g.user_id = gu.id
        WHERE b.tourist_id = ? 
        AND b.status IN ('confirmed', 'pending')
        AND b.booking_date >= CURDATE()`,
       [touristId]
     );
 
-    const totalUpcomingTours = countResult[0].total;
+    const totalUpcomingBookings = countResult[0].total;
 
-    // Get upcoming tours with details
+    // Get upcoming bookings with details
     const [upcomingTours] = await pool.execute(
       `SELECT 
          b.id as booking_id,
          b.booking_date,
          b.status,
          b.total_price,
-         b.number_of_people,
-         b.special_requirements,
+         b.number_of_tourists,
+         b.special_requests,
          b.created_at as booking_created_at,
-         t.id as tour_id,
-         t.title as tour_title,
-         t.description as tour_description,
-         t.duration,
-         t.price,
-         t.location as tour_location,
-         t.image_url as tour_image,
-         t.max_people,
          g.id as guide_id,
          gu.name as guide_name,
          gu.email as guide_email,
-         gu.phone as guide_phone,
-         g.rating as guide_rating,
-         g.total_reviews as guide_total_reviews,
-         g.location as guide_location,
-         g.languages as guide_languages,
-         g.specialties as guide_specialties,
-         g.price_per_hour as guide_price_per_hour
+         gu.phone as guide_phone
        FROM bookings b
-       JOIN tours t ON b.tour_id = t.id
        JOIN guides g ON b.guide_id = g.id
        JOIN users gu ON g.user_id = gu.id
        WHERE b.tourist_id = ? 
        AND b.status IN ('confirmed', 'pending')
        AND b.booking_date >= CURDATE()
        ORDER BY b.booking_date ASC, b.created_at DESC
-       LIMIT ? OFFSET ?`,
-      [touristId, parseInt(limit), parseInt(offset)]
+      LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}`,
+      [touristId]
     );
 
-    // Format the response
-    const formattedTours = upcomingTours.map((tour) => ({
-      booking_id: tour.booking_id,
-      booking_date: tour.booking_date,
-      status: tour.status,
-      total_price: tour.total_price,
-      number_of_people: tour.number_of_people,
-      special_requirements: tour.special_requirements,
-      booking_created_at: tour.booking_created_at,
+    const formattedBookings = upcomingTours.map((b) => ({
+      booking_id: b.booking_id,
+      booking_date: b.booking_date,
+      status: b.status,
+      total_price: b.total_price,
+      number_of_people: b.number_of_people,
+      special_requirements: b.special_requirements,
+      booking_created_at: b.booking_created_at,
       tour: {
-        id: tour.tour_id,
-        title: tour.tour_title,
-        description: tour.tour_description,
-        duration: tour.duration,
-        price: tour.price,
-        location: tour.tour_location,
-        image_url: tour.tour_image,
-        max_people: tour.max_people,
+        id: b.tour_id,
+        title: b.tour_title,
+        description: b.tour_description,
+        duration: b.duration,
+        price: b.price,
+        location: b.tour_location,
+        image_url: b.tour_image,
+        max_people: b.max_people,
       },
       guide: {
-        id: tour.guide_id,
-        name: tour.guide_name,
-        email: tour.guide_email,
-        phone: tour.guide_phone,
-        rating: tour.guide_rating,
-        total_reviews: tour.guide_total_reviews,
-        location: tour.guide_location,
-        languages: tour.guide_languages,
-        specialties: tour.guide_specialties,
-        price_per_hour: tour.guide_price_per_hour,
+        id: b.guide_id,
+        name: b.guide_name,
+        email: b.guide_email,
+        phone: b.guide_phone,
+        rating: b.guide_rating,
+        total_reviews: b.guide_total_reviews,
+        location: b.guide_location,
+        languages: b.guide_languages,
+        specialties: b.guide_specialties,
+        price_per_hour: b.guide_price_per_hour,
       },
     }));
 
-    const totalPages = Math.ceil(totalUpcomingTours / limit);
+    const totalPages = Math.ceil(totalUpcomingBookings / limit);
 
     res.json({
-      upcoming_tours: formattedTours,
+      upcoming_Tours: formattedBookings,
       pagination: {
         currentPage: parseInt(page),
         totalPages,
-        totalUpcomingTours,
+        totalUpcomingBookings,
         limit: parseInt(limit),
         hasNextPage: page < totalPages,
         hasPrevPage: page > 1,
       },
     });
   } catch (error) {
-    console.error("Error fetching upcoming tours:", error);
+    console.error("Error fetching upcoming bookings:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error",

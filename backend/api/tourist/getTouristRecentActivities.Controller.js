@@ -29,19 +29,17 @@ const getTouristRecentActivities = async (req, res) => {
             WHEN b.status = 'cancelled' THEN 'Booking Cancelled'
             ELSE 'Booking Updated'
           END as title,
-          CONCAT('Booking for ', t.title, ' with guide ', gu.name) as description,
+          CONCAT('Booking for guide ', gu.name) as description,
           b.status,
           b.created_at as timestamp,
           b.total_price as amount,
-          t.title as tour_title,
           gu.name as guide_name
         FROM bookings b
-        JOIN tours t ON b.tour_id = t.id
         JOIN guides g ON b.guide_id = g.id
         JOIN users gu ON g.user_id = gu.id
         WHERE b.tourist_id = ?
         ORDER BY b.created_at DESC
-        LIMIT ?
+        LIMIT ${limit}
       )
       UNION ALL
       (
@@ -49,23 +47,21 @@ const getTouristRecentActivities = async (req, res) => {
           CONCAT('review_', r.id) as id,
           'review' as type,
           'Review Submitted' as title,
-          CONCAT('Left a ', r.rating, '-star review for ', t.title) as description,
+          CONCAT('Left a ', r.rating, '-star review for ', gu.name) as description,
           'completed' as status,
           r.created_at as timestamp,
           r.rating as amount,
-          t.title as tour_title,
           gu.name as guide_name
         FROM reviews r
-        JOIN tours t ON r.tour_id = t.id
         JOIN guides g ON r.guide_id = g.id
         JOIN users gu ON g.user_id = gu.id
         WHERE r.tourist_id = ?
         ORDER BY r.created_at DESC
-        LIMIT ?
+        LIMIT ${limit}
       )
       ORDER BY timestamp DESC
-      LIMIT ?`,
-      [touristId, limit, touristId, limit, limit]
+      LIMIT ${limit}`,
+      [touristId, touristId]
     );
 
     return res.status(200).json({

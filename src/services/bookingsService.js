@@ -23,18 +23,8 @@ export const bookingsService = {
   // Create new booking
   async createBooking(bookingData) {
     try {
-      // Transform frontend data to match backend API structure
-      const backendBookingData = {
-        guideId: bookingData.guideId,
-        touristId: bookingData.touristId || "default-tourist", // Add default if not provided
-        date: bookingData.date,
-        timeSlot: bookingData.time || bookingData.timeSlot,
-        duration: bookingData.duration || 8, // Default 8 hours
-        numberOfTourists:
-          bookingData.participants || bookingData.numberOfTourists || 1,
-        specialRequests: bookingData.specialRequests || "",
-        totalPrice: bookingData.totalPrice || 0,
-      };
+      // Use the data as-is since frontend already prepares it correctly
+      const backendBookingData = bookingData;
 
       const response = await apiClient.post("/", backendBookingData);
       return response.data;

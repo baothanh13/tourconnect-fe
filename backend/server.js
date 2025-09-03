@@ -114,6 +114,10 @@ connectToDB()
     );
 
     // ✅ Chỉ listen một lần
-    app.listen(PORT, () => {});
+    app.listen(PORT, () => {
+       console.log(`🚀 Server is running at http://localhost:${PORT}`);
+      console.log(`📖 Swagger UI available at http://localhost:${PORT}/api-docs`);
+      console.log(`💚 Health check: http://localhost:${PORT}/api/health`);
+    });
   })
   .catch((err) => {});

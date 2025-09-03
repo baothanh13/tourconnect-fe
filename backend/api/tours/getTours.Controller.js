@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
       `
     SELECT
         t.id, t.guide_id, t.title, t.description, t.duration_hours, t.max_people,
-        t.price, t.image_url, t.category
+        t.price, t.image_url, t.category,
         g.user_id,
         u.name AS guide_name
       FROM tours t

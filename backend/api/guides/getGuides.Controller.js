@@ -5,7 +5,9 @@ async function getGuides(req, res) {
     const {
       location,
       languages,
+      language, // Support both parameter names for backward compatibility
       specialties, // 🔹 thêm specialties
+      category,   // 🔹 thêm specialties
       minRating,
       priceRange,
       date, // TODO: filter guides theo ngày có sẵn
@@ -48,18 +50,42 @@ async function getGuides(req, res) {
       }
     }
 
-    // Languages (JSON array trong DB)
-    if (languages) {
-      const langs = languages.split(",").map((l) => l.trim());
+    // Languages (JSON array trong DB) - support both parameter names
+    const languagesParam = languages || language;
+    if (languagesParam) {
+      let langs;
+      // Handle both comma-separated string and JSON string
+      if (languagesParam.startsWith("[")) {
+        try {
+          langs = JSON.parse(languagesParam);
+        } catch (e) {
+          langs = languagesParam.split(",").map((l) => l.trim());
+        }
+      } else {
+        langs = languagesParam.split(",").map((l) => l.trim());
+      }
+      
       langs.forEach((lang) => {
         baseQuery += ` AND JSON_CONTAINS(g.languages, JSON_QUOTE(?))`;
         params.push(lang);
       });
     }
 
-    // 🔹 Specialties (JSON array trong DB)
-    if (specialties) {
-      const specs = specialties.split(",").map((s) => s.trim());
+    // 🔹 Specialties (JSON array trong DB) - support both parameter names
+    const specialtiesParam = specialties || category;
+    if (specialtiesParam) {
+      let specs;
+      // Handle both comma-separated string and JSON string
+      if (specialtiesParam.startsWith("[")) {
+        try {
+          specs = JSON.parse(specialtiesParam);
+        } catch (e) {
+          specs = specialtiesParam.split(",").map((s) => s.trim());
+        }
+      } else {
+        specs = specialtiesParam.split(",").map((s) => s.trim());
+      }
+      
       specs.forEach((spec) => {
         baseQuery += ` AND JSON_CONTAINS(g.specialties, JSON_QUOTE(?))`;
         params.push(spec);

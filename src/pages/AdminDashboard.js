@@ -5,6 +5,8 @@ import Loading from "../components/Loading";
 import UserManagement from "../components/dashboard/UserManagement";
 import GuideManagement from "../components/dashboard/GuideManagement";
 import BookingManagement from "../components/dashboard/BookingManagement";
+import ToursManagement from "../components/dashboard/ToursManagement";
+import ReviewsManagement from "../components/dashboard/ReviewsManagement";
 import { adminService } from "../services/adminService";
 import {
   FaUsers,
@@ -27,6 +29,8 @@ import {
   FaClock,
   FaCheckCircle,
   FaTimes,
+  FaMapMarkedAlt,
+  FaStar,
 } from "react-icons/fa";
 import "./DashboardStyles.css";
 import "./ModernDashboard.css";
@@ -213,6 +217,10 @@ const AdminDashboard = () => {
         return <GuideManagement />;
       case "bookings":
         return <BookingManagement />;
+      case "tours":
+        return <ToursManagement />;
+      case "reviews":
+        return <ReviewsManagement />;
       default:
         return (
           <div className="modern-dashboard-content">
@@ -391,6 +399,20 @@ const AdminDashboard = () => {
           >
             <FaListAlt />
             <span>Bookings</span>
+          </button>
+          <button
+            onClick={() => setActiveView("tours")}
+            className={`nav-button ${activeView === "tours" ? "active" : ""}`}
+          >
+            <FaMapMarkedAlt />
+            <span>Tours</span>
+          </button>
+          <button
+            onClick={() => setActiveView("reviews")}
+            className={`nav-button ${activeView === "reviews" ? "active" : ""}`}
+          >
+            <FaStar />
+            <span>Reviews</span>
           </button>
         </div>
 

@@ -20,7 +20,32 @@ apiClient.interceptors.request.use((config) => {
 });
 
 export const toursService = {
-  // Get all tours with filters
+  // Get all tours with filters (for admin dashboard)
+  async getAllTours(filters = {}) {
+    try {
+      const params = new URLSearchParams();
+
+      if (filters.page) params.append("page", filters.page);
+      if (filters.limit) params.append("limit", filters.limit);
+      if (filters.category) params.append("category", filters.category);
+      if (filters.minPrice) params.append("minPrice", filters.minPrice);
+      if (filters.maxPrice) params.append("maxPrice", filters.maxPrice);
+      if (filters.guide_id) params.append("guide_id", filters.guide_id);
+      if (filters.q) params.append("q", filters.q);
+
+      const queryString = params.toString();
+      const url = queryString ? `/?${queryString}` : "/";
+
+      const response = await apiClient.get(url);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch tours."
+      );
+    }
+  },
+
+  // Get all tours with filters (legacy method)
   async getTours(filters = {}) {
     try {
       const params = new URLSearchParams();

@@ -28,7 +28,8 @@ export const guidesService = {
       // Add filters to query params
       if (filters.location) params.append("location", filters.location);
       if (filters.languages) params.append("languages", filters.languages);
-      if (filters.specialties) params.append("specialties", filters.specialties);
+      if (filters.specialties)
+        params.append("specialties", filters.specialties);
       if (filters.minRating) params.append("minRating", filters.minRating);
       if (filters.priceRange) params.append("priceRange", filters.priceRange);
       if (filters.available !== undefined)
@@ -235,6 +236,40 @@ export const guidesService = {
     } catch (error) {
       throw new Error(
         error.response?.data?.message || "Failed to fetch reviews."
+      );
+    }
+  },
+
+  // Update user avatar/profile photo
+  async updateUserAvatar(userId, avatarUrl) {
+    try {
+      console.log("Testing auth routes first...");
+
+      // Test if auth routes are working
+      const testResponse = await axios.get(
+        "http://localhost:5000/api/auth/test"
+      );
+      console.log("Auth routes test successful:", testResponse.data);
+
+      console.log("Calling avatar update API with:", { userId, avatarUrl });
+      const response = await axios.put(
+        `http://localhost:5000/api/auth/users/${userId}/avatar-test`, // Using test endpoint
+        { avatar_url: avatarUrl },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem(
+              "tourconnect_token"
+            )}`,
+          },
+        }
+      );
+      console.log("API response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("API error:", error.response?.data || error.message);
+      throw new Error(
+        error.response?.data?.message || "Failed to update avatar."
       );
     }
   },

@@ -169,6 +169,67 @@
   color: #ef4444;
 }
 
+/* Back to Website Button */
+.back-to-website-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: var(--radius-lg);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.back-to-website-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.back-to-website-btn:hover::before {
+  left: 100%;
+}
+
+.back-to-website-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4),
+    0 4px 12px rgba(102, 126, 234, 0.2), 0 0 0 4px rgba(102, 126, 234, 0.1);
+  background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
+}
+
+.back-to-website-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.back-to-website-btn svg {
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+}
+
+.back-to-website-btn:hover svg {
+  transform: translateX(-2px);
+}
+
 /* Dashboard Content */
 .dashboard-main {
   padding: 2rem;
@@ -584,6 +645,24 @@
     display: none;
   }
 
+  .back-to-website-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .back-to-website-btn span {
+    display: none;
+  }
+
+  .logout-button {
+    padding: 0.6rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .logout-button span {
+    display: none;
+  }
+
   .dashboard-main {
     padding: 1rem;
   }
@@ -631,4 +710,34 @@
 .quick-action-card,
 .dashboard-section {
   animation: fadeIn 0.3s ease-out;
+}
+
+/* Additional responsive styles for very small screens */
+@media (max-width: 480px) {
+  .header-actions {
+    gap: 0.5rem;
+  }
+
+  .back-to-website-btn,
+  .logout-button {
+    padding: 0.5rem;
+    min-width: 44px;
+    height: 44px;
+    justify-content: center;
+  }
+
+  .back-to-website-btn svg,
+  .logout-button svg {
+    font-size: 1rem;
+  }
+
+  .user-level {
+    display: none;
+  }
+
+  .notification-btn {
+    padding: 0.5rem;
+    min-width: 44px;
+    height: 44px;
+  }
 }

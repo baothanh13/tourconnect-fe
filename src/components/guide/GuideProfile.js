@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { guidesService } from "../../services/guidesService";
 import GuideProfileForm from "./GuideProfileForm";
 import Loading from "../Loading";
@@ -20,16 +21,19 @@ import {
   FaCamera,
   FaGlobe,
   FaAward,
+  FaArrowLeft,
 } from "react-icons/fa";
-import "./GuideComponents.css";
-import "./GuideProfile.css";
+import "./GuideProfile_new.css";
 
 const GuideProfile = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   const fetchProfileData = useCallback(async () => {
     try {
@@ -106,6 +110,68 @@ const GuideProfile = () => {
     return isNaN(numRating) ? "0.0" : numRating.toFixed(1);
   };
 
+  const handleAvatarUpload = async (event) => {
+    console.log("handleAvatarUpload called", event);
+    const file = event.target.files[0];
+    console.log("Selected file:", file);
+
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      alert("Please select a valid image file (JPEG, PNG, or WebP)");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+      alert("File size must be less than 5MB");
+      return;
+    }
+
+    console.log("Starting upload...");
+    setUploadingAvatar(true);
+
+    try {
+      // For now, we'll use a simple approach - convert to base64 data URL
+      // In a production app, you'd upload to a cloud service like AWS S3, Cloudinary, etc.
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          // Instead of base64, let's use a test image URL for now
+          const testImageUrl = `https://picsum.photos/200/200?random=${Date.now()}`;
+          console.log("Using test image URL:", testImageUrl);
+
+          // Update avatar via API
+          await guidesService.updateUserAvatar(user.id, testImageUrl);
+
+          // Update local profile state
+          setProfile((prev) => ({
+            ...prev,
+            avatar_url: testImageUrl,
+          }));
+
+          // Show success message
+          alert("Profile photo updated successfully!");
+          console.log("Avatar updated successfully");
+        } catch (error) {
+          console.error("Error updating avatar:", error);
+          alert("Failed to update profile photo. Please try again.");
+        } finally {
+          setUploadingAvatar(false);
+        }
+      };
+
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      alert("Failed to upload image. Please try again.");
+      setUploadingAvatar(false);
+    }
+  };
+
   if (loading) return <Loading />;
 
   if (error) {
@@ -170,209 +236,381 @@ const GuideProfile = () => {
   }
 
   return (
-    <div className="modern-guide-profile">
-      {/* Header Section */}
-      <div className="profile-header">
-        <div className="profile-header-bg">
-          <div className="header-overlay"></div>
+    <div className="modern-guide-profile-container">
+      {/* Back Button */}
+      <div className="profile-back-button">
+        <button
+          onClick={() => navigate("/guide/dashboard")}
+          className="back-btn"
+        >
+          <FaArrowLeft />
+          <span>Back to Dashboard</span>
+        </button>
+      </div>
+
+      {/* Hero Header Section */}
+      <div className="profile-hero">
+        <div className="hero-background">
+          <div className="hero-overlay"></div>
+          <div className="hero-pattern"></div>
         </div>
 
-        <div className="profile-header-content">
-          <div className="profile-avatar">
-            <div className="avatar-container">
-              {profile.avatar_url ? (
-                <img src={profile.avatar_url} alt="Profile" />
-              ) : (
-                <div className="avatar-placeholder">
-                  <FaUser />
+        <div className="hero-content">
+          <div className="profile-banner">
+            <div className="profile-avatar-section">
+              <div className="avatar-wrapper">
+                <div className="avatar-container">
+                  {profile.avatar_url ? (
+                    <img
+                      src={profile.avatar_url}
+                      alt="Profile"
+                      className="profile-avatar"
+                    />
+                  ) : (
+                    <div className="avatar-placeholder">
+                      <FaUser />
+                    </div>
+                  )}
                 </div>
-              )}
-              <button className="avatar-edit-btn">
-                <FaCamera />
+                <div className="avatar-upload-wrapper">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    onChange={handleAvatarUpload}
+                    style={{ display: "none" }}
+                  />
+                  <button
+                    className="avatar-edit-btn"
+                    onClick={() => {
+                      console.log("Camera button clicked");
+                      fileInputRef.current?.click();
+                    }}
+                    disabled={uploadingAvatar}
+                    title={
+                      uploadingAvatar ? "Uploading..." : "Change profile photo"
+                    }
+                  >
+                    {uploadingAvatar ? <FaClock /> : <FaCamera />}
+                  </button>
+                </div>
+                <div className="avatar-ring"></div>
+              </div>
+
+              <div className="profile-header-info">
+                <h1 className="profile-name">
+                  {profile.user_name || profile.name || "Guide"}
+                </h1>
+
+                <div className="profile-badges">
+                  <div className="verification-badge">
+                    {getVerificationIcon(profile.verification_status)}
+                    <span
+                      className={`status-text ${profile.verification_status}`}
+                    >
+                      {profile.verification_status?.charAt(0).toUpperCase() +
+                        profile.verification_status?.slice(1) || "Pending"}
+                    </span>
+                  </div>
+
+                  <div className="rating-badge">
+                    <FaStar className="rating-star" />
+                    <span className="rating-value">
+                      {formatRating(profile.rating)}
+                    </span>
+                    <span className="review-count">
+                      ({profile.total_reviews || 0} reviews)
+                    </span>
+                  </div>
+                </div>
+
+                <div className="profile-quick-stats">
+                  <div className="quick-stat">
+                    <FaMapMarkerAlt className="stat-icon" />
+                    <span>{profile.location || "Location not set"}</span>
+                  </div>
+                  <div className="quick-stat">
+                    <FaDollarSign className="stat-icon" />
+                    <span>${profile.price_per_hour || 0}/hour</span>
+                  </div>
+                  <div className="quick-stat">
+                    <FaCalendarAlt className="stat-icon" />
+                    <span>{profile.experience_years || 0} years exp.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="profile-actions">
+              <button
+                onClick={() => setEditing(true)}
+                className="edit-profile-button"
+              >
+                <FaEdit />
+                <span>Edit Profile</span>
               </button>
             </div>
-          </div>
-
-          <div className="profile-header-info">
-            <h1>{profile.user_name || profile.name || "Guide"}</h1>
-            <div className="verification-status">
-              {getVerificationIcon(profile.verification_status)}
-              <span className={`status-text ${profile.verification_status}`}>
-                {profile.verification_status?.charAt(0).toUpperCase() +
-                  profile.verification_status?.slice(1) || "Pending"}
-              </span>
-            </div>
-            <div className="profile-rating">
-              <FaStar className="rating-star" />
-              <span>{formatRating(profile.rating)}</span>
-              <span className="review-count">
-                ({profile.total_reviews || 0} reviews)
-              </span>
-            </div>
-          </div>
-
-          <div className="profile-header-actions">
-            <button
-              onClick={() => setEditing(true)}
-              className="edit-profile-btn"
-            >
-              <FaEdit />
-              Edit Profile
-            </button>
           </div>
         </div>
       </div>
 
-      {/* Profile Content */}
-      <div className="profile-content">
-        <div className="profile-grid">
-          {/* Personal Information Card */}
-          <div className="profile-card">
-            <div className="card-header">
-              <FaUser className="card-icon" />
-              <h3>Personal Information</h3>
-            </div>
-            <div className="card-content">
-              <div className="info-item">
-                <FaUser className="info-icon" />
-                <div className="info-content">
-                  <label>Full Name</label>
-                  <span>
-                    {profile.user_name || profile.name || "Not specified"}
-                  </span>
-                </div>
-              </div>
-
-              <div className="info-item">
-                <FaEnvelope className="info-icon" />
-                <div className="info-content">
-                  <label>Email</label>
-                  <span>{profile.user_email || "Not specified"}</span>
-                </div>
-              </div>
-
-              <div className="info-item">
-                <FaPhone className="info-icon" />
-                <div className="info-content">
-                  <label>Phone</label>
-                  <span>{profile.phone || "Not specified"}</span>
-                </div>
-              </div>
-
-              <div className="info-item">
-                <FaMapMarkerAlt className="info-icon" />
-                <div className="info-content">
-                  <label>Location</label>
-                  <span>{profile.location || "Not specified"}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Professional Information Card */}
-          <div className="profile-card">
-            <div className="card-header">
-              <FaGraduationCap className="card-icon" />
-              <h3>Professional Information</h3>
-            </div>
-            <div className="card-content">
-              <div className="info-item">
-                <FaLanguage className="info-icon" />
-                <div className="info-content">
-                  <label>Languages</label>
-                  <span>{formatLanguages(profile.languages)}</span>
-                </div>
-              </div>
-
-              <div className="info-item">
-                <FaCalendarAlt className="info-icon" />
-                <div className="info-content">
-                  <label>Experience</label>
-                  <span>{profile.experience_years || 0} years</span>
-                </div>
-              </div>
-
-              <div className="info-item">
-                <FaDollarSign className="info-icon" />
-                <div className="info-content">
-                  <label>Price per Hour</label>
-                  <span>${profile.price_per_hour || 0}</span>
-                </div>
-              </div>
-
-              <div className="info-item">
-                <FaGlobe className="info-icon" />
-                <div className="info-content">
-                  <label>Specialties</label>
-                  <span>{formatSpecialties(profile.specialties)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
+      {/* Main Content */}
+      <div className="profile-main-content">
+        <div className="content-wrapper">
           {/* About Section */}
           {profile.description && (
-            <div className="profile-card full-width">
-              <div className="card-header">
-                <FaUser className="card-icon" />
-                <h3>About Me</h3>
-              </div>
-              <div className="card-content">
-                <div className="about-content">
-                  <p>{profile.description}</p>
+            <div className="profile-section about-section">
+              <div className="section-header">
+                <div className="section-icon">
+                  <FaUser />
                 </div>
+                <h2>About Me</h2>
+              </div>
+              <div className="section-content">
+                <p className="about-text">{profile.description}</p>
               </div>
             </div>
           )}
 
-          {/* Statistics Card */}
-          <div className="profile-card">
-            <div className="card-header">
-              <FaAward className="card-icon" />
-              <h3>Statistics</h3>
-            </div>
-            <div className="card-content">
-              <div className="stats-grid">
-                <div className="stat-item">
-                  <div className="stat-value">{profile.total_reviews || 0}</div>
-                  <div className="stat-label">Reviews</div>
+          {/* Information Grid */}
+          <div className="profile-grid">
+            {/* Personal Information Card */}
+            <div className="info-card">
+              <div className="card-header">
+                <div className="card-icon personal">
+                  <FaUser />
                 </div>
-                <div className="stat-item">
-                  <div className="stat-value">
-                    {formatRating(profile.rating)}
-                  </div>
-                  <div className="stat-label">Rating</div>
+                <div className="card-title">
+                  <h3>Personal Information</h3>
+                  <p>Basic contact details</p>
                 </div>
-                <div className="stat-item">
-                  <div className="stat-value">
-                    {profile.experience_years || 0}
+              </div>
+
+              <div className="card-body">
+                <div className="info-grid">
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <FaUser />
+                    </div>
+                    <div className="info-details">
+                      <label>Full Name</label>
+                      <span>
+                        {profile.user_name || profile.name || "Not specified"}
+                      </span>
+                    </div>
                   </div>
-                  <div className="stat-label">Years</div>
-                </div>
-                <div className="stat-item">
-                  <div className="stat-value">
-                    {profile.is_available ? "Available" : "Busy"}
+
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <FaEnvelope />
+                    </div>
+                    <div className="info-details">
+                      <label>Email</label>
+                      <span>{profile.user_email || "Not specified"}</span>
+                    </div>
                   </div>
-                  <div className="stat-label">Status</div>
+
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <FaPhone />
+                    </div>
+                    <div className="info-details">
+                      <label>Phone</label>
+                      <span>{profile.phone || "Not specified"}</span>
+                    </div>
+                  </div>
+
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <FaMapMarkerAlt />
+                    </div>
+                    <div className="info-details">
+                      <label>Location</label>
+                      <span>{profile.location || "Not specified"}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+
+            {/* Professional Information Card */}
+            <div className="info-card">
+              <div className="card-header">
+                <div className="card-icon professional">
+                  <FaGraduationCap />
+                </div>
+                <div className="card-title">
+                  <h3>Professional Details</h3>
+                  <p>Skills and expertise</p>
+                </div>
+              </div>
+
+              <div className="card-body">
+                <div className="info-grid">
+                  <div className="info-item full-width">
+                    <div className="info-icon">
+                      <FaLanguage />
+                    </div>
+                    <div className="info-details">
+                      <label>Languages</label>
+                      <div className="language-tags">
+                        {formatLanguages(profile.languages)
+                          .split(", ")
+                          .map((lang, index) => (
+                            <span key={index} className="language-tag">
+                              {lang}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <FaCalendarAlt />
+                    </div>
+                    <div className="info-details">
+                      <label>Experience</label>
+                      <span>{profile.experience_years || 0} years</span>
+                    </div>
+                  </div>
+
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <FaDollarSign />
+                    </div>
+                    <div className="info-details">
+                      <label>Hourly Rate</label>
+                      <span className="price">
+                        ${profile.price_per_hour || 0}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="info-item full-width">
+                    <div className="info-icon">
+                      <FaGlobe />
+                    </div>
+                    <div className="info-details">
+                      <label>Specialties</label>
+                      <div className="specialty-tags">
+                        {formatSpecialties(profile.specialties)
+                          .split(", ")
+                          .map((specialty, index) => (
+                            <span key={index} className="specialty-tag">
+                              {specialty}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Statistics Card */}
+            <div className="info-card stats-card">
+              <div className="card-header">
+                <div className="card-icon stats">
+                  <FaAward />
+                </div>
+                <div className="card-title">
+                  <h3>Performance Stats</h3>
+                  <p>Your guide metrics</p>
+                </div>
+              </div>
+
+              <div className="card-body">
+                <div className="stats-grid">
+                  <div className="stat-box reviews-rating-box">
+                    <div className="stat-icon reviews">
+                      <FaStar />
+                    </div>
+                    <div className="stat-content">
+                      <div className="stat-value">
+                        {profile.total_reviews || 0}
+                      </div>
+                      <div className="stat-label">Reviews</div>
+                      <div className="rating-info">
+                        <FaStar className="rating-star" />
+                        <span className="rating-value">
+                          {formatRating(profile.rating)}
+                        </span>
+                        <span className="rating-text">avg rating</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* <div className="stat-box">
+                    <div className="stat-icon experience">
+                      <FaCalendarAlt />
+                    </div>
+                    <div className="stat-content">
+                      <div className="stat-value">
+                        {profile.experience_years || 0}
+                      </div>
+                      <div className="stat-label">Years Experience</div>
+                    </div>
+                  </div> */}
+
+                  {/* <div className="stat-box">
+                    <div className="stat-icon tours">
+                      <FaGlobe />
+                    </div>
+                    <div className="stat-content">
+                      <div className="stat-value">
+                        {profile.total_tours || 0}
+                      </div>
+                      <div className="stat-label">Tours Created</div>
+                    </div>
+                  </div> */}
+
+                  {/* <div className="stat-box">
+                    <div className="stat-icon status">
+                      <FaCheckCircle />
+                    </div>
+                    <div className="stat-content">
+                      <div className="stat-value">
+                        {profile.is_available ? "Available" : "Busy"}
+                      </div>
+                      <div className="stat-label">Status</div>
+                    </div>
+                  </div> */}
+                </div>
+              </div>
+            </div>
+
+            {/* Certificates */}
+            {profile.certificates && (
+              <div className="info-card certificates-card">
+                <div className="card-header">
+                  <div className="card-icon certificates">
+                    <FaAward />
+                  </div>
+                  <div className="card-title">
+                    <h3>Certifications</h3>
+                    <p>Professional qualifications</p>
+                  </div>
+                </div>
+
+                <div className="card-body">
+                  <div className="certificates-list">
+                    {(typeof profile.certificates === "string"
+                      ? profile.certificates.split(",")
+                      : profile.certificates
+                    ).map((cert, index) => (
+                      <div key={index} className="certificate-item">
+                        <div className="cert-icon">
+                          <FaAward />
+                        </div>
+                        <span className="cert-text">{cert.trim()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-
-          {/* Certificates */}
-          {profile.certificates && (
-            <div className="profile-card">
-              <div className="card-header">
-                <FaAward className="card-icon" />
-                <h3>Certificates</h3>
-              </div>
-              <div className="card-content">
-                <div className="certificates-content">
-                  <p>{profile.certificates}</p>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

@@ -3,18 +3,18 @@ import { useAuth } from "../../contexts/AuthContext";
 import { toursService } from "../../services/toursService";
 import { guidesService } from "../../services/guidesService";
 import Loading from "../Loading";
-import { 
-  FaPlus, 
-  FaEdit, 
-  FaTrash, 
-  FaEye, 
-  FaTimes, 
-  FaClock, 
-  FaUsers, 
+import {
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaEye,
+  FaTimes,
+  FaClock,
+  FaUsers,
   FaDollarSign,
   FaMapMarkerAlt,
   FaCalendarAlt,
-  FaTag
+  FaTag,
 } from "react-icons/fa";
 import "./GuideComponents.css";
 
@@ -82,16 +82,18 @@ const GuideTours = () => {
                 </div>
                 <div className="tour-badge">
                   <FaTag />
-                  {tour.category || 'General'}
+                  {tour.category || "General"}
                 </div>
               </div>
-              
+
               <div className="tour-card-content">
                 <h3 className="tour-title">{tour.title}</h3>
                 <p className="tour-description">
-                  {tour.description ? tour.description.substring(0, 100) + '...' : 'No description available'}
+                  {tour.description
+                    ? tour.description.substring(0, 100) + "..."
+                    : "No description available"}
                 </p>
-                
+
                 <div className="tour-details">
                   <div className="detail-item">
                     <FaDollarSign className="detail-icon" />
@@ -108,14 +110,16 @@ const GuideTours = () => {
                   {tour.tour_date && (
                     <div className="detail-item">
                       <FaCalendarAlt className="detail-icon" />
-                      <span>{new Date(tour.tour_date).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(tour.tour_date).toLocaleDateString()}
+                      </span>
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="tour-card-actions">
-                <button 
+                <button
                   className="btn-icon view-btn"
                   onClick={() => handleViewDetail(tour)}
                   title="View Details"
@@ -142,7 +146,10 @@ const GuideTours = () => {
       {/* Tour Detail Modal */}
       {showModal && selectedTour && (
         <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="tour-detail-modal" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="tour-detail-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
               <h2>{selectedTour.title}</h2>
               <button className="close-btn" onClick={handleCloseModal}>
@@ -151,85 +158,125 @@ const GuideTours = () => {
             </div>
 
             <div className="modal-content">
-              <div className="modal-image-section">
+              {/* Tour Image Section */}
+              <div className="tour-image-container">
                 {selectedTour.image_url ? (
-                  <img src={selectedTour.image_url} alt={selectedTour.title} />
+                  <img
+                    src={selectedTour.image_url}
+                    alt={selectedTour.title}
+                    className="tour-detail-image"
+                  />
                 ) : (
-                  <div className="modal-placeholder">
-                    <FaMapMarkerAlt />
-                    <p>No image available</p>
+                  <div className="image-placeholder">
+                    <FaMapMarkerAlt className="placeholder-icon" />
+                    <span>No image available</span>
                   </div>
                 )}
+                <div className="image-overlay">
+                  <div className="tour-category-badge">
+                    <FaTag />
+                    {selectedTour.category || "General"}
+                  </div>
+                </div>
               </div>
 
-              <div className="modal-details-section">
-                <div className="detail-grid">
-                  <div className="detail-card">
-                    <div className="detail-header">
-                      <FaDollarSign className="detail-icon-large" />
-                      <span className="detail-label">Price</span>
+              {/* Tour Information */}
+              <div className="tour-info-section">
+                <div className="tour-title-section">
+                  <h2 className="tour-title">{selectedTour.title}</h2>
+                  <div className="tour-location">
+                    <FaMapMarkerAlt className="location-icon" />
+                    <span>
+                      {selectedTour.location || "Location not specified"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Quick Info Grid */}
+                <div className="quick-info-grid">
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <FaDollarSign />
                     </div>
-                    <div className="detail-value">${selectedTour.price}</div>
+                    <div className="info-content">
+                      <span className="info-label">Price</span>
+                      <span className="info-value">${selectedTour.price}</span>
+                    </div>
                   </div>
 
-                  <div className="detail-card">
-                    <div className="detail-header">
-                      <FaClock className="detail-icon-large" />
-                      <span className="detail-label">Duration</span>
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <FaClock />
                     </div>
-                    <div className="detail-value">{selectedTour.duration_hours} hours</div>
+                    <div className="info-content">
+                      <span className="info-label">Duration</span>
+                      <span className="info-value">
+                        {selectedTour.duration_hours} hours
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="detail-card">
-                    <div className="detail-header">
-                      <FaUsers className="detail-icon-large" />
-                      <span className="detail-label">Max People</span>
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <FaUsers />
                     </div>
-                    <div className="detail-value">{selectedTour.max_people} people</div>
-                  </div>
-
-                  <div className="detail-card">
-                    <div className="detail-header">
-                      <FaTag className="detail-icon-large" />
-                      <span className="detail-label">Category</span>
+                    <div className="info-content">
+                      <span className="info-label">Max Guests</span>
+                      <span className="info-value">
+                        {selectedTour.max_people} people
+                      </span>
                     </div>
-                    <div className="detail-value">{selectedTour.category || 'General'}</div>
                   </div>
 
                   {selectedTour.tour_date && (
-                    <div className="detail-card">
-                      <div className="detail-header">
-                        <FaCalendarAlt className="detail-icon-large" />
-                        <span className="detail-label">Tour Date</span>
+                    <div className="info-item">
+                      <div className="info-icon">
+                        <FaCalendarAlt />
                       </div>
-                      <div className="detail-value">
-                        {new Date(selectedTour.tour_date).toLocaleDateString()}
+                      <div className="info-content">
+                        <span className="info-label">Date</span>
+                        <span className="info-value">
+                          {new Date(
+                            selectedTour.tour_date
+                          ).toLocaleDateString()}
+                        </span>
                       </div>
                     </div>
                   )}
 
                   {selectedTour.tour_time && (
-                    <div className="detail-card">
-                      <div className="detail-header">
-                        <FaClock className="detail-icon-large" />
-                        <span className="detail-label">Tour Time</span>
+                    <div className="info-item">
+                      <div className="info-icon">
+                        <FaClock />
                       </div>
-                      <div className="detail-value">{selectedTour.tour_time}</div>
+                      <div className="info-content">
+                        <span className="info-label">Time</span>
+                        <span className="info-value">
+                          {selectedTour.tour_time}
+                        </span>
+                      </div>
                     </div>
                   )}
                 </div>
 
-                <div className="description-section">
-                  <h3>Description</h3>
-                  <p>{selectedTour.description || 'No description available for this tour.'}</p>
+                {/* Description */}
+                <div className="tour-description">
+                  <h3>About this tour</h3>
+                  <p>
+                    {selectedTour.description ||
+                      "No description available for this tour."}
+                  </p>
                 </div>
 
-                <div className="modal-actions">
-                  <button className="btn-primary edit-tour-btn">
-                    <FaEdit /> Edit Tour
+                {/* Action Buttons */}
+                <div className="tour-actions">
+                  <button className="action-btn primary">
+                    <FaEdit />
+                    Edit Tour
                   </button>
-                  <button className="btn-secondary">
-                    <FaUsers /> View Bookings
+                  <button className="action-btn secondary">
+                    <FaUsers />
+                    View Bookings
                   </button>
                 </div>
               </div>

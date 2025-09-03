@@ -43,6 +43,7 @@ const updateGuide = async (req, res) => {
                     u.name AS user_name, 
                     u.email AS user_email,
                     u.phone,
+                    u.avatar_url,
                     g.location,
                     g.languages,
                     g.specialties,

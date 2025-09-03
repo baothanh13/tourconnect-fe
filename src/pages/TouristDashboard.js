@@ -227,7 +227,13 @@ const TouristDashboard = () => {
     </div>
   );
 
-  const QuickActionCard = ({ icon, label, description, onClick, className }) => (
+  const QuickActionCard = ({
+    icon,
+    label,
+    description,
+    onClick,
+    className,
+  }) => (
     <div className={`quick-action-card ${className || ""}`} onClick={onClick}>
       <div className="action-icon">{icon}</div>
       <div className="action-content">
@@ -330,7 +336,10 @@ const TouristDashboard = () => {
         <div className="dashboard-card">
           <div className="card-header">
             <h3>Tourist Profile</h3>
-            <button className="view-all-btn" onClick={() => setShowEditModal(true)}>
+            <button
+              className="view-all-btn"
+              onClick={() => setShowEditModal(true)}
+            >
               Edit Profile
             </button>
           </div>
@@ -376,10 +385,13 @@ const TouristDashboard = () => {
                       </p>
                       <span className="activity-time">
                         <FaClock />{" "}
-                        {new Date(activity.timestamp).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                        })}
+                        {new Date(activity.timestamp).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                          }
+                        )}
                       </span>
                     </div>
                   </div>
@@ -436,7 +448,11 @@ const TouristDashboard = () => {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="submit" className="btn btn-apply" disabled={updating}>
+                <button
+                  type="submit"
+                  className="btn btn-apply"
+                  disabled={updating}
+                >
                   <FaCheck style={{ marginRight: "8px" }} />
                   {updating ? "Updating..." : "Save Changes"}
                 </button>
@@ -496,7 +512,10 @@ const TouristDashboard = () => {
           <FaExclamationTriangle className="error-icon" />
           <h2>Oops! Something went wrong</h2>
           <p>{error}</p>
-          <button className="retry-btn" onClick={() => window.location.reload()}>
+          <button
+            className="retry-btn"
+            onClick={() => window.location.reload()}
+          >
             Try Again
           </button>
         </div>
@@ -522,13 +541,17 @@ const TouristDashboard = () => {
         <div className="header-navigation">
           <button
             onClick={() => setActiveView("dashboard")}
-            className={`nav-button ${activeView === "dashboard" ? "active" : ""}`}
+            className={`nav-button ${
+              activeView === "dashboard" ? "active" : ""
+            }`}
           >
             <FaHome />
             <span>Dashboard</span>
           </button>
           <button
-            className={`nav-button ${activeView === "bookings" ? "active" : ""}`}
+            className={`nav-button ${
+              activeView === "bookings" ? "active" : ""
+            }`}
             onClick={() => navigate("/tourist/bookings")}
           >
             <FaCalendarCheck />
@@ -558,6 +581,14 @@ const TouristDashboard = () => {
           <button className="notification-btn">
             <FaBell />
             <span className="notification-badge">2</span>
+          </button>
+          <button
+            onClick={() => navigate("/")}
+            className="back-to-website-btn"
+            title="Back to Homepage"
+          >
+            <FaHome />
+            <span>Back to Website</span>
           </button>
           <button onClick={handleLogout} className="logout-button">
             <FaSignOutAlt />

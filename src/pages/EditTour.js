@@ -119,9 +119,9 @@ const EditTour = () => {
   return (
     <div className="create-tour-container">
       <div className="create-tour-header">
-        <button className="back-btn" onClick={() => navigate("/guide/tours")}>
+        {/* <button className="back-btn" onClick={() => navigate("/guide/tours")}>
           <FaArrowLeft /> Back to Tours
-        </button>
+        </button> */}
         <h1>Edit Tour</h1>
         <p>Update your tour details and offerings</p>
       </div>

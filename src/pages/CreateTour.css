@@ -20,24 +20,36 @@
   position: absolute;
   top: 20px;
   left: 20px;
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: #667eea;
+  padding: 12px 18px;
+  border-radius: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  backdrop-filter: none;
+}
+
+/* Back button for Edit Tour page */
+.back-btn {
+  display: none; /* Hidden as requested */
 }
 
 .back-btn-create-tour:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 1);
+  color: #5a5fd7;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+  border-color: rgba(99, 102, 241, 0.3);
 }
+
+/* Back button hover state removed since button is hidden */
 
 .create-tour-header h1 {
   color: white;
@@ -161,58 +173,123 @@
 
 .form-actions {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   justify-content: center;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin-top: 35px;
+  padding-top: 25px;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.form-actions::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
 }
 
 .btn-primary,
 .btn-secondary-create-tour {
-  padding: 12px 25px;
+  padding: 14px 28px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  min-width: 120px;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: none;
+  min-width: 140px;
   justify-content: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-primary-create-tour {
-  background: rgba(40, 167, 69, 0.8);
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
-  border: 1px solid rgba(40, 167, 69, 0.3);
+  border: 2px solid rgba(40, 167, 69, 0.3);
+}
+
+.btn-primary-create-tour::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-primary-create-tour:hover::before {
+  left: 100%;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: rgba(40, 167, 69, 1);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3);
+  background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(40, 167, 69, 0.4);
 }
 
 .btn-secondary-create-tour {
-  background: rgba(108, 117, 125, 0.8);
-  color: white;
-  border: 1px solid rgba(108, 117, 125, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  color: #6c757d;
+  border: 2px solid rgba(108, 117, 125, 0.3);
+}
+
+.btn-secondary-create-tour::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(108, 117, 125, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-secondary-create-tour:hover::before {
+  left: 100%;
 }
 
 .btn-secondary-create-tour:hover:not(:disabled) {
-  background: rgba(108, 117, 125, 1);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 1);
+  color: #495057;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(108, 117, 125, 0.3);
+  border-color: rgba(108, 117, 125, 0.5);
 }
 
 .btn-primary:disabled,
-.btn-secondary:disabled {
+.btn-secondary-create-tour:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:disabled::before,
+.btn-secondary-create-tour:disabled::before {
+  display: none;
 }
 
 @media (max-width: 768px) {
@@ -241,10 +318,12 @@
     flex-direction: column;
   }
 
-  .back-btn {
+  .back-btn,
+  .back-btn-create-tour {
     position: relative;
     top: auto;
     left: auto;
     margin-bottom: 15px;
+    align-self: flex-start;
   }
 }

@@ -40,30 +40,33 @@ const GuideReviews = () => {
     }
   }, [user.id]);
 
-  const loadReviews = useCallback(async (page = 1) => {
-    if (!guideProfile?.id) return;
+  const loadReviews = useCallback(
+    async (page = 1) => {
+      if (!guideProfile?.id) return;
 
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await guidesService.getGuideReviews(guideProfile.id, {
-        page,
-        limit: pagination.limit,
-      });
-      
-      setReviews(response.reviews || []);
-      setPagination(prev => ({
-        ...prev,
-        page: response.page || page,
-        total: response.total || 0,
-      }));
-    } catch (err) {
-      setError("Failed to load reviews. Please try again.");
-      console.error("Error loading reviews:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [guideProfile?.id, pagination.limit]);
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await guidesService.getGuideReviews(guideProfile.id, {
+          page,
+          limit: pagination.limit,
+        });
+
+        setReviews(response.reviews || []);
+        setPagination((prev) => ({
+          ...prev,
+          page: response.page || page,
+          total: response.total || 0,
+        }));
+      } catch (err) {
+        setError("Failed to load reviews. Please try again.");
+        console.error("Error loading reviews:", err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [guideProfile?.id, pagination.limit]
+  );
 
   useEffect(() => {
     const initializeData = async () => {
@@ -72,7 +75,7 @@ const GuideReviews = () => {
         await loadReviews(1);
       }
     };
-    
+
     initializeData();
   }, [loadGuideProfile, loadReviews]);
 
@@ -110,7 +113,7 @@ const GuideReviews = () => {
 
   const getRatingDistribution = () => {
     const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    reviews.forEach(review => {
+    reviews.forEach((review) => {
       distribution[review.rating]++;
     });
     return distribution;
@@ -163,9 +166,7 @@ const GuideReviews = () => {
             <FaStar />
           </div>
           <div className="stat-content">
-            <div className="stat-number">
-              {getRatingDistribution()[5]}
-            </div>
+            <div className="stat-number">{getRatingDistribution()[5]}</div>
             <div className="stat-label">5 STAR REVIEWS</div>
           </div>
         </div>
@@ -282,7 +283,9 @@ const GuideReviews = () => {
                 <div className="review-actions">
                   <button
                     className="btn-secondary"
-                    onClick={() => navigate(`/guide/bookings/${review.booking_id}`)}
+                    onClick={() =>
+                      navigate(`/guide/bookings/${review.booking_id}`)
+                    }
                     title="View booking details"
                   >
                     <FaEye /> View Booking
@@ -316,12 +319,15 @@ const GuideReviews = () => {
             Previous
           </button>
           <span className="pagination-info">
-            Page {pagination.page} of {Math.ceil(pagination.total / pagination.limit)}
+            Page {pagination.page} of{" "}
+            {Math.ceil(pagination.total / pagination.limit)}
           </span>
           <button
             className="pagination-btn"
             onClick={() => handlePageChange(pagination.page + 1)}
-            disabled={pagination.page >= Math.ceil(pagination.total / pagination.limit)}
+            disabled={
+              pagination.page >= Math.ceil(pagination.total / pagination.limit)
+            }
           >
             Next
           </button>

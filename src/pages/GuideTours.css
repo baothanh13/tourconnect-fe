@@ -762,44 +762,51 @@
 }
 
 .tour-actions-modern {
-  display: flex;
-  gap: 8px;
+  display: flex !important;
+  gap: 12px !important;
+  padding: 1rem !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-top: 1px solid rgba(226, 232, 240, 0.6) !important;
+  margin-top: auto !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 0 0 24px 24px !important;
+  justify-content: center !important;
 }
 
 .action-btn-compact {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 16px !important;
+  border: 2px solid transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.1rem !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
 }
 
 .action-btn-compact::before {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  transition: all 0.6s ease;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
 }
 
 .action-btn-compact:hover::before {
-  width: 120%;
-  height: 120%;
+  left: 100%;
 }
 
 .action-btn-compact:disabled {
@@ -809,67 +816,36 @@
 }
 
 .view-btn-compact {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 80%, #f093fb 100%);
-  color: white;
-  box-shadow: 0 6px 24px rgba(102, 126, 234, 0.4),
-    0 3px 8px rgba(102, 126, 234, 0.2);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+  color: white !important;
 }
 
 .view-btn-compact:hover {
-  transform: translateY(-3px) scale(1.08);
-  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5),
-    0 6px 16px rgba(102, 126, 234, 0.3);
-  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-3px) scale(1.1) !important;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 .edit-btn-compact {
-  background: linear-gradient(135deg, #10b981 0%, #34d399 80%, #6ee7b7 100%);
-  color: white;
-  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.4),
-    0 3px 8px rgba(16, 185, 129, 0.2);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: white !important;
 }
 
 .edit-btn-compact:hover {
-  transform: translateY(-3px) scale(1.08) rotate(5deg);
-  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5),
-    0 6px 16px rgba(16, 185, 129, 0.3);
-  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-3px) scale(1.1) rotate(5deg) !important;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 .delete-btn-compact {
-  background: linear-gradient(135deg, #ef4444 0%, #f87171 80%, #fca5a5 100%);
-  color: white;
-  box-shadow: 0 6px 24px rgba(239, 68, 68, 0.4),
-    0 3px 8px rgba(239, 68, 68, 0.2);
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: white !important;
 }
 
 .delete-btn-compact:hover {
-  transform: translateY(-3px) scale(1.08);
-  box-shadow: 0 12px 32px rgba(239, 68, 68, 0.5),
-    0 6px 16px rgba(239, 68, 68, 0.3);
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-.edit-btn-compact {
-  background: linear-gradient(135deg, #38a169 0%, #4fd1c7 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
-}
-
-.edit-btn-compact:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 20px rgba(56, 161, 105, 0.4);
-}
-
-.delete-btn-compact {
-  background: linear-gradient(135deg, #e53e3e 0%, #fc8181 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
-}
-
-.delete-btn-compact:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 20px rgba(229, 62, 62, 0.4);
+  transform: translateY(-3px) scale(1.1) !important;
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 /* Responsive Design for Modern Cards */
@@ -1623,33 +1599,35 @@
 
 .tour-actions {
   display: flex;
-  gap: 0.5rem;
-  padding: 1.25rem;
+  gap: 8px;
+  padding: 1rem;
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border-top: 1px solid rgba(226, 232, 240, 0.6);
   margin-top: auto;
   backdrop-filter: blur(10px);
+  border-radius: 0 0 24px 24px;
 }
 
 .action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 1.25rem;
+  gap: 6px;
+  padding: 10px 12px;
   border: none;
   border-radius: 12px;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  min-height: 44px;
+  min-height: 40px;
   text-align: center;
   flex: 1;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   text-decoration: none;
+  border: 2px solid transparent;
 }
 
 .action-btn::before {
@@ -1662,10 +1640,10 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0.3),
     transparent
   );
-  transition: left 0.5s;
+  transition: left 0.5s ease;
 }
 
 .action-btn:hover::before {
@@ -1673,38 +1651,63 @@
 }
 
 .action-btn svg {
-  font-size: 1rem;
+  font-size: 0.9rem;
   transition: transform 0.3s ease;
 }
 
 .action-btn:hover svg {
-  transform: scale(1.1);
+  transform: scale(1.1) rotate(5deg);
 }
 
 .view-btn {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+  border: 2px solid transparent;
 }
 
 .view-btn:hover {
-  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.view-btn:active {
+  transform: translateY(0);
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: 2px solid transparent;
+}
+
+.edit-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.edit-btn:active {
+  transform: translateY(0);
 }
 
 .delete-btn {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: white;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+  border: 2px solid transparent;
 }
 
 .delete-btn:hover:not(:disabled) {
   background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.delete-btn:active {
+  transform: translateY(0);
 }
 
 .delete-btn:disabled {

@@ -262,7 +262,7 @@ const GuideTours = () => {
       )}
 
       {/* Tours Grid */}
-      <div className="tours-content">
+      <div className="tour-content-guide-tours">
         {filteredTours.length > 0 ? (
           <div className="tours-grid">
             {filteredTours.map((tour) => (

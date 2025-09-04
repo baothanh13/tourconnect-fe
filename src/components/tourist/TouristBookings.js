@@ -283,7 +283,7 @@ const TouristBookings = () => {
 
               <div className="booking-actions">
                 <button
-                  className="btn-secondary"
+                  className="btn-secondary-tourist"
                   onClick={() => {
                     setSelectedBooking(booking);
                     setShowDetails(true);

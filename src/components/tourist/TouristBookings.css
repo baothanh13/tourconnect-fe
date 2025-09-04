@@ -261,7 +261,7 @@
 .booking-actions button:focus-visible{ outline:3px solid color-mix(in oklab, var(--primary), #fff 40%); outline-offset:2px; }
 .btn-primary{ background: linear-gradient(180deg, var(--primary), var(--primary-2)); color:#fff; box-shadow: 0 8px 20px color-mix(in oklab, var(--primary), transparent 80%); }
 .btn-primary:hover{ transform: translateY(-1px); filter: brightness(1.05); }
-.btn-secondary{ background: var(--secondary-color); color: var(--text-primary); border:1px solid var(--border-color); }
+.btn-secondary-tourist{ background: var(--secondary-color); color: black; border:1px solid var(--border-color); justify-content: center;}
 .btn-secondary:hover{ transform: translateY(-1px); background: var(--hover-bg); }
 .btn-danger{ background:#dc3545; color:#fff; }
 .btn-danger:hover{ transform: translateY(-1px); filter: brightness(1.05); }

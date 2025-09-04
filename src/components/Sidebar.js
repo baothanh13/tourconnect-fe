@@ -277,8 +277,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               />
             </div>
             <div className="profile-info">
-              <span className="profile-name">{user.name || user.email}</span>
-              <span className="profile-role">{user.role}</span>
+              {/* <span className="profile-name">{user.name || user.email}</span> */}
+              {/* <span className="profile-role">{user.role}</span> */}
             </div>
           </div>
         )}

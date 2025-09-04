@@ -181,8 +181,8 @@ const TourDetailPage = () => {
           <h2>Oops! Something went wrong</h2>
           <p>{error}</p>
           <div className="error-actions">
-            <button onClick={() => navigate(-1)} className="btn-secondary">
-              ← Go Back
+            <button onClick={() => navigate(-1)} className="back-link">
+              ← Back to Tours
             </button>
             <button
               onClick={() => window.location.reload()}
@@ -219,9 +219,8 @@ const TourDetailPage = () => {
     <div className="tour-detail-page">
       {/* Back Navigation */}
       <div className="tour-detail-nav">
-        <button onClick={() => navigate(-1)} className="back-button">
-          <span className="back-icon">←</span>
-          Back
+        <button onClick={() => navigate(-1)} className="back-link">
+          ← Back to Tours
         </button>
       </div>
 

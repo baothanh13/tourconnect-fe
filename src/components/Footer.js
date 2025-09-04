@@ -111,18 +111,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Payment Methods */}
-        <div className="payment-methods">
-          <h4>We Accept</h4>
-          <div className="payment-icons">
-            <div className="payment-card">💳 PayPal</div>
-            <div className="payment-card">💳 Mastercard</div>
-            <div className="payment-card">💳 Visa</div>
-            <div className="payment-card">💳 Discover</div>
-            <div className="payment-card">💳 American Express</div>
-          </div>
-        </div>
-
         {/* Bottom Section */}
         <div className="footer-bottom">
           <div className="footer-logo">

@@ -57,42 +57,30 @@
   -webkit-backdrop-filter: blur(20px);
 }
 
-.back-button {
-  display: flex;
+.back-link {
+  display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  background: white;
-  color: #475569;
-  border: 2px solid #e2e8f0;
-  padding: 0.75rem 1.5rem;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  font-size: 0.95rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  color: #1e293b;
   text-decoration: none;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid #e2e8f0;
+  font-size: 14px;
+  margin-bottom: 20px;
+  cursor: pointer;
   font-family: inherit;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-.back-button:hover {
-  background: #667eea;
+.back-link:hover {
+  background: #6366f1;
   color: white;
-  border-color: #667eea;
-  transform: translateX(-3px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.25);
-}
-
-.back-icon {
-  font-size: 1.1rem;
-  transition: transform 0.3s ease;
-  font-weight: bold;
-}
-
-.back-button:hover .back-icon {
-  transform: translateX(-2px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+  border-color: #6366f1;
 }
 
 /* Hero Section - Redesigned */
@@ -997,9 +985,9 @@
     align-items: center;
   }
 
-  .back-button {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
+  .back-link {
+    padding: 10px 16px;
+    font-size: 13px;
   }
 
   .info-card {

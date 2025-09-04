@@ -28,6 +28,21 @@ body {
   overflow-x: hidden;
 }
 
+/* Ensure all homepage sections are centered */
+.homepage section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.homepage section .container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
 /* --- Modern Hero Section --- */
 .hero-section-modern {
   position: relative;
@@ -98,24 +113,30 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   position: relative;
   z-index: 2;
+  min-height: 60vh;
+  text-align: center;
 }
 
 .hero-content-modern {
   color: white;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 900px;
+  width: 100%;
 }
 
 .hero-badge {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
@@ -137,6 +158,7 @@ body {
   line-height: 1.1;
   margin: 0;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
 
 .title-highlight {
@@ -147,30 +169,33 @@ body {
 }
 
 .hero-description {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   line-height: 1.6;
   opacity: 0.95;
   font-weight: 400;
-  max-width: 500px;
-  margin: 0;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 /* --- Modern Search Container --- */
 .hero-search-modern {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   width: 100%;
   max-width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .search-container-modern {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  padding: 1.5rem;
+  padding: 2rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
   width: 100%;
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
   overflow: hidden;
 }
@@ -320,9 +345,7 @@ body {
 
 /* --- Trust Indicators --- */
 .hero-trust-indicators {
-  display: flex;
-  gap: 2rem;
-  margin-top: 1rem;
+  display: none; /* Hide trust indicators completely */
 }
 
 .trust-item {
@@ -356,10 +379,7 @@ body {
 
 /* --- Hero Visual --- */
 .hero-visual {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: none; /* Hide for centered layout */
 }
 
 .hero-image-container {
@@ -479,6 +499,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
+  text-align: center; /* Ensure all content is centered by default */
 }
 
 .section-title {
@@ -509,6 +530,9 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
+  justify-items: center; /* Center grid items */
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .step {
@@ -560,6 +584,9 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
+  justify-items: center; /* Center grid items */
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .destination-card {
@@ -656,7 +683,7 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-width: 1000px;
+  max-width: 1200px; /* Consistent max-width */
   margin: 0 auto;
 }
 
@@ -666,16 +693,21 @@ body {
 }
 .trust-text .section-subtitle {
   text-align: center;
-  margin: 1rem 0 3rem 0;
+  margin: 1rem auto 3rem auto; /* Center with auto margins */
   max-width: 600px;
 }
 
 .trust-features {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 3rem;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2.5rem;
   width: 100%;
   margin-top: 2rem;
+  justify-items: center;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .trust-feature {
@@ -684,11 +716,15 @@ body {
   align-items: center;
   text-align: center;
   background: white;
-  padding: 2rem 1.5rem;
+  padding: 2.5rem 2rem;
   border-radius: 20px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   border: 1px solid rgba(102, 126, 234, 0.1);
+  width: 100%;
+  max-width: 350px;
+  height: 280px;
+  justify-content: center;
 }
 
 .trust-feature:hover {
@@ -698,12 +734,12 @@ body {
 }
 
 .trust-icon {
-  font-size: 2rem;
+  font-size: 2.5rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  width: 4rem;
-  height: 4rem;
-  border-radius: 16px;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -755,41 +791,28 @@ body {
 /* Modern Hero Responsive */
 @media (max-width: 1024px) {
   .hero-container {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    text-align: center;
-  }
-
-  .hero-visual {
-    order: -1;
-  }
-
-  .hero-image-container {
-    width: 400px;
-    height: 500px;
+    padding: 2rem 1rem;
+    min-height: 55vh;
   }
 
   .hero-title-modern {
-    font-size: 3.5rem;
-  }
-
-  .hero-trust-indicators {
-    justify-content: center;
+    font-size: 3.2rem;
   }
 }
 
 @media (max-width: 768px) {
   .hero-container {
     padding: 1.5rem;
-    gap: 2rem;
+    min-height: 50vh;
   }
 
   .hero-title-modern {
-    font-size: 2.8rem;
+    font-size: 2.5rem;
   }
 
   .hero-description {
-    font-size: 1.125rem;
+    font-size: 1.1rem;
+    max-width: 450px;
   }
 
   .search-input-group {
@@ -808,38 +831,20 @@ body {
     padding: 1.25rem 2rem;
     font-size: 1.1rem;
   }
-
-  .hero-trust-indicators {
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .trust-item {
-    flex: 1;
-    min-width: 120px;
-    flex-direction: column;
-    text-align: center;
-    gap: 0.5rem;
-  }
-
-  .hero-image-container {
-    width: 300px;
-    height: 400px;
-  }
-
-  .hero-floating-card {
-    right: 0;
-    bottom: 1rem;
-  }
 }
 
 @media (max-width: 480px) {
+  .hero-container {
+    min-height: 45vh;
+  }
+
   .hero-title-modern {
-    font-size: 2.2rem;
+    font-size: 2rem;
   }
 
   .hero-description {
     font-size: 1rem;
+    max-width: 350px;
   }
 
   .hero-badge {
@@ -853,20 +858,6 @@ body {
 
   .input-container {
     padding: 0.75rem;
-  }
-
-  .trust-item {
-    min-width: 100px;
-  }
-
-  .hero-image-container {
-    width: 280px;
-    height: 350px;
-  }
-
-  .hero-floating-card {
-    padding: 1rem;
-    right: 1rem;
   }
 }
 
@@ -977,6 +968,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
+  text-align: center; /* Center all content */
 }
 
 .impact-stats {
@@ -986,6 +978,7 @@ body {
   margin: 3rem auto 0 auto;
   max-width: 1000px;
   justify-content: center;
+  justify-items: center; /* Center grid items */
 }
 
 /* --- Featured Guides Section --- */
@@ -996,14 +989,21 @@ body {
 
 .section-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   margin-bottom: 3rem;
-  gap: 2rem;
+  gap: 1rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 3rem;
 }
 
 .section-text {
   flex: 1;
+  text-align: center; /* Center section text */
 }
 
 .view-all-btn {
@@ -1035,6 +1035,9 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   align-items: start;
+  justify-items: center; /* Center grid items */
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .loading-container {
@@ -1059,10 +1062,11 @@ body {
 
 .tours-preview-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
   align-items: start;
   justify-content: center;
+  justify-items: center; /* Center grid items */
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -1076,9 +1080,11 @@ body {
 .activity-indicator {
   display: flex;
   align-items: center;
+  justify-content: center; /* Center the indicator */
   gap: 8px;
   color: var(--primary-color);
   font-weight: 600;
+  margin-bottom: 2rem;
 }
 
 .pulse-dot {
@@ -1192,31 +1198,38 @@ body {
   .guides-preview-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.5rem;
+    justify-items: center;
   }
 
   .tours-preview-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
-    max-width: 800px;
+    max-width: 900px;
+    justify-items: center;
   }
 
   .section-header {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    gap: 1rem;
   }
 
   .impact-stats {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    justify-items: center;
   }
 
   .hero-stats {
     gap: 2rem;
+    justify-content: center;
   }
 
   .trust-features {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    justify-items: center;
+    max-width: 600px;
   }
 }
 
@@ -1233,20 +1246,24 @@ body {
   .tours-preview-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+    justify-items: center;
   }
 
   .section-header {
     margin-bottom: 2rem;
+    text-align: center;
   }
 
   .view-all-btn {
     width: 100%;
+    max-width: 300px;
     justify-content: center;
     margin-top: 1rem;
   }
 
   .hero-stats {
     gap: 1.5rem;
+    justify-content: center;
   }
 
   .hero-stat .stat-number {
@@ -1270,19 +1287,32 @@ body {
   .impact-stats {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1rem;
+    justify-items: center;
   }
 
   .trust-features {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+    justify-items: center;
   }
 
   .trust-feature {
-    padding: 1.5rem 1rem;
+    padding: 2rem 1.5rem;
+    max-width: 350px;
+    height: auto;
+    min-height: 250px;
   }
 
   .trust-section {
     padding: 4rem 0;
+  }
+
+  .steps-grid {
+    justify-items: center;
+  }
+
+  .destinations-grid {
+    justify-items: center;
   }
 }
 
@@ -1290,15 +1320,23 @@ body {
   .guides-preview-grid,
   .tours-preview-grid {
     gap: 1rem;
+    justify-items: center;
   }
 
   .hero-stats {
     flex-direction: column;
     gap: 1rem;
+    align-items: center;
   }
 
   .impact-stats {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .trust-features {
+    grid-template-columns: 1fr;
+    justify-items: center;
   }
 }
 
@@ -1327,6 +1365,13 @@ body {
       rgba(56, 189, 248, 0.03) 0%,
       transparent 50%
     );
+}
+
+.how-it-works-redesigned .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
 }
 
 .section-header-center {

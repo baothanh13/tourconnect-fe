@@ -106,7 +106,7 @@ const CreateTour = () => {
   return (
     <div className="create-tour-container">
       <div className="create-tour-header">
-        <button className="back-btn" onClick={() => navigate("/guide/tours")}>
+        <button className="back-btn-create-tour" onClick={() => navigate("/guide/tours")}>
           <FaArrowLeft /> Back to Tours
         </button>
         <h1>Create New Tour</h1>
@@ -284,7 +284,7 @@ const CreateTour = () => {
         <div className="form-actions">
           <button
             type="button"
-            className="btn-secondary"
+            className="btn-secondary-create-tour"
             onClick={() => navigate("/guide/tours")}
             disabled={loading}
           >

@@ -61,7 +61,7 @@ const HomePage = () => {
     try {
       const response = await guidesService.getGuides({
         limit: 6,
-        minRating: 4.0,
+        minRating: 3.0,
         available: true,
       });
       setFeaturedGuides(response.guides || []);

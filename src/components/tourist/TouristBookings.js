@@ -254,7 +254,7 @@ const TouristBookings = () => {
               </div>
 
               <div className="booking-content">
-                <h3 className="tour-title">{booking.tourTitle}</h3>
+                <h3 className="tour-title">{booking.guideName}</h3>
 
                 <div className="booking-details">
                   <div className="detail-item">
@@ -333,10 +333,6 @@ const TouristBookings = () => {
 
             <div className="modal-body">
               <div className="booking-detail-section">
-                <h4>Tour Information</h4>
-                <p>
-                  <strong>Tour:</strong> {selectedBooking.tourTitle}
-                </p>
                 <p>
                   <strong>Guide:</strong> {selectedBooking.guideName}
                 </p>

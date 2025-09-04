@@ -16,7 +16,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.back-btn {
+.back-btn-create-tour {
   position: absolute;
   top: 20px;
   left: 20px;
@@ -34,7 +34,7 @@
   backdrop-filter: blur(10px);
 }
 
-.back-btn:hover {
+.back-btn-create-tour:hover {
   background: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
@@ -169,7 +169,7 @@
 }
 
 .btn-primary,
-.btn-secondary {
+.btn-secondary-create-tour {
   padding: 12px 25px;
   border: none;
   border-radius: 10px;
@@ -185,7 +185,7 @@
   justify-content: center;
 }
 
-.btn-primary {
+.btn-primary-create-tour {
   background: rgba(40, 167, 69, 0.8);
   color: white;
   border: 1px solid rgba(40, 167, 69, 0.3);
@@ -197,13 +197,13 @@
   box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3);
 }
 
-.btn-secondary {
+.btn-secondary-create-tour {
   background: rgba(108, 117, 125, 0.8);
   color: white;
   border: 1px solid rgba(108, 117, 125, 0.3);
 }
 
-.btn-secondary:hover:not(:disabled) {
+.btn-secondary-create-tour:hover:not(:disabled) {
   background: rgba(108, 117, 125, 1);
   transform: translateY(-2px);
 }

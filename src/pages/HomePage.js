@@ -74,7 +74,7 @@ const HomePage = () => {
   const fetchPopularTours = async () => {
     try {
       const response = await toursService.getTours({
-        limit: 8,
+        limit: 6,
         sortBy: "popularity",
       });
       setPopularTours(response.tours || []);
@@ -323,14 +323,16 @@ const HomePage = () => {
       <section className="platform-impact">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">
-              Connecting Hearts, Creating Memories
-            </h2>
-            <p className="section-subtitle">
-              TourConnect brings together passionate guides and curious
-              travelers to create authentic experiences that go beyond
-              traditional tourism.
-            </p>
+            <div className="section-text">
+              <h2 className="section-title">
+                Connecting Hearts, Creating Memories
+              </h2>
+              <p className="section-subtitle">
+                TourConnect brings together passionate guides and curious
+                travelers to create authentic experiences that go beyond
+                traditional tourism.
+              </p>
+            </div>
           </div>
 
           {platformStats && (
@@ -429,7 +431,7 @@ const HomePage = () => {
             </div>
           ) : (
             <div className="tours-preview-grid">
-              {popularTours.slice(0, 8).map((tour) => (
+              {popularTours.slice(0, 6).map((tour) => (
                 <TourPreviewCard key={tour.id} tour={tour} />
               ))}
             </div>

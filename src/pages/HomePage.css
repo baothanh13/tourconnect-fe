@@ -170,22 +170,25 @@ body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
   width: 100%;
-  max-width: 900px; /* Prevent container from getting too wide */
+  max-width: 900px;
   margin: 0 auto;
+  overflow: hidden;
 }
 
 .search-input-group {
   display: flex;
   align-items: stretch;
-  gap: 1px;
+  gap: 8px;
   background: #f1f5f9;
   border-radius: 16px;
   padding: 0.5rem;
-  min-width: 0; /* Ensures proper flex behavior */
+  min-width: 0;
+  flex-wrap: nowrap;
 }
 
 .input-container {
-  flex: 1;
+  flex: 1 1 0%;
+  min-width: 180px;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -247,28 +250,72 @@ body {
 }
 
 .search-btn-modern {
-  background: #0f766e;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 12px;
-  padding: 1rem 1.5rem;
+  border-radius: 16px;
+  padding: 1.2rem 2rem;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 0.75rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
-  white-space: nowrap; /* Prevents text wrapping */
-  min-width: 140px; /* Ensures minimum button width */
+  flex-grow: 0;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.35),
+    0 4px 16px rgba(118, 75, 162, 0.25);
+  white-space: nowrap;
+  min-width: 180px;
+  max-width: 220px;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.search-btn-modern::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.search-btn-modern:hover::before {
+  left: 100%;
 }
 
 .search-btn-modern:hover {
-  background: #134e4a;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(15, 118, 110, 0.4);
+  background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(102, 126, 234, 0.5),
+    0 8px 20px rgba(118, 75, 162, 0.35), 0 0 0 6px rgba(102, 126, 234, 0.1);
+}
+
+.search-btn-modern:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(102, 126, 234, 0.4);
+}
+
+.search-btn-modern svg {
+  width: 22px;
+  height: 22px;
+  transition: transform 0.3s ease;
+}
+
+.search-btn-modern:hover svg {
+  transform: scale(1.1) rotate(5deg);
 }
 
 /* --- Trust Indicators --- */
@@ -605,43 +652,64 @@ body {
 }
 
 .trust-content {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 5rem;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .trust-text .section-title {
-  text-align: left;
+  text-align: center;
+  margin-bottom: 1rem;
 }
 .trust-text .section-subtitle {
-  text-align: left;
+  text-align: center;
   margin: 1rem 0 3rem 0;
+  max-width: 600px;
 }
 
 .trust-features {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3rem;
+  width: 100%;
+  margin-top: 2rem;
 }
 
 .trust-feature {
   display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: white;
+  padding: 2rem 1.5rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.trust-feature:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+  border-color: rgba(102, 126, 234, 0.2);
 }
 
 .trust-icon {
-  font-size: 1.5rem;
-  background: var(--primary-color);
+  font-size: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 12px;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
 .trust-feature h4 {
@@ -815,18 +883,28 @@ body {
 }
 
 /* Medium screens - Fix search button visibility */
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .search-input-group {
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .input-divider {
+    display: none;
   }
 
   .search-btn-modern {
-    min-width: 160px;
-    padding: 1rem 1.25rem;
+    width: 100%;
+    min-width: auto;
+    max-width: none;
+    padding: 1.25rem 2rem;
+    justify-content: center;
   }
 
   .input-container {
-    min-width: 200px;
+    min-width: auto;
+    width: 100%;
   }
 }
 
@@ -895,11 +973,19 @@ body {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
+.platform-impact .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
 .impact-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
-  margin-top: 3rem;
+  margin: 3rem auto 0 auto;
+  max-width: 1000px;
+  justify-content: center;
 }
 
 /* --- Featured Guides Section --- */
@@ -973,9 +1059,12 @@ body {
 
 .tours-preview-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   align-items: start;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* --- Live Activity Section --- */
@@ -1100,10 +1189,15 @@ body {
 
 /* --- Responsive Design for New Sections --- */
 @media (max-width: 1024px) {
-  .guides-preview-grid,
-  .tours-preview-grid {
+  .guides-preview-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.5rem;
+  }
+
+  .tours-preview-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    max-width: 800px;
   }
 
   .section-header {
@@ -1117,6 +1211,11 @@ body {
   }
 
   .hero-stats {
+    gap: 2rem;
+  }
+
+  .trust-features {
+    grid-template-columns: 1fr;
     gap: 2rem;
   }
 }
@@ -1171,6 +1270,19 @@ body {
   .impact-stats {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1rem;
+  }
+
+  .trust-features {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .trust-feature {
+    padding: 1.5rem 1rem;
+  }
+
+  .trust-section {
+    padding: 4rem 0;
   }
 }
 

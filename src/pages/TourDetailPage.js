@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import LoadingSpinner from "../components/LoadingSpinner";
 import toursService from "../services/toursService";
+import bookingsService from "../services/bookingsService";
 import "./TourDetailPage.css";
 
 const TourDetailPage = () => {
   const { tourId } = useParams();
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
   const [tour, setTour] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [bookingData, setBookingData] = useState({
+    date: "",
+    guests: 1,
+    timeSlot: "09:00:00",
+  });
+  const [bookingLoading, setBookingLoading] = useState(false);
 
   const fetchTourDetails = async () => {
     try {
@@ -66,6 +75,60 @@ const TourDetailPage = () => {
       photography: "📸",
     };
     return icons[category?.toLowerCase()] || "🎯";
+  };
+
+  const handleBookingSubmit = async () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    if (!bookingData.date) {
+      alert("Please select a date for your tour");
+      return;
+    }
+
+    if (!tour.guide_id) {
+      alert("Guide information is missing. Please try again.");
+      return;
+    }
+
+    try {
+      setBookingLoading(true);
+
+      const booking = {
+        guideId: tour.guide_id,
+        date: bookingData.date,
+        timeSlot: bookingData.timeSlot,
+        duration: tour.duration_hours || 4,
+        numberOfTourists: parseInt(bookingData.guests),
+        specialRequests: "",
+        totalPrice: tour.price * parseInt(bookingData.guests),
+      };
+
+      console.log("Sending booking data:", booking);
+
+      const result = await bookingsService.createBooking(booking);
+      console.log("Booking result:", result);
+
+      // Navigate to tourist dashboard after success
+      alert(
+        "Booking request sent successfully! The guide will review your request."
+      );
+      navigate("/tourist/dashboard");
+    } catch (error) {
+      console.error("Booking error:", error);
+      alert(error.message || "Failed to create booking. Please try again.");
+    } finally {
+      setBookingLoading(false);
+    }
+  };
+
+  const handleInputChange = (field, value) => {
+    setBookingData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   const renderStars = (rating) => {
@@ -258,10 +321,32 @@ const TourDetailPage = () => {
               <div className="info-content">
                 <span className="info-label">Languages</span>
                 <span className="info-value">
-                  {tour.languages || "English"}
+                  {Array.isArray(tour.languages)
+                    ? tour.languages.join(", ")
+                    : tour.languages || "English"}
                 </span>
               </div>
             </div>
+
+            {tour.meeting_point && (
+              <div className="info-card">
+                <div className="info-icon">📍</div>
+                <div className="info-content">
+                  <span className="info-label">Meeting Point</span>
+                  <span className="info-value">{tour.meeting_point}</span>
+                </div>
+              </div>
+            )}
+
+            {tour.tour_type && (
+              <div className="info-card">
+                <div className="info-icon">🎯</div>
+                <div className="info-content">
+                  <span className="info-label">Tour Type</span>
+                  <span className="info-value">{tour.tour_type}</span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Description Section */}
@@ -287,36 +372,125 @@ const TourDetailPage = () => {
             </div>
           </div>
 
-          {/* What's Included */}
-          <div className="tour-includes-section">
-            <h3 className="section-title">What's Included</h3>
-            <div className="includes-grid">
-              <div className="include-item">
-                <span className="include-icon">✅</span>
-                <span>Professional Guide</span>
-              </div>
-              <div className="include-item">
-                <span className="include-icon">✅</span>
-                <span>Transportation</span>
-              </div>
-              <div className="include-item">
-                <span className="include-icon">✅</span>
-                <span>Entry Fees</span>
-              </div>
-              <div className="include-item">
-                <span className="include-icon">✅</span>
-                <span>Insurance Coverage</span>
-              </div>
-              <div className="include-item">
-                <span className="include-icon">❌</span>
-                <span>Personal Expenses</span>
-              </div>
-              <div className="include-item">
-                <span className="include-icon">❌</span>
-                <span>Meals (unless specified)</span>
+          {/* Tour Features & Highlights */}
+          {(tour.highlights || tour.features || tour.included_items) && (
+            <div className="tour-includes-section">
+              <h3 className="section-title">Tour Highlights & Features</h3>
+              <div className="includes-grid">
+                {tour.highlights &&
+                  Array.isArray(tour.highlights) &&
+                  tour.highlights.map((highlight, index) => (
+                    <div key={`highlight-${index}`} className="include-item">
+                      <span className="include-icon">⭐</span>
+                      <span>{highlight}</span>
+                    </div>
+                  ))}
+                {tour.features &&
+                  Array.isArray(tour.features) &&
+                  tour.features.map((feature, index) => (
+                    <div key={`feature-${index}`} className="include-item">
+                      <span className="include-icon">✅</span>
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                {tour.included_items &&
+                  Array.isArray(tour.included_items) &&
+                  tour.included_items.map((item, index) => (
+                    <div key={`item-${index}`} className="include-item">
+                      <span className="include-icon">📦</span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+
+                {/* Default items if no specific data */}
+                {!tour.highlights && !tour.features && !tour.included_items && (
+                  <>
+                    <div className="include-item">
+                      <span className="include-icon">✅</span>
+                      <span>Professional tour guide</span>
+                    </div>
+                    <div className="include-item">
+                      <span className="include-icon">✅</span>
+                      <span>Local expertise and insights</span>
+                    </div>
+                    <div className="include-item">
+                      <span className="include-icon">✅</span>
+                      <span>Personalized experience</span>
+                    </div>
+                    <div className="include-item">
+                      <span className="include-icon">✅</span>
+                      <span>Safety equipment if needed</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
-          </div>
+          )}
+
+          {/* What's Included (fallback if no highlights/features) */}
+          {!tour.highlights && !tour.features && !tour.included_items && (
+            <div className="tour-includes-section">
+              <h3 className="section-title">What's Included</h3>
+              <div className="includes-grid">
+                <div className="include-item">
+                  <span className="include-icon">✅</span>
+                  <span>Professional Guide</span>
+                </div>
+                <div className="include-item">
+                  <span className="include-icon">✅</span>
+                  <span>Local expertise and insights</span>
+                </div>
+                <div className="include-item">
+                  <span className="include-icon">✅</span>
+                  <span>Personalized experience</span>
+                </div>
+                <div className="include-item">
+                  <span className="include-icon">✅</span>
+                  <span>Safety equipment if needed</span>
+                </div>
+                <div className="include-item">
+                  <span className="include-icon">❌</span>
+                  <span>Personal Expenses</span>
+                </div>
+                <div className="include-item">
+                  <span className="include-icon">❌</span>
+                  <span>Meals (unless specified)</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Additional Tour Information */}
+          {(tour.itinerary || tour.schedule || tour.notes) && (
+            <div className="tour-additional-info">
+              {tour.itinerary && (
+                <div className="info-section">
+                  <h3 className="section-title">Itinerary</h3>
+                  <div className="info-content">
+                    <p>{tour.itinerary}</p>
+                  </div>
+                </div>
+              )}
+
+              {tour.schedule && (
+                <div className="info-section">
+                  <h3 className="section-title">Schedule</h3>
+                  <div className="info-content">
+                    <p>{tour.schedule}</p>
+                  </div>
+                </div>
+              )}
+
+              {tour.notes && (
+                <div className="info-section">
+                  <h3 className="section-title">Important Notes</h3>
+                  <div className="info-content">
+                    <p>{tour.notes}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Guide Information */}
           {tour.guide_name && (
@@ -363,12 +537,20 @@ const TourDetailPage = () => {
                   id="tour-date"
                   className="date-input"
                   min={new Date().toISOString().split("T")[0]}
+                  value={bookingData.date}
+                  onChange={(e) => handleInputChange("date", e.target.value)}
+                  required
                 />
               </div>
 
               <div className="form-group">
                 <label htmlFor="guests">Number of Guests</label>
-                <select id="guests" className="guests-select">
+                <select
+                  id="guests"
+                  className="guests-select"
+                  value={bookingData.guests}
+                  onChange={(e) => handleInputChange("guests", e.target.value)}
+                >
                   {[...Array(Math.min(tour.max_people, 10))].map((_, i) => (
                     <option key={i + 1} value={i + 1}>
                       {i + 1} {i === 0 ? "Guest" : "Guests"}
@@ -377,9 +559,53 @@ const TourDetailPage = () => {
                 </select>
               </div>
 
-              <button className="book-now-btn">
-                <span className="btn-icon">📅</span>
-                Book Now
+              <div className="form-group">
+                <label htmlFor="timeSlot">Preferred Time</label>
+                <select
+                  id="timeSlot"
+                  className="guests-select"
+                  value={bookingData.timeSlot}
+                  onChange={(e) =>
+                    handleInputChange("timeSlot", e.target.value)
+                  }
+                >
+                  <option value="09:00:00">09:00 AM</option>
+                  <option value="10:00:00">10:00 AM</option>
+                  <option value="11:00:00">11:00 AM</option>
+                  <option value="12:00:00">12:00 PM</option>
+                  <option value="13:00:00">01:00 PM</option>
+                  <option value="14:00:00">02:00 PM</option>
+                  <option value="15:00:00">03:00 PM</option>
+                  <option value="16:00:00">04:00 PM</option>
+                </select>
+              </div>
+
+              {/* Total Price Display */}
+              <div className="total-price-section">
+                <div className="price-breakdown">
+                  <span className="price-label">Total Price:</span>
+                  <span className="total-amount">
+                    {formatPrice(tour.price * parseInt(bookingData.guests))}
+                  </span>
+                </div>
+                <span className="price-note">
+                  ({bookingData.guests} guest
+                  {parseInt(bookingData.guests) > 1 ? "s" : ""} ×{" "}
+                  {formatPrice(tour.price)})
+                </span>
+              </div>
+
+              <button
+                className="book-now-btn"
+                onClick={handleBookingSubmit}
+                disabled={bookingLoading}
+              >
+                <span className="btn-icon">{bookingLoading ? "⏳" : "📅"}</span>
+                {bookingLoading
+                  ? "Processing..."
+                  : isAuthenticated
+                  ? "Book Now"
+                  : "Login to Book"}
               </button>
 
               <button className="add-to-wishlist-btn">

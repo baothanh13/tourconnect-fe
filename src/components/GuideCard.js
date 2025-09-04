@@ -75,8 +75,7 @@ const GuideCard = ({ guide }) => {
     if (!isAuthenticated) {
       navigate("/login");
     } else {
-      // TODO: Add booking functionality - navigate to booking page
-      navigate(`/book-tour?guideId=${guide.id}`);
+      navigate(`/booking/${guide.id}`);
     }
   };
 
@@ -263,7 +262,11 @@ const GuideCard = ({ guide }) => {
           <button
             className="btn btn-book"
             onClick={handleBookNowClick}
-            title={isAuthenticated ? "Book this guide now" : "Login to book this guide"}
+            title={
+              isAuthenticated
+                ? "Book this guide now"
+                : "Login to book this guide"
+            }
           >
             <svg viewBox="0 0 24 24" fill="currentColor">
               <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" />

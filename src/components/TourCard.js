@@ -188,15 +188,12 @@ const TourCard = ({ tour }) => {
 
         {/* Action Buttons */}
         <div className="tour-actions">
-          <Link
-            to={`/tours/${tour.id}`}
-            className="btn-primary tour-details-btn"
-          >
+          <Link to={`/tours/${tour.id}`} className="tour-btn tour-btn-view">
             <span className="btn-icon">👁️</span>
             View Details
           </Link>
 
-          <button className="btn-secondary book-now-btn">
+          <button className="tour-btn tour-btn-book">
             <span className="btn-icon">📅</span>
             Book Now
           </button>

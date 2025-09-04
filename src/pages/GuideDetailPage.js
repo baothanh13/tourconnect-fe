@@ -449,12 +449,6 @@ const GuideDetailPage = () => {
                         📅 Login to Book
                       </Link>
                     )}
-                    <button className="btn btn-secondary btn-large">
-                      💬 Send Message
-                    </button>
-                    <button className="btn btn-outline btn-large">
-                      ❤️ Add to Favorites
-                    </button>
                   </div>
                 </div>
               </div>

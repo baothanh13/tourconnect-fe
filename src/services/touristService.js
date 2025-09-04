@@ -1,4 +1,5 @@
 import apiService from "./api";
+import { guidesService } from "./guidesService";
 
 class TouristService {
   // Get tourist dashboard stats
@@ -120,44 +121,34 @@ class TouristService {
       });
       const bookings = response.bookings || [];
 
-      const enrichedBookings = await Promise.all(
-        bookings.map(async (booking) => {
-          try {
-            if (booking.tour_id) {
-              const tourResponse = await apiService.get(
-                `/tours/${booking.tour_id}`
-              );
-              const tour = tourResponse.tour || {};
-
-              return {
-                ...booking,
-                tourTitle: tour.title || booking.tour_title || "Unknown Tour",
-                tourImage: tour.image_url || booking.tour_image,
-                tourCategory: tour.category || booking.category,
-                guideName:
-                  tour.guide_name || booking.guide_name || "Unknown Guide",
-                guideAvatar: tour.guide_avatar || booking.guide_avatar,
-                location:
-                  tour.location || booking.location || "Location not specified",
-              };
-            } else {
-              return {
-                ...booking,
-                tourTitle: booking.tour_title || "Unknown Tour",
-                guideName: booking.guide_name || "Unknown Guide",
-                location: booking.location || "Location not specified",
-              };
-            }
-          } catch (err) {
-            return {
-              ...booking,
-              tourTitle: booking.tour_title || "Unknown Tour",
-              guideName: booking.guide_name || "Unknown Guide",
-              location: booking.location || "Location not specified",
-            };
-          }
-        })
-      );
+      const enrichedBookings = bookings.map((booking) => {
+        // Now the backend already provides guide info via JOIN
+        return {
+          ...booking,
+          tourTitle: `${booking.duration_hours || 4} Hour Tour with ${
+            booking.guide_name || "Guide"
+          }`,
+          tourImage: booking.guide_avatar || booking.tour_image,
+          tourCategory: booking.guide_specialties
+            ? Array.isArray(booking.guide_specialties)
+              ? booking.guide_specialties[0]
+              : booking.guide_specialties.split(",")[0]
+            : "Tour Experience",
+          guideName: booking.guide_name || "Unknown Guide",
+          guideAvatar: booking.guide_avatar || booking.guide_avatar,
+          location:
+            booking.guide_location ||
+            booking.location ||
+            "Location not specified",
+          guideSpecialties: booking.guide_specialties
+            ? Array.isArray(booking.guide_specialties)
+              ? booking.guide_specialties
+              : booking.guide_specialties.split(",")
+            : [],
+          guideRating: booking.guide_rating || 0,
+          guidePrice: booking.guide_price || 0,
+        };
+      });
 
       return enrichedBookings;
     } catch (error) {
@@ -237,7 +228,6 @@ class TouristService {
       throw error;
     }
   }
-
 
   // Get available tours
   async getAvailableTours(params = {}) {

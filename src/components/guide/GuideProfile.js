@@ -22,6 +22,7 @@ import {
   FaGlobe,
   FaAward,
   FaArrowLeft,
+  FaEye,
 } from "react-icons/fa";
 import "./GuideProfile_new.css";
 
@@ -34,6 +35,7 @@ const GuideProfile = () => {
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [showCertificateModal, setShowCertificateModal] = useState(false);
 
   const fetchProfileData = useCallback(async () => {
     try {
@@ -580,32 +582,175 @@ const GuideProfile = () => {
               </div>
             </div>
 
-            {/* Certificates */}
-            {profile.certificates && (
-              <div className="info-card certificates-card">
-                <div className="card-header">
-                  <div className="card-icon certificates">
-                    <FaAward />
+            {/* Certificates and Certificate Images Row */}
+            <div className="certificates-row">
+              {/* Certificates */}
+              {profile.certificates && (
+                <div className="info-card certificates-card">
+                  <div className="card-header">
+                    <div className="card-icon certificates">
+                      <FaAward />
+                    </div>
+                    <div className="card-title">
+                      <h3>Certifications</h3>
+                      <p>Professional qualifications</p>
+                    </div>
                   </div>
-                  <div className="card-title">
-                    <h3>Certifications</h3>
-                    <p>Professional qualifications</p>
+
+                  <div className="card-body">
+                    <div className="certificates-list">
+                      {(typeof profile.certificates === "string"
+                        ? profile.certificates.split(",")
+                        : profile.certificates
+                      ).map((cert, index) => (
+                        <div key={index} className="certificate-item">
+                          <div className="cert-icon">
+                            <FaAward />
+                          </div>
+                          <span className="cert-text">{cert.trim()}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
+              )}
 
-                <div className="card-body">
-                  <div className="certificates-list">
-                    {(typeof profile.certificates === "string"
-                      ? profile.certificates.split(",")
-                      : profile.certificates
-                    ).map((cert, index) => (
-                      <div key={index} className="certificate-item">
-                        <div className="cert-icon">
-                          <FaAward />
-                        </div>
-                        <span className="cert-text">{cert.trim()}</span>
-                      </div>
-                    ))}
+              {/* Certificate Images Summary */}
+              {profile.certificate_img && (
+                <div className="info-card certificate-images-summary-card">
+                  <div className="card-header">
+                    <div className="card-icon certificate-images">
+                      <FaCamera />
+                    </div>
+                    <div className="card-title">
+                      <h3>Certificate Images</h3>
+                      <p>Proof of qualifications</p>
+                    </div>
+                  </div>
+
+                  <div className="card-body">
+                    <div className="certificate-images-summary">
+                      {(() => {
+                        let imageUrls = [];
+                        
+                        // Parse certificate_img if it's a JSON string
+                        if (typeof profile.certificate_img === 'string') {
+                          try {
+                            const parsed = JSON.parse(profile.certificate_img);
+                            imageUrls = Array.isArray(parsed) ? parsed : [profile.certificate_img];
+                          } catch {
+                            imageUrls = [profile.certificate_img];
+                          }
+                        } else if (Array.isArray(profile.certificate_img)) {
+                          imageUrls = profile.certificate_img;
+                        } else {
+                          imageUrls = [];
+                        }
+
+                        // Show only first 2 certificates
+                        const displayUrls = imageUrls.slice(0, 2);
+                        const hasMore = imageUrls.length > 2;
+
+                        return (
+                          <>
+                            {displayUrls.map((imageUrl, index) => (
+                              <div key={index} className="certificate-summary-item">
+                                <div className="cert-icon">
+                                  <FaAward />
+                                </div>
+                                <span className="cert-text">
+                                  Certificate {index + 1}
+                                </span>
+                              </div>
+                            ))}
+                            {hasMore && (
+                              <div className="certificate-summary-item">
+                                <div className="cert-icon">
+                                  <FaAward />
+                                </div>
+                                <span className="cert-text">
+                                  +{imageUrls.length - 2} more certificates
+                                </span>
+                              </div>
+                            )}
+                            <button
+                              className="view-all-certificates-btn"
+                              onClick={() => setShowCertificateModal(true)}
+                            >
+                              <FaEye />
+                              <span>View All Images</span>
+                            </button>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Certificate Images Modal */}
+            {showCertificateModal && profile.certificate_img && (
+              <div className="certificate-modal-overlay" onClick={() => setShowCertificateModal(false)}>
+                <div className="certificate-modal" onClick={(e) => e.stopPropagation()}>
+                  <div className="modal-header">
+                    <h3>Certificate Images</h3>
+                    <button 
+                      className="modal-close-btn"
+                      onClick={() => setShowCertificateModal(false)}
+                    >
+                      <FaTimes />
+                    </button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="certificate-images-list">
+                      {(() => {
+                        let imageUrls = [];
+                        
+                        // Parse certificate_img if it's a JSON string
+                        if (typeof profile.certificate_img === 'string') {
+                          try {
+                            const parsed = JSON.parse(profile.certificate_img);
+                            imageUrls = Array.isArray(parsed) ? parsed : [profile.certificate_img];
+                          } catch {
+                            imageUrls = [profile.certificate_img];
+                          }
+                        } else if (Array.isArray(profile.certificate_img)) {
+                          imageUrls = profile.certificate_img;
+                        } else {
+                          imageUrls = [];
+                        }
+
+                        return imageUrls.map((imageUrl, index) => (
+                          <div key={index} className="certificate-image-list-item">
+                            <div className="certificate-image-header">
+                              <div className="certificate-number">
+                                <FaAward />
+                                <span>Certificate {index + 1}</span>
+                              </div>
+                            </div>
+                            <div className="certificate-image-container">
+                              <img
+                                src={imageUrl}
+                                alt={`Certificate ${index + 1}`}
+                                className="certificate-image"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'block';
+                                }}
+                              />
+                              <div className="image-error" style={{ display: 'none' }}>
+                                <p>Unable to load image</p>
+                                <small>Check the URL</small>
+                              </div>
+                            </div>
+                            <div className="certificate-image-url">
+                              <small>{imageUrl}</small>
+                            </div>
+                          </div>
+                        ));
+                      })()}
+                    </div>
                   </div>
                 </div>
               </div>

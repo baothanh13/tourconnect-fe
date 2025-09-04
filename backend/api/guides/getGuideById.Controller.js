@@ -7,6 +7,7 @@ const getGuideById = async (req, res) => {
     const guides = await query(
       `SELECT 
               g.id,
+              u.avatar_url,
               u.name AS user_name, 
               u.email AS user_email,
               u.phone,
@@ -21,7 +22,8 @@ const getGuideById = async (req, res) => {
               g.total_reviews,
               g.is_available,
               g.current_location,
-              g.verification_status
+              g.verification_status,
+              g.certificate_img
             FROM guides g
             JOIN users u ON g.user_id = u.id
             WHERE g.id = ?;`,

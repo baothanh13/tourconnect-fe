@@ -421,8 +421,8 @@
   gap: 4px;
 }
 
-.price-amount {
-  font-size: 24px;
+.price-amount-card {
+  font-size: 30px;
   font-weight: 900;
   letter-spacing: -0.5px;
 }

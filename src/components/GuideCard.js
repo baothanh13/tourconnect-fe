@@ -232,7 +232,7 @@ const GuideCard = ({ guide }) => {
         {/* Price and Availability */}
         <div className="price-availability-section">
           <div className="price-container">
-            <span className="price-amount">${guide.price_per_hour}</span>
+            <span className="price-amount-card">${guide.price_per_hour}</span>
             <span className="price-unit">/hour</span>
           </div>
           <div className="availability-container">

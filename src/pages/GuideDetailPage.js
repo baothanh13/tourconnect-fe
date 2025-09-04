@@ -11,6 +11,7 @@ const GuideDetailPage = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [showCertificateModal, setShowCertificateModal] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -103,14 +104,7 @@ const GuideDetailPage = () => {
     return specialties;
   };
 
-  const formatCertificates = (certificates) => {
-    if (!certificates || certificates.length === 0)
-      return ["Licensed Tour Guide"];
-    if (Array.isArray(certificates)) {
-      return certificates;
-    }
-    return [certificates];
-  };
+
 
   if (loading) {
     return (
@@ -208,7 +202,7 @@ const GuideDetailPage = () => {
               {/* Price */}
               <div className="price-section">
                 <span className="price-label">Starting from</span>
-                <span className="price-amount">
+                <span className="price-amount-guide-details">
                   ${guide.price_per_hour}/hour
                 </span>
               </div>
@@ -324,18 +318,77 @@ const GuideDetailPage = () => {
               </div>
 
               {/* Certifications Section */}
-              <div className="section-card">
-                <h3 className="section-title">Certifications & Licenses</h3>
-                <div className="certifications-list">
-                  {formatCertificates(guide.certificates).map((cert, index) => (
-                    <div key={index} className="certification-item">
-                      <span className="cert-icon">📜</span>
-                      <span className="cert-name">{cert}</span>
+                <div className="section-card">
+                  <div className="section-header">
+                    <h3 className="section-title">Certifications & Licenses</h3>
+                    {guide.certificate_img && (
+                      <button
+                        className="view-all-certificates-btn"
+                        onClick={() => setShowCertificateModal(true)}
+                      >
+                        View Certificates
+                      </button>
+                    )}
+                  </div>
+
+                </div>
+            {showCertificateModal && guide.certificate_img && (
+              <div
+                className="certificate-modal-overlay"
+                onClick={() => setShowCertificateModal(false)}
+              >
+                <div
+                  className="certificate-modal"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="modal-header">
+                    <h3>Certificate Images</h3>
+                    <button
+                      className="modal-close-btn"
+                      onClick={() => setShowCertificateModal(false)}
+                    >
+                      ✖
+                    </button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="certificate-images-list">
+                      {(() => {
+                        let imageUrls = [];
+
+                        if (typeof guide.certificate_img === "string") {
+                          try {
+                            const parsed = JSON.parse(guide.certificate_img);
+                            imageUrls = Array.isArray(parsed)
+                              ? parsed
+                              : [guide.certificate_img];
+                          } catch {
+                            imageUrls = [guide.certificate_img];
+                          }
+                        } else if (Array.isArray(guide.certificate_img)) {
+                          imageUrls = guide.certificate_img;
+                        }
+
+                        return imageUrls.map((url, index) => (
+                          <div key={index} className="certificate-image-list-item">
+                            <img
+                              src={url}
+                              alt={`Certificate ${index + 1}`}
+                              className="certificate-image"
+                            />
+                            <div className="certificate-image-url">
+                              <small>{url}</small>
+                            </div>
+                          </div>
+                        ));
+                      })()}
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+            {/* Kết thúc modal */}
+
+          </div>
           )}
 
           {/* Reviews Tab */}

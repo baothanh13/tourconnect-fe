@@ -3,12 +3,14 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   padding: 20px 0;
+  max-width: 1000px; /* hoặc 1800px tùy ý */
+  width: 100%;
 }
 
 .guide-detail-container {
-  max-width: 1200px;
+  max-width: 1400px; /* hoặc 1800px tùy ý */
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0px 20px;
 }
 
 /* Header */
@@ -80,6 +82,7 @@
   grid-template-columns: 2fr 1fr;
   gap: 30px;
   margin-bottom: 40px;
+  margin: 0 auto;
 }
 
 .guide-profile-main {
@@ -218,8 +221,8 @@
   margin-bottom: 5px;
 }
 
-.price-amount {
-  font-size: 2rem;
+.price-amount-guide-details {
+  font-size: 50px;
   font-weight: 700;
 }
 
@@ -284,6 +287,7 @@
   padding: 5px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   margin-bottom: 30px;
+  margin-top: 30px;
 }
 
 .tab-button {
@@ -328,6 +332,29 @@
   padding: 30px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
+}
+
+.certificate-images-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.certificate-image-list-item {
+  flex: 0 1 45%;   /* mỗi ảnh chiếm ~45% chiều ngang container */
+  text-align: center;
+}
+
+.certificate-image {
+  max-width: 400px;   /* hoặc 300px tùy bạn muốn nhỏ cỡ nào */
+  max-height: 300px;  /* giới hạn chiều cao */
+  width: 100%;        /* co giãn theo khung */
+  height: auto;       /* giữ tỉ lệ */
+  border-radius: 8px; /* bo góc cho đẹp */
+  display: block;
+  margin: 0 auto;     /* căn giữa */
+  object-fit: contain; /* đảm bảo ảnh không bị méo */
 }
 
 .section-title {

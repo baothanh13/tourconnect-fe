@@ -11,15 +11,15 @@ const getBookings = async (req, res) => {
     // Join with guides table to get guide information
     const bookings = await query(
       `SELECT 
-        b.*,
-        g.user_name as guide_name,
-        g.avatar_url as guide_avatar,
-        g.location as guide_location,
-        g.specialties as guide_specialties,
-        g.rating as guide_rating,
-        g.price_per_hour as guide_price
+          b.*,
+          u.name AS guide_name,
+          u.avatar_url AS guide_avatar,
+          g.location AS guide_location,
+          g.specialties AS guide_specialties,
+          g.rating AS guide_rating
       FROM bookings b
-      LEFT JOIN guides g ON b.guide_id = g.id
+      LEFT JOIN guides g ON b.guide_id = g.id 
+      LEFT JOIN users u ON g.user_id = u.id
       WHERE b.tourist_id = ? 
       ORDER BY b.created_at DESC`,
       [userId]

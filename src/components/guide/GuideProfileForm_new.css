@@ -684,3 +684,75 @@
   border-color: var(--error-color);
   background: rgba(239, 68, 68, 0.05);
 }
+
+/* Certificate Images Section */
+.certificate-images-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.certificate-image-input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.certificate-image-input-group .input-wrapper {
+  flex: 1;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.certificate-image-input-group .modern-input {
+  flex: 1;
+}
+
+.update-section {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.update-certificate-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.update-certificate-btn:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.update-certificate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive adjustments for certificate images section */
+@media (max-width: 768px) {
+  .update-section {
+    justify-content: center;
+  }
+  
+  .update-certificate-btn {
+    width: 100%;
+    min-width: auto;
+  }
+}

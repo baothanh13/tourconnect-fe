@@ -17,6 +17,7 @@ import {
   FaCheck,
   FaGlobe,
   FaAward,
+  FaCamera,
 } from "react-icons/fa";
 import "./GuideProfileForm_new.css";
 
@@ -25,29 +26,40 @@ const GuideProfileForm = ({ onProfileCreated, initialData, onCancel }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [updatingCertificate, setUpdatingCertificate] = useState(false);
 
   // Helper function to parse JSON strings or arrays
   const parseArrayField = (field) => {
+    console.log("parseArrayField input:", field, "type:", typeof field);
     if (!field) return [""];
     if (typeof field === "string") {
       try {
         const parsed = JSON.parse(field);
+        console.log("JSON parsed successfully:", parsed);
         return Array.isArray(parsed) && parsed.length > 0 ? parsed : [""];
       } catch {
+        console.log("JSON parse failed, returning as single item array:", [field]);
         return [field];
       }
     }
+    console.log("Field is already array, returning:", field);
     return Array.isArray(field) && field.length > 0 ? field : [""];
   };
 
-  const [formData, setFormData] = useState({
-    location: initialData?.location || "",
-    languages: parseArrayField(initialData?.languages),
-    specialties: parseArrayField(initialData?.specialties),
-    price_per_hour: initialData?.price_per_hour || 25,
-    experience_years: initialData?.experience_years || 1,
-    description: initialData?.description || "",
-    certificates: parseArrayField(initialData?.certificates),
+  const [formData, setFormData] = useState(() => {
+    console.log("initialData:", initialData);
+    console.log("initialData.certificate_img:", initialData?.certificate_img);
+    
+    return {
+      location: initialData?.location || "",
+      languages: parseArrayField(initialData?.languages),
+      specialties: parseArrayField(initialData?.specialties),
+      price_per_hour: initialData?.price_per_hour || 25,
+      experience_years: initialData?.experience_years || 1,
+      description: initialData?.description || "",
+      certificates: parseArrayField(initialData?.certificates),
+      certificate_img: parseArrayField(initialData?.certificate_img),
+    };
   });
 
   const commonLanguages = [
@@ -105,6 +117,40 @@ const GuideProfileForm = ({ onProfileCreated, initialData, onCancel }) => {
       ...prev,
       [field]: prev[field].filter((_, i) => i !== index),
     }));
+  };
+
+  const handleUpdateCertificateImage = async () => {
+    // Filter out empty URLs
+    const validUrls = formData.certificate_img.filter(url => url.trim() !== "");
+    
+    console.log("formData.certificate_img:", formData.certificate_img);
+    console.log("validUrls:", validUrls);
+    
+    if (validUrls.length === 0) {
+      alert("Please enter at least one certificate image URL");
+      return;
+    }
+
+    if (!user?.id) {
+      setError("User not authenticated");
+      return;
+    }
+
+    try {
+      setUpdatingCertificate(true);
+      setError(null);
+
+      // Use the updateCertificateImage API with array of URLs
+      console.log("Sending to API:", validUrls);
+      await guidesService.updateCertificateImage(user.id, validUrls);
+      
+      alert("Certificate images updated successfully!");
+    } catch (error) {
+      console.error("Error updating certificate images:", error);
+      setError(error.message || "Failed to update certificate images");
+    } finally {
+      setUpdatingCertificate(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -547,6 +593,78 @@ const GuideProfileForm = ({ onProfileCreated, initialData, onCancel }) => {
                   </div>
                   <small className="field-hint">
                     Certifications build trust and credibility with travelers
+                  </small>
+                </div>
+
+                {/* Certificate Image URLs */}
+                <div className="form-field full-width">
+                  <label className="field-label">
+                    <FaCamera className="label-icon" />
+                    <span>Certificate Image URLs</span>
+                    <span className="optional">(Optional)</span>
+                  </label>
+                  <div className="certificate-images-section">
+                    {formData.certificate_img.map((imageUrl, index) => (
+                      <div key={index} className="certificate-image-input-group">
+                        <div className="input-wrapper">
+                          <input
+                            type="url"
+                            value={imageUrl}
+                            onChange={(e) =>
+                              handleArrayChange(
+                                index,
+                                e.target.value,
+                                "certificate_img"
+                              )
+                            }
+                            placeholder="https://example.com/your-certificate-image.jpg"
+                            className="modern-input"
+                          />
+                          {formData.certificate_img.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                removeArrayItem(index, "certificate_img")
+                              }
+                              className="input-remove-btn"
+                            >
+                              <FaTimes />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => addArrayItem("certificate_img")}
+                      className="add-button secondary"
+                    >
+                      <FaPlus />
+                      <span>Add Another Certificate Image</span>
+                    </button>
+                    <div className="update-section">
+                      <button
+                        type="button"
+                        onClick={handleUpdateCertificateImage}
+                        className="update-certificate-btn"
+                        disabled={updatingCertificate || formData.certificate_img.every(url => !url.trim())}
+                      >
+                        {updatingCertificate ? (
+                          <>
+                            <div className="button-spinner"></div>
+                            Update All Images
+                          </>
+                        ) : (
+                          <>
+                            <FaCamera />
+                            Update All Images
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  <small className="field-hint">
+                    Add URLs of your certificate images to build credibility with travelers
                   </small>
                 </div>
               </div>

@@ -44,7 +44,8 @@ const getGuideDashboardStats = async (req, res) => {
         SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_bookings,
         SUM(CASE WHEN status = 'confirmed' AND booking_date > CURDATE() THEN 1 ELSE 0 END) as upcoming_bookings,
         SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_bookings,
-        SUM(CASE WHEN status = 'completed' THEN total_price ELSE 0 END) as total_earnings
+        SUM(CASE WHEN status = 'confirmed' THEN total_price ELSE 0 END) as total_earnings,
+        SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirm_bookings
        FROM bookings 
        WHERE guide_id = ?`,
       [guide.id]
@@ -96,21 +97,21 @@ const getGuideDashboardStats = async (req, res) => {
       [guide.id]
     );
 
-    // Completed Tours
+    // Completed Tours (dùng confirmed)
     const [completedTours] = await pool.execute(
-      `SELECT COUNT(DISTINCT t.id) as completed_tours
-      FROM tours t
-      JOIN bookings b ON t.guide_id = b.guide_id
-      WHERE t.guide_id = ? AND b.status = 'completed'`,
+      `SELECT 
+         SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as completed_tours
+       FROM bookings
+       WHERE guide_id = ?`,
       [guide.id]
     );
 
-    // Total customers (ước lượng)
-    const totalCustomers = (bookingStats[0].completed_bookings || 0) * 1.5;
+    // Total customers (ước lượng từ confirmed bookings)
+    const totalCustomers = (bookingStats[0].confirm_bookings || 0) * 1.5;
 
     const stats = {
       totalTours: tourStats[0].total_tours || 0,
-      completedTours: completedTours[0].completed_tours || 0, // ✅ thêm completedTours
+      completedTours: completedTours[0].completed_tours || 0, // ✅ fixed
       upcomingTours: bookingStats[0].upcoming_bookings || 0,
       pendingBookings: bookingStats[0].pending_bookings || 0,
       totalBookings: bookingStats[0].total_bookings || 0,
@@ -145,6 +146,7 @@ const getGuideDashboardStats = async (req, res) => {
     });
   }
 };
+
 
 // ================== Recent Activities ==================
 const getGuideRecentActivities = async (req, res) => {

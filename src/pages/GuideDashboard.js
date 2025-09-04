@@ -155,7 +155,7 @@ const GuideDashboard = () => {
         const apiStats = dashboardData.stats || {};
         const enhancedStats = {
           totalTours: apiStats.totalTours || 0,
-          completedTours: apiStats.completedBookings || 0,
+          completedTours: apiStats.completedTours || 0,
           upcomingTours: apiStats.upcomingTours || 0,
           pendingBookings: apiStats.pendingBookings || 0,
           totalEarnings: parseFloat(apiStats.totalEarnings) || 0,
@@ -418,7 +418,7 @@ const GuideDashboard = () => {
             />
             <StatCard
               icon={<FaCalendarCheck />}
-              title="Completed Tours"
+              title="Confirm Bookings"
               value={stats.completedTours}
               trend={8.2}
               className="completed-card"
@@ -496,13 +496,6 @@ const GuideDashboard = () => {
                 description="Set your availability and time slots"
                 onClick={() => navigate("/guide/schedule")}
                 className="action-schedule"
-              />
-              <QuickActionCard
-                icon={<FaCamera />}
-                label="Upload Photos"
-                description="Add photos to your tours and profile"
-                onClick={() => navigate("/guide/photos")}
-                className="action-photos"
               />
               <QuickActionCard
                 icon={<FaHeadset />}

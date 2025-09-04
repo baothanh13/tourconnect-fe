@@ -205,15 +205,19 @@ export const guidesService = {
   },
 
   // Update certificate image by user ID
-  async updateCertificateImage(userId, certificateImgUrl) {
+  async updateCertificateImage(userId, certificateImgUrls) {
     try {
-      const response = await apiClient.put(`/certificate/${userId}`, {
-        certificate_img: certificateImgUrl,
-      });
+      console.log("guidesService.updateCertificateImage called with:", { userId, certificateImgUrls });
+      const requestBody = { certificate_img: certificateImgUrls };
+      console.log("Request body:", requestBody);
+      
+      const response = await apiClient.put(`/certificate/${userId}`, requestBody);
+      console.log("API response:", response.data);
       return response.data;
     } catch (error) {
+      console.error("API error:", error.response?.data || error.message);
       throw new Error(
-        error.response?.data?.message || "Failed to update certificate image."
+        error.response?.data?.message || "Failed to update certificate images."
       );
     }
   },

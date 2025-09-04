@@ -264,9 +264,8 @@ const TouristDashboard = () => {
         />
         <StatCard
           icon={<FaRoute />}
-          title="Completed Tours"
+          title="Confirm Bookings"
           value={stats.completedTours}
-          trend={stats.growthPercentage}
           className="completed-card"
           isLoading={loading}
         />

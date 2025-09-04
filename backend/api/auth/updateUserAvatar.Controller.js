@@ -1,24 +1,28 @@
 const { pool } = require("../../config/db");
+const path = require("path");
+const fs = require("fs");
+const url = require("url");
 
 const updateUserAvatar = async (req, res) => {
   console.log("updateUserAvatar called with params:", req.params);
-  console.log("updateUserAvatar called with body:", req.body);
+  console.log("Uploaded file:", req.file);
 
   try {
     const { userId } = req.params;
-    const { avatar_url } = req.body;
 
-    // Validate input
-    if (!avatar_url) {
+    if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: "Avatar URL is required",
+        message: "Avatar file is required",
       });
     }
 
-    // Verify that the user exists
+    // ✅ Tạo full URL để client load ảnh
+    const avatarUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+
+    // Lấy avatar cũ của user
     const [userCheck] = await pool.execute(
-      "SELECT id FROM users WHERE id = ?",
+      "SELECT id, avatar_url FROM users WHERE id = ?",
       [userId]
     );
 
@@ -29,10 +33,31 @@ const updateUserAvatar = async (req, res) => {
       });
     }
 
-    // Update user avatar
+    const oldAvatar = userCheck[0].avatar_url;
+
+    // ✅ Nếu có avatar cũ thì xóa file cũ trong /uploads
+    if (oldAvatar) {
+      try {
+        const oldPathRelative = url.parse(oldAvatar).pathname; // => "/uploads/xxx.png"
+        if (oldPathRelative && oldPathRelative.startsWith("/uploads/")) {
+          const oldPath = path.join(__dirname, "../../", oldPathRelative);
+          fs.unlink(oldPath, (err) => {
+            if (err) {
+              console.warn("⚠️ Failed to delete old avatar:", err.message);
+            } else {
+              console.log("✅ Old avatar deleted:", oldPath);
+            }
+          });
+        }
+      } catch (e) {
+        console.warn("⚠️ Error parsing old avatar URL:", e.message);
+      }
+    }
+
+    // ✅ Update DB với avatar mới
     const [result] = await pool.execute(
       "UPDATE users SET avatar_url = ?, updated_at = NOW() WHERE id = ?",
-      [avatar_url, userId]
+      [avatarUrl, userId]
     );
 
     if (result.affectedRows === 0) {
@@ -42,7 +67,7 @@ const updateUserAvatar = async (req, res) => {
       });
     }
 
-    // Fetch updated user info
+    // ✅ Fetch user mới
     const [updatedUser] = await pool.execute(
       "SELECT id, name, email, phone, avatar_url, role FROM users WHERE id = ?",
       [userId]

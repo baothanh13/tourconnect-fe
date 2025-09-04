@@ -137,39 +137,21 @@ const GuideProfile = () => {
     setUploadingAvatar(true);
 
     try {
-      // For now, we'll use a simple approach - convert to base64 data URL
-      // In a production app, you'd upload to a cloud service like AWS S3, Cloudinary, etc.
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        try {
-          // Instead of base64, let's use a test image URL for now
-          const testImageUrl = `https://picsum.photos/200/200?random=${Date.now()}`;
-          console.log("Using test image URL:", testImageUrl);
+      // ✅ Gọi API upload avatar bằng FormData
+      const response = await guidesService.uploadUserAvatar(user.id, file);
 
-          // Update avatar via API
-          await guidesService.updateUserAvatar(user.id, testImageUrl);
+      // Cập nhật local profile state với URL trả về từ backend
+      setProfile((prev) => ({
+        ...prev,
+        avatar_url: response.data.user.avatar_url, // backend trả full URL
+      }));
 
-          // Update local profile state
-          setProfile((prev) => ({
-            ...prev,
-            avatar_url: testImageUrl,
-          }));
-
-          // Show success message
-          alert("Profile photo updated successfully!");
-          console.log("Avatar updated successfully");
-        } catch (error) {
-          console.error("Error updating avatar:", error);
-          alert("Failed to update profile photo. Please try again.");
-        } finally {
-          setUploadingAvatar(false);
-        }
-      };
-
-      reader.readAsDataURL(file);
+      alert("Profile photo updated successfully!");
+      console.log("Avatar updated successfully");
     } catch (error) {
       console.error("Error uploading avatar:", error);
-      alert("Failed to upload image. Please try again.");
+      alert("Failed to upload profile photo. Please try again.");
+    } finally {
       setUploadingAvatar(false);
     }
   };
@@ -274,6 +256,7 @@ const GuideProfile = () => {
                     </div>
                   )}
                 </div>
+
                 <div className="avatar-upload-wrapper">
                   <input
                     type="file"
@@ -282,20 +265,18 @@ const GuideProfile = () => {
                     onChange={handleAvatarUpload}
                     style={{ display: "none" }}
                   />
+
                   <button
+                    type="button"
                     className="avatar-edit-btn"
-                    onClick={() => {
-                      console.log("Camera button clicked");
-                      fileInputRef.current?.click();
-                    }}
+                    onClick={() => fileInputRef.current?.click()}
                     disabled={uploadingAvatar}
-                    title={
-                      uploadingAvatar ? "Uploading..." : "Change profile photo"
-                    }
+                    title={uploadingAvatar ? "Uploading..." : "Change profile photo"}
                   >
                     {uploadingAvatar ? <FaClock /> : <FaCamera />}
                   </button>
                 </div>
+
                 <div className="avatar-ring"></div>
               </div>
 

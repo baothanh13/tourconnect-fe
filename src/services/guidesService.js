@@ -245,38 +245,28 @@ export const guidesService = {
   },
 
   // Update user avatar/profile photo
-  async updateUserAvatar(userId, avatarUrl) {
+  async uploadUserAvatar(userId, file) {
     try {
-      console.log("Testing auth routes first...");
+      const formData = new FormData();
+      formData.append("avatar", file);
 
-      // Test if auth routes are working
-      const testResponse = await axios.get(
-        "http://localhost:5000/api/auth/test"
-      );
-      console.log("Auth routes test successful:", testResponse.data);
-
-      console.log("Calling avatar update API with:", { userId, avatarUrl });
-      const response = await axios.put(
-        `http://localhost:5000/api/auth/users/${userId}/avatar-test`, // Using test endpoint
-        { avatar_url: avatarUrl },
+      const response = await axios.post(
+        `http://localhost:5000/api/auth/users/${userId}/avatar`,
+        formData,
         {
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem(
-              "tourconnect_token"
-            )}`,
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("tourconnect_token")}`,
           },
         }
       );
-      console.log("API response:", response.data);
+
       return response.data;
     } catch (error) {
       console.error("API error:", error.response?.data || error.message);
-      throw new Error(
-        error.response?.data?.message || "Failed to update avatar."
-      );
+      throw new Error(error.response?.data?.message || "Failed to upload avatar.");
     }
-  },
+  }
 };
 
 export default guidesService;

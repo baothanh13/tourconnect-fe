@@ -5,7 +5,9 @@ const login = require("../api/auth/login.Controller");
 const register = require("../api/auth/register.Controller");
 const logout = require("../api/auth/logout.Controller");
 const verifyToken = require("../middleware/verifyToken"); // Import middleware
+const updateUserAvatar = require("../api/auth/updateUserAvatar.Controller");
 const confirmOTP = require("../api/auth/confirmOTP.Controller");
+const upload = require("../middleware/upload"); // file bạn tạo với multer
 const {
   sendForgotPasswordOTP,
   resetPassword,
@@ -17,38 +19,14 @@ router.get("/test", (req, res) => {
   res.json({ message: "Auth routes are working!" });
 });
 
-// Create a simple avatar update function directly here for testing
-const simpleAvatarUpdate = async (req, res) => {
-  console.log("Simple avatar update called with params:", req.params);
-  console.log("Simple avatar update called with body:", req.body);
 
-  try {
-    const { userId } = req.params;
-    const { avatar_url } = req.body;
 
-    if (!avatar_url) {
-      return res.status(400).json({
-        success: false,
-        message: "Avatar URL is required",
-      });
-    }
+router.post(
+  "/users/:userId/avatar",
+  upload.single("avatar"), // 👈 "avatar" phải trùng với frontend append
+  updateUserAvatar
+);
 
-    // For now, just return success without database update
-    res.json({
-      success: true,
-      message: "Avatar test successful",
-      data: { userId, avatar_url },
-    });
-  } catch (error) {
-    console.error("Error in simple avatar update:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-};
-
-router.put("/users/:userId/avatar-test", simpleAvatarUpdate);
 /**
  * @swagger
  * /api/auth/login:

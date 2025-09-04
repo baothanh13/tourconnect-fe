@@ -13,6 +13,7 @@ const touristRoutes = require("./routes/tourist.Routes");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swaggerOptions");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 const PORT = 5000;
@@ -30,6 +31,7 @@ app.use(bodyParser.json());
 
 // Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ✅ Kết nối DB 1 lần để đảm bảo pool hoạt động
 connectToDB()

@@ -12,13 +12,14 @@ import {
   FaFileAlt,
   FaCertificate,
   FaUser,
+  FaCamera,
   FaPlus,
   FaTimes,
   FaCheck,
   FaGlobe,
   FaAward,
 } from "react-icons/fa";
-import "./GuideProfileForm_new.css";
+import "./GuideProfileForm.css";
 
 const GuideProfileForm = ({ onProfileCreated, initialData, onCancel }) => {
   const { user } = useAuth();

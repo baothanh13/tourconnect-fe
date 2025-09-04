@@ -376,7 +376,7 @@ const GuideTours = () => {
         )}
       </div>
 
-      {/* Beautiful Tour Details Modal */}
+      {/* Clean Tour Details Modal */}
       {showModal && selectedTour && (
         <div className="tour-modal-overlay" onClick={handleCloseModal}>
           <div
@@ -391,6 +391,13 @@ const GuideTours = () => {
                     {selectedTour.category || "General"}
                   </span>
                 </div>
+                <button
+                  className="modal-close-btn"
+                  onClick={handleCloseModal}
+                  title="Close"
+                >
+                  ×
+                </button>
               </div>
             </div>
 

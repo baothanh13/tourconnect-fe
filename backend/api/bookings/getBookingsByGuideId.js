@@ -5,8 +5,12 @@ const getBookingByGuideId = async (req, res) => {
 
   try {
     const [results] = await pool.execute(
-      `SELECT *
-       FROM bookings
+      `SELECT b.*,
+       u.name AS tourist_name,
+       u.email AS tourist_email,
+       u.phone AS tourist_phone
+       FROM bookings b
+       JOIN users u ON b.tourist_id = u.id
        WHERE guide_id = ?
        ORDER BY created_at DESC`,
       [guideId]

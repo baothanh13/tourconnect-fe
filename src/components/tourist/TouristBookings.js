@@ -248,7 +248,7 @@ const TouristBookings = () => {
                   {getStatusIcon(booking.status)}
                   <span className="status-text">{booking.status}</span>
                 </div>
-                <div className="booking-price">
+                <div className="booking-price-tr">
                   {formatCurrency(booking.total_price)}
                 </div>
               </div>

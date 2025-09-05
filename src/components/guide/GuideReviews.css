@@ -129,7 +129,7 @@
 }
 
 /* ---------- Enhanced Header ---------- */
-.page-header {
+.page-header-guide {
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
@@ -156,7 +156,7 @@
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 
-.back-button {
+.back-button-guide {
   background: var(--primary);
   color: #fff;
   border: none;
@@ -202,13 +202,13 @@
   outline-offset: 2px;
 }
 
-.page-title-center {
+.page-title-center-guide {
   flex: 1;
   text-align: center;
   position: relative;
 }
 
-.page-title-center h2 {
+.page-title-center-guide h2 {
   color: var(--text-primary);
   font-size: clamp(28px, 3.2vw, 40px);
   font-weight: 800;
@@ -225,7 +225,7 @@
   position: relative;
 }
 
-.page-title-center p {
+.page-title-center-guide p {
   color: var(--text-secondary);
   font-size: 1.1rem;
   margin: 0;
@@ -235,14 +235,14 @@
 }
 
 /* ---------- Enhanced Statistics Grid ---------- */
-.review-stats-grid {
+.review-stats-grid-guide {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--spacing-lg);
   margin-bottom: var(--spacing-xl);
 }
 
-.stat-card {
+.stat-card-guide {
   background: var(--card-bg);
   backdrop-filter: blur(20px);
   border: 1px solid var(--border-color);
@@ -258,7 +258,7 @@
   min-height: 110px;
 }
 
-.stat-card::before {
+.stat-card-guide::before {
   content: "";
   position: absolute;
   top: 0;
@@ -269,60 +269,60 @@
   transition: all 0.3s ease;
 }
 
-.stat-card.total::before {
+.stat-card-guide.total::before {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.stat-card.average::before {
+.stat-card-guide.average::before {
   background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
-.stat-card.five-star::before {
+.stat-card-guide.five-star::before {
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
-.stat-card.recent::before {
+.stat-card-guide.recent::before {
   background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
 }
 
-.stat-icon {
+.stat-icon-guide {
   width: 60px;
   height: 60px;
   border-radius: var(--radius-md);
   display: grid;
   place-items: center;
   font-size: 1.8rem;
-  color: white;
+  color: rgb(220, 99, 99);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   position: relative;
   overflow: hidden;
 }
 
-.stat-card.total .stat-icon {
+.stat-card-guide.total .stat-icon {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.stat-card.average .stat-icon {
+.stat-card-guide.average .stat-icon {
   background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
-.stat-card.five-star .stat-icon {
+.stat-card-guide.five-star .stat-icon {
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
-.stat-card.recent .stat-icon {
+.stat-card-guide.recent .stat-icon {
   background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
 }
 
-.stat-content {
+.stat-content-guide {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
 }
 
-.stat-number {
+.stat-number-guide {
   font-size: 2rem;
   font-weight: 800;
   color: var(--text-primary);
@@ -338,7 +338,7 @@
   background-clip: text;
 }
 
-.stat-label {
+.stat-label-guide {
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -347,19 +347,19 @@
   margin: 0;
 }
 
-.stat-card:hover {
+.stat-card-guide:hover {
   transform: translateY(-4px) scale(1.02);
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
   border-color: var(--primary-solid);
 }
 
-.stat-card:hover .stat-icon {
+.stat-card-guide:hover .stat-icon-guide {
   transform: scale(1.1) rotate(5deg);
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
 }
 
 /* ---------- Enhanced Search & Filter ---------- */
-.search-section {
+.search-section-guide {
   margin-bottom: var(--spacing-xl);
   background: var(--card-bg);
   backdrop-filter: blur(20px);
@@ -369,8 +369,8 @@
   box-shadow: var(--shadow);
 }
 
-.search-section h3,
-.filter-section h3 {
+.search-section-guide h3,
+.filter-section-guide h3 {
   color: var(--text-primary);
   font-size: 1rem;
   font-weight: 700;
@@ -381,8 +381,8 @@
   padding-left: var(--spacing-md);
 }
 
-.search-section h3::before,
-.filter-section h3::before {
+.search-section-guide h3::before,
+.filter-section-guide h3::before {
   content: "";
   position: absolute;
   left: 0;
@@ -394,12 +394,12 @@
   border-radius: 2px;
 }
 
-.search-box {
+.search-box-guide {
   position: relative;
   max-width: 100%;
 }
 
-.search-box input {
+.search-box-guide input {
   width: 100%;
   padding: var(--spacing-md) var(--spacing-lg);
   border-radius: var(--radius-md);
@@ -413,19 +413,19 @@
   box-sizing: border-box;
 }
 
-.search-box input:focus {
+.search-box-guide input:focus {
   outline: none;
   border-color: var(--primary-solid);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
   transform: translateY(-1px);
 }
 
-.search-box input::placeholder {
+.search-box-guide input::placeholder {
   color: var(--text-secondary);
   font-weight: 400;
 }
 
-.filter-section {
+.filter-section-guide {
   margin-bottom: var(--spacing-xl);
   background: var(--card-bg);
   backdrop-filter: blur(20px);
@@ -435,13 +435,13 @@
   box-shadow: var(--shadow);
 }
 
-.filter-tabs {
+.filter-tabs-guide {
   display: flex;
   gap: var(--spacing-sm);
   flex-wrap: wrap;
 }
 
-.filter-tabs button {
+.filter-tabs-guide button {
   padding: var(--spacing-sm) var(--spacing-md);
   border: 2px solid var(--border-color);
   background: var(--panel);
@@ -455,7 +455,7 @@
   overflow: hidden;
 }
 
-.filter-tabs button::before {
+.filter-tabs-guide button::before {
   content: "";
   position: absolute;
   top: 0;
@@ -471,25 +471,25 @@
   transition: left 0.5s ease;
 }
 
-.filter-tabs button:hover::before {
+.filter-tabs-guide button:hover::before {
   left: 100%;
 }
 
-.filter-tabs button:hover {
+.filter-tabs-guide button:hover {
   border-color: var(--primary-solid);
   color: var(--primary-solid);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
 
-.filter-tabs button.active {
+.filter-tabs-guide button.active {
   background: var(--primary);
   border-color: var(--primary-solid);
   color: white;
   box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
 }
 
-.filter-tabs button.active:hover {
+.filter-tabs-guide button.active:hover {
   background: var(--primary-hover);
   transform: translateY(-2px);
   box-shadow: 0 12px 35px rgba(99, 102, 241, 0.4);
@@ -535,7 +535,7 @@
   gap: var(--spacing-lg);
 }
 
-.review-card {
+.review-card-guide {
   background: var(--card-bg);
   backdrop-filter: blur(20px);
   border: 1px solid var(--border-color);
@@ -546,7 +546,7 @@
   position: relative;
 }
 
-.review-card::before {
+.review-card-guide::before {
   content: "";
   position: absolute;
   top: 0;
@@ -557,13 +557,13 @@
   transition: all 0.3s ease;
 }
 
-.review-card:hover {
+.review-card-guide:hover {
   transform: translateY(-4px);
   border-color: var(--primary-solid);
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
 }
 
-.review-header {
+.review-header-guide {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -572,14 +572,14 @@
   gap: var(--spacing-lg);
 }
 
-.review-info {
+.review-info-guide {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
 }
 
-.review-info h4 {
+.review-inf-guide h4 {
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -595,7 +595,7 @@
   background-clip: text;
 }
 
-.tourist-name {
+.tourist-name-guide {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
@@ -609,7 +609,7 @@
   margin: 0;
 }
 
-.tourist-name .meta-icon {
+.tourist-name-guide .meta-icon {
   color: var(--primary-solid);
 }
 
@@ -878,12 +878,12 @@
 
 /* ---------- Professional Responsive Design ---------- */
 @media (max-width: 992px) {
-  .review-stats-grid {
+  .review-stats-grid-guide {
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-lg);
   }
 
-  .stat-card {
+  .stat-card-guide {
     min-height: 100px;
   }
 }
@@ -899,7 +899,7 @@
     text-align: center;
   }
 
-  .page-title-center h2 {
+  .page-title-center-guide h2 {
     font-size: 2rem;
   }
 
@@ -958,7 +958,7 @@
     padding: var(--spacing-md);
   }
 
-  .page-title-center h2 {
+  .page-title-center-guide h2 {
     font-size: 1.75rem;
   }
 

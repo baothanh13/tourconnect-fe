@@ -207,13 +207,13 @@
   outline-offset: 2px;
 }
 
-.page-title-center {
+.tr-page-title-center {
   flex: 1;
   text-align: center;
   position: relative;
 }
 
-.page-title-center h2 {
+.tr-page-title-center h2 {
   color: var(--text-primary);
   font-size: clamp(28px, 3.2vw, 40px);
   font-weight: 800;
@@ -230,17 +230,17 @@
   position: relative;
 }
 
-.page-title-center p {
+.tr-page-title-center p {
   color: var(--text-secondary);
   font-size: 1.1rem;
-  margin: 0;
+  margin: 0 ptr;
   text-align: center;
   font-weight: 500;
   line-height: 1.5;
 }
 
 /* Enhanced Header Button */
-.btn-primary {
+.btn-primary-tr {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
@@ -259,7 +259,7 @@
   font-size: 0.95rem;
 }
 
-.btn-primary::before {
+.btn-primary-tr::before {
   content: "";
   position: absolute;
   top: 0;
@@ -275,11 +275,11 @@
   transition: left 0.5s ease;
 }
 
-.btn-primary:hover::before {
+.btn-primary-tr:hover::before {
   left: 100%;
 }
 
-.btn-primary:hover {
+.btn-primary-tr:hover {
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
 }
@@ -298,7 +298,7 @@
   margin: var(--spacing-lg) 0 var(--spacing-xl) 0;
 }
 
-.stat-card {
+.stat-card-tr {
   position: relative;
   background: var(--card-bg);
   backdrop-filter: blur(20px);
@@ -315,7 +315,7 @@
   cursor: pointer;
 }
 
-.stat-card::before {
+.stat-card-tr::before {
   content: "";
   position: absolute;
   left: 0;
@@ -326,7 +326,7 @@
   opacity: 1;
 }
 
-.stat-card::after {
+.stat-card-tr::after {
   content: "";
   position: absolute;
   top: 0;
@@ -342,20 +342,20 @@
 }
 
 /* Enhanced Card Types */
-.stat-card.total::before {
+.stat-card-tr.total::before {
   background: linear-gradient(180deg, #6366f1, #8b5cf6);
 }
-.stat-card.average::before {
+.stat-card-tr.average::before {
   background: linear-gradient(180deg, #f59e0b, #ef4444);
 }
-.stat-card.five-star::before {
+.stat-card-tr.five-star::before {
   background: linear-gradient(180deg, #10b981, #06b6d4);
 }
-.stat-card.recent::before {
+.stat-card-tr.recent::before {
   background: linear-gradient(180deg, #3b82f6, #1d4ed8);
 }
 
-.stat-icon {
+.stat-icon-tr {
   width: 56px;
   height: 56px;
   border-radius: var(--radius-md);
@@ -368,7 +368,7 @@
   overflow: hidden;
 }
 
-.stat-icon::before {
+.stat-icon-tr::before {
   content: "";
   position: absolute;
   top: 0;
@@ -383,27 +383,27 @@
   border-radius: var(--radius-md);
 }
 
-.stat-card.total .stat-icon {
+.stat-card-tr.total .stat-icon {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
 }
-.stat-card.average .stat-icon {
+.stat-card-tr.average .stat-icon {
   background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
 }
-.stat-card.five-star .stat-icon {
+.stat-card-tr.five-star .stat-icon {
   background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
 }
-.stat-card.recent .stat-icon {
+.stat-card-tr.recent .stat-icon {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 }
 
-.stat-content {
+.stat-content-tr {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
 }
 
-.stat-number {
+.stat-number-tr {
   font-size: 2rem;
   font-weight: 800;
   color: var(--text-primary);
@@ -419,7 +419,7 @@
   background-clip: text;
 }
 
-.stat-label {
+.stat-label-tr {
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -428,19 +428,19 @@
   margin: 0;
 }
 
-.stat-card:hover {
+.stat-card-tr:hover {
   transform: translateY(-4px) scale(1.02);
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
   border-color: var(--primary-solid);
 }
 
-.stat-card:hover .stat-icon {
+.stat-card-tr:hover .stat-icon {
   transform: scale(1.1) rotate(5deg);
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
 }
 
 /* ---------- Enhanced Search & Filter ---------- */
-.search-section {
+.search-section-tr {
   margin-bottom: var(--spacing-xl);
   background: var(--card-bg);
   backdrop-filter: blur(20px);
@@ -450,7 +450,7 @@
   box-shadow: var(--shadow);
 }
 
-.search-section h3,
+.search-section-tr h3,
 .filter-section h3 {
   color: var(--text-primary);
   font-size: 1rem;
@@ -462,7 +462,7 @@
   padding-left: var(--spacing-md);
 }
 
-.search-section h3::before,
+.search-section-tr h3::before,
 .filter-section h3::before {
   content: "";
   position: absolute;
@@ -475,12 +475,12 @@
   border-radius: 2px;
 }
 
-.search-box {
+.search-box-tr {
   position: relative;
   max-width: 100%;
 }
 
-.search-box input {
+.search-box-tr input {
   width: 100%;
   padding: var(--spacing-md) var(--spacing-lg);
   border-radius: var(--radius-md);
@@ -494,19 +494,19 @@
   box-sizing: border-box;
 }
 
-.search-box input:focus {
+.search-box-tr input:focus {
   outline: none;
   border-color: var(--primary-solid);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
   transform: translateY(-1px);
 }
 
-.search-box input::placeholder {
+.search-box-tr input::placeholder {
   color: var(--text-secondary);
   font-weight: 400;
 }
 
-.filter-section {
+.filter-section-tr {
   margin-bottom: var(--spacing-xl);
   background: var(--card-bg);
   backdrop-filter: blur(20px);
@@ -516,13 +516,14 @@
   box-shadow: var(--shadow);
 }
 
-.filter-tabs {
+.filter-tabs-tr {
   display: flex;
   gap: var(--spacing-sm);
   flex-wrap: wrap;
+  margin-top: var(--spacing-md);
 }
 
-.filter-tabs button {
+.filter-tabs-tr button {
   padding: var(--spacing-sm) var(--spacing-md);
   border: 2px solid var(--border-color);
   background: var(--panel);
@@ -536,7 +537,7 @@
   overflow: hidden;
 }
 
-.filter-tabs button::before {
+.filter-tabs-tr button::before {
   content: "";
   position: absolute;
   top: 0;
@@ -552,18 +553,18 @@
   transition: left 0.5s ease;
 }
 
-.filter-tabs button:hover::before {
+.filter-tabs-tr button:hover::before {
   left: 100%;
 }
 
-.filter-tabs button:hover {
+.filter-tabs-tr button:hover {
   border-color: var(--primary-solid);
   color: var(--primary-solid);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
 
-.filter-tabs button.active {
+.filter-tabs-tr button.active {
   background: var(--primary);
   color: #fff;
   border-color: var(--primary-solid);
@@ -594,9 +595,11 @@
 
 /* ---------- Enhanced Reviews List & Cards ---------- */
 .reviews-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xl);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(650px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+    align-items: start;
 }
 
 .review-card {
@@ -609,6 +612,9 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  max-width: 650px;
+  max-height: 500px;   /* 👈 ví dụ: tối đa 250px */
+  overflow: hidden;    /* ẩn phần text thừa */
 }
 
 .review-card::before {
@@ -647,6 +653,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+  text-overflow: ellipsis;
 }
 
 .review-info h4 {
@@ -665,12 +672,12 @@
   background-clip: text;
 }
 
-.guide-name {
+.guide-name-tr {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   font-weight: 500;
   padding: var(--spacing-xs) var(--spacing-sm);
   background: rgba(99, 102, 241, 0.08);
@@ -678,7 +685,7 @@
   width: fit-content;
 }
 
-.guide-name .meta-icon {
+.guide-name-tr .meta-icon {
   color: var(--primary-solid);
   font-size: 0.9rem;
 }
@@ -813,6 +820,11 @@
   margin: 0;
   font-weight: 400;
   text-align: justify;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;       /* 👈 số dòng tối đa */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .review-footer {
@@ -1046,7 +1058,7 @@
 }
 
 .modal-actions .btn-secondary,
-.modal-actions .btn-primary {
+.modal-actions .btn-primary-tr {
   border-radius: var(--radius-md);
   padding: var(--spacing-md) var(--spacing-xl);
   font-weight: 600;
@@ -1056,13 +1068,13 @@
   cursor: pointer;
 }
 
-.modal-actions .btn-primary {
+.modal-actions .btn-primary-tr {
   background: var(--primary);
   color: white;
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
-.modal-actions .btn-primary:hover {
+.modal-actions .btn-primary-tr:hover {
   background: #5a5fd7;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
@@ -1159,7 +1171,7 @@
     gap: var(--spacing-sm);
   }
 
-  .modal-actions .btn-primary,
+  .modal-actions .btn-primary-tr,
   .modal-actions .btn-secondary {
     width: 100%;
     justify-content: center;

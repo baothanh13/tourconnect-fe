@@ -3,15 +3,17 @@
 /* Guide Preview Card */
 .guide-preview-card {
   background: white;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: 1px solid #e5e7eb;
-  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.08);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  padding: 28px;
+  margin-bottom: 20px;
   max-width: 380px;
-  margin: 0 auto;
+  width: 25%;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
 }
 
 .guide-preview-card:hover {
@@ -27,7 +29,7 @@
   margin-bottom: 16px;
 }
 
-.guide-avatar {
+.guide-avatar-preview {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -36,7 +38,7 @@
   flex-shrink: 0;
 }
 
-.guide-avatar img {
+.guide-avatar-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -57,7 +59,7 @@
   text-align: left;
 }
 
-.guide-name {
+.guide-name-preview {
   font-size: 18px;
   font-weight: 600;
   color: #1f2937;
@@ -65,11 +67,11 @@
   min-height: 24px;
 }
 
-.guide-location {
+.guide-location-preview {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: 20px;
   color: #6b7280;
   margin-bottom: 8px;
 }
@@ -121,18 +123,18 @@
   font-size: 11px;
 }
 
-.guide-price {
+.guide-price-preview {
   display: flex;
   align-items: center;
   gap: 6px;
   font-weight: 600;
   color: #0891b2;
   margin-bottom: 8px;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .guide-experience {
-  font-size: 13px;
+  font-size: 20px;
   color: #6b7280;
   font-weight: 500;
 }

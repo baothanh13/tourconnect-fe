@@ -144,12 +144,12 @@ const TouristReviews = () => {
         >
           <FaArrowLeft />
         </button>
-        <div className="page-title-center">
+        <div className="tr-page-title-center">
           <h2>My Reviews</h2>
           <p>Share your experiences and rate the tours you've taken</p>
         </div>
         <button
-          className="btn-primary add-review-btn"
+          className="btn-primary-tr add-review-btn"
           onClick={() => setShowCreateModal(true)}
         >
           <FaPlus /> Write Review
@@ -158,51 +158,51 @@ const TouristReviews = () => {
 
       {/* Statistics Cards - 2x2 Grid */}
       <div className="review-stats-grid">
-        <div className="stat-card total">
+        <div className="stat-card-tr total">
           <div className="stat-icon">
             <FaStar />
           </div>
-          <div className="stat-content">
-            <div className="stat-number">{reviews.length}</div>
-            <div className="stat-label">TOTAL REVIEWS</div>
+          <div className="stat-content-tr">
+            <div className="stat-number-tr">{reviews.length}</div>
+            <div className="stat-label-tr">TOTAL REVIEWS</div>
           </div>
         </div>
 
-        <div className="stat-card average">
+        <div className="stat-card-tr average">
           <div className="stat-icon">
             <FaStar />
           </div>
-          <div className="stat-content">
-            <div className="stat-number">
+          <div className="stat-content-tr">
+            <div className="stat-number-tr">
               {reviews.length > 0
                 ? (
-                    reviews.reduce((sum, r) => sum + r.rating, 0) /
+                    reviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) /
                     reviews.length
                   ).toFixed(1)
                 : "0.0"}
             </div>
-            <div className="stat-label">AVERAGE RATING</div>
+            <div className="stat-label-tr">AVERAGE RATING</div>
           </div>
         </div>
 
-        <div className="stat-card five-star">
+        <div className="stat-card-tr five-star">
           <div className="stat-icon">
             <FaStar />
           </div>
-          <div className="stat-content">
-            <div className="stat-number">
-              {reviews.filter((r) => r.rating === 5).length}
+          <div className="stat-content-tr">
+            <div className="stat-number-tr">
+              {reviews.filter((r) => Number(r.rating) === 5).length}
             </div>
-            <div className="stat-label">5 STAR REVIEWS</div>
+            <div className="stat-label-tr">5 STAR REVIEWS</div>
           </div>
         </div>
 
-        <div className="stat-card recent">
+        <div className="stat-card-tr recent">
           <div className="stat-icon">
             <FaCalendarAlt />
           </div>
-          <div className="stat-content">
-            <div className="stat-number">
+          <div className="stat-content-tr">
+            <div className="stat-number-tr">
               {
                 reviews.filter((r) => {
                   const reviewDate = new Date(r.created_at);
@@ -212,15 +212,15 @@ const TouristReviews = () => {
                 }).length
               }
             </div>
-            <div className="stat-label">RECENT REVIEWS</div>
+            <div className="stat-label-tr">RECENT REVIEWS</div>
           </div>
         </div>
       </div>
 
       {/* Search Section */}
-      <div className="search-section">
+      <div className="search-section-tr">
         <h3>SEARCH REVIEWS</h3>
-        <div className="search-box">
+        <div className="search-box-tr">
           <input
             type="text"
             placeholder="Search by tour name or review content..."
@@ -231,9 +231,9 @@ const TouristReviews = () => {
       </div>
 
       {/* Filter Section */}
-      <div className="filter-section">
+      <div className="filter-section-tr">
         <h3>FILTER BY RATING</h3>
-        <div className="filter-tabs">
+        <div className="filter-tabs-tr">
           <button
             className={filterRating === "all" ? "active" : ""}
             onClick={() => setFilterRating("all")}
@@ -299,7 +299,7 @@ const TouristReviews = () => {
               <div className="review-header">
                 <div className="review-info">
                   <h4>{review.tour_title || "Tour Title"}</h4>
-                  <p className="guide-name">
+                  <p className="guide-name-tr">
                     <FaUser /> Guide: {review.guide_name || "Unknown"}
                   </p>
                   <div className="review-rating">

@@ -41,24 +41,24 @@ export const GuidePreviewCard = ({ guide }) => {
   return (
     <div className="guide-preview-card" onClick={handleClick}>
       <div className="guide-preview-header">
-        <div className="guide-avatar">
+        <div className="guide-avatar-preview">
           <img
             src={
-              guide.profile_image ||
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                guide.user_name || "Guide"
-              )}&background=0891b2&color=fff&size=60`
+              guide.avatar_url // ✅ dùng avatar_url từ DB
+                ? guide.avatar_url
+                : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                    guide.user_name || "Guide"
+                  )}&background=0891b2&color=fff&size=60`
             }
             alt={guide.user_name}
           />
         </div>
         {guide.is_available && <div className="available-badge">Available</div>}
       </div>
-
       <div className="guide-preview-content">
-        <h3 className="guide-name">{guide.user_name}</h3>
+        <h3 className="guide-name-preview">{guide.user_name}</h3>
 
-        <div className="guide-location">
+        <div className="guide-location-preview">
           <FaMapMarkerAlt />
           <span>{guide.location}</span>
         </div>
@@ -81,7 +81,7 @@ export const GuidePreviewCard = ({ guide }) => {
           </div>
         </div>
 
-        <div className="guide-price">
+        <div className="guide-price-preview">
           <FaDollarSign />
           <span>${guide.price_per_hour}/hour</span>
         </div>

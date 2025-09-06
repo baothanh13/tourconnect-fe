@@ -336,7 +336,6 @@ const GuideBookings = () => {
               <tr>
                 <th>Booking ID</th>
                 <th>Tourist</th>
-                <th>Tour</th>
                 <th>Date & Time</th>
                 <th>Duration</th>
                 <th>Guests</th>
@@ -358,16 +357,6 @@ const GuideBookings = () => {
                     <div className="user-info">
                       <FaUser className="user-icon" />
                       <span>{booking.tourist_name || "Tourist"}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="tour-info">
-                      <FaMapMarkerAlt className="location-icon" />
-                      <span>
-                        {booking.tour_title ||
-                          booking.tour_name ||
-                          "Tour Experience"}
-                      </span>
                     </div>
                   </td>
                   <td>

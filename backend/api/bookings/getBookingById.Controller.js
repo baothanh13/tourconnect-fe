@@ -6,7 +6,13 @@ const getBookingById = async (req, res) => {
   try {
     const connection = await connectToDB();
     const [results] = await connection.execute(
-      `SELECT * FROM bookings WHERE id = ?`,
+      `SELECT b.*,
+       u.name AS tourist_name,
+       u.email AS tourist_email,
+       u.phone AS tourist_phone
+       FROM bookings b
+       JOIN users u ON b.tourist_id = u.id
+       WHERE b.id = ?`,
       [bookingId]
     );
 

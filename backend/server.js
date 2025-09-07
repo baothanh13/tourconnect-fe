@@ -10,6 +10,7 @@ const supportTicketsRoutes = require("./routes/supportTickets.Routes");
 const tourRoutes = require("./routes/tour.Routes");
 const reviewRoutes = require("./routes/review.Routes");
 const touristRoutes = require("./routes/tourist.Routes");
+const paymentRoutes = require("./routes/payment.Routes");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swaggerOptions");
 const cors = require("cors");
@@ -45,11 +46,15 @@ connectToDB()
     app.use("/api/tours", tourRoutes);
     app.use("/api/reviews", reviewRoutes);
     app.use("/api/tourist", touristRoutes);
+    app.use("/api", paymentRoutes);
 
     // ✅ Chỉ listen một lần
     app.listen(PORT, () => {
       console.log(`🚀 Server is running at http://localhost:${PORT}`);
-      console.log(`📖 Swagger UI available at http://localhost:${PORT}/api-docs`);
+      console.log(
+        `📖 Swagger UI available at http://localhost:${PORT}/api-docs`
+      );
+      console.log("✅ Payment routes mounted at /api/payments");
     });
   })
   .catch((err) => {

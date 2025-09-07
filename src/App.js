@@ -51,6 +51,7 @@ import TouristBookings from "./components/tourist/TouristBookings";
 import TouristReviews from "./components/tourist/TouristReviews";
 import TouristProfile from "./components/tourist/TouristProfile";
 import TouristSupport from "./components/tourist/TouristSupport";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 import FAQ from "./pages/FAQ";
 function App() {
@@ -134,6 +135,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["tourist"]}>
                 <TouristProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payment/success"
+            element={
+              <ProtectedRoute allowedRoles={["tourist"]}>
+                <PaymentSuccess />
               </ProtectedRoute>
             }
           />

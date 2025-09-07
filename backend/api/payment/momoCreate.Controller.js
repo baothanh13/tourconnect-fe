@@ -7,7 +7,13 @@ const generateId = require('../../utils/generateId'); // Import utility to gener
 /**
  * POST /api/payments/momo/create
  * body: { bookingId, amount, currency, returnUrl?, notifyUrl? }
- */
+ */ 
+console.log("🔑 MoMo ENV:", {
+  partnerCode: process.env.MOMO_PARTNER_CODE,
+  accessKey: process.env.MOMO_ACCESS_KEY,
+  secretKey: process.env.MOMO_SECRET_KEY ? "LOADED" : "MISSING"
+});
+
 module.exports = async (req, res) => {
   const {
     bookingId,

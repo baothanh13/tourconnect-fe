@@ -3,7 +3,66 @@
 // Note: Stripe will be initialized when needed
 // const stripePromise = loadStripe('pk_live_...');
 
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+
 export const PaymentService = {
+  // Create MoMo payment
+  createMoMoPayment: async (bookingId, amount, currency = "VND") => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/payments/momo/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookingId,
+          amount,
+          currency,
+          returnUrl: `${window.location.origin}/payment/success`,
+          notifyUrl: `${API_BASE_URL}/payments/momo/callback`,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create MoMo payment");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("MoMo payment creation error:", error);
+      throw error;
+    }
+  },
+
+  // Get payment status
+  getPaymentStatus: async (paymentId) => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/payments/status/${paymentId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to get payment status");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Payment status error:", error);
+      throw error;
+    }
+  },
+
   // Process booking payment
   processBookingPayment: async (bookingData, paymentMethod) => {
     try {

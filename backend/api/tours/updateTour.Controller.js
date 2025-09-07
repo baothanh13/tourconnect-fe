@@ -12,6 +12,8 @@ module.exports = async (req, res) => {
     price,
     image_url,
     category,
+    tour_date, // thêm
+    tour_time, // thêm
   } = req.body || {};
 
   // Build dynamic SET
@@ -49,6 +51,14 @@ module.exports = async (req, res) => {
   if (category !== undefined) {
     fields.push("category = ?");
     params.push(category);
+  }
+  if (tour_date !== undefined) { // thêm
+    fields.push("tour_date = ?");
+    params.push(tour_date);
+  }
+  if (tour_time !== undefined) { // thêm
+    fields.push("tour_time = ?");
+    params.push(tour_time);
   }
 
   if (fields.length === 0) {

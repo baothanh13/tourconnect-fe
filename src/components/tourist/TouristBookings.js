@@ -3,6 +3,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import touristService from "../../services/touristService";
 import Loading from "../Loading";
+import MoMoPayment from "../payment/MoMoPayment";
 import {
   FaCalendarAlt,
   FaClock,
@@ -14,6 +15,7 @@ import {
   FaCheckCircle,
   FaExclamationTriangle,
   FaArrowLeft,
+  FaCreditCard,
 } from "react-icons/fa";
 import "./TouristBookings.css";
 
@@ -27,6 +29,9 @@ const TouristBookings = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [selectedBookingForPayment, setSelectedBookingForPayment] =
+    useState(null);
 
   const loadBookings = useCallback(async () => {
     try {
@@ -57,6 +62,18 @@ const TouristBookings = () => {
     } catch (err) {
       alert("Failed to cancel booking. Please try again.");
     }
+  };
+
+  const handlePayment = (booking) => {
+    setSelectedBookingForPayment(booking);
+    setShowPayment(true);
+  };
+
+  const handlePaymentClose = () => {
+    setShowPayment(false);
+    setSelectedBookingForPayment(null);
+    // Refresh bookings to get updated payment status
+    loadBookings();
   };
 
   const getStatusIcon = (status) => {
@@ -292,6 +309,16 @@ const TouristBookings = () => {
                   <FaEye /> View Details
                 </button>
 
+                {booking.status === "confirmed" &&
+                  booking.payment_status !== "paid" && (
+                    <button
+                      className="btn-payment"
+                      onClick={() => handlePayment(booking)}
+                    >
+                      <FaCreditCard /> Pay Now
+                    </button>
+                  )}
+
                 {booking.status === "confirmed" && (
                   <button
                     className="btn-danger"
@@ -356,6 +383,10 @@ const TouristBookings = () => {
                   <strong>Status:</strong> {selectedBooking.status}
                 </p>
                 <p>
+                  <strong>Payment Status:</strong>{" "}
+                  {selectedBooking.payment_status || "pending"}
+                </p>
+                <p>
                   <strong>Total Price:</strong>{" "}
                   {formatCurrency(selectedBooking.total_price)}
                 </p>
@@ -384,6 +415,30 @@ const TouristBookings = () => {
                   </p>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Modal */}
+      {showPayment && selectedBookingForPayment && (
+        <div className="modal-overlay">
+          <div
+            className="modal-content payment-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h3>Make Payment</h3>
+              <button className="close-btn" onClick={handlePaymentClose}>
+                <FaTimes />
+              </button>
+            </div>
+            <div className="modal-body">
+              <MoMoPayment
+                booking={selectedBookingForPayment}
+                onPaymentComplete={handlePaymentClose}
+                onCancel={handlePaymentClose}
+              />
             </div>
           </div>
         </div>

@@ -1,10 +1,10 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const momoCreate = require('../api/payment/momoCreate.Controller');
-const momoCallback = require('../api/payment/momoCallback.Controller');
-const getPaymentStatus = require('../api/payment/getPaymentStatus.Controller');
-const refundPayment = require('../api/payment/refundPayment.Controller');
+const momoCreate = require("../api/payment/momoCreate.Controller");
+const momoCallback = require("../api/payment/momoCallback.Controller");
+const getPaymentStatus = require("../api/payment/getPaymentStatus.Controller");
+const refundPayment = require("../api/payment/refundPayment.Controller");
 
 // Nếu cần auth/admin cho refund:
 // const verifyToken = require('../middleware/verifyToken');
@@ -39,7 +39,7 @@ const refundPayment = require('../api/payment/refundPayment.Controller');
  *       200:
  *         description: Created MoMo payment successfully
  */
-router.post('/payments/momo/create', momoCreate);
+router.post("/payments/momo/create", momoCreate);
 
 /**
  * @swagger
@@ -51,7 +51,7 @@ router.post('/payments/momo/create', momoCreate);
  *       204:
  *         description: Acknowledged
  */
-router.post('/payments/momo/callback', momoCallback);
+router.post("/payments/momo/callback", momoCallback);
 
 /**
  * @swagger
@@ -70,7 +70,7 @@ router.post('/payments/momo/callback', momoCallback);
  *       404:
  *         description: Not found
  */
-router.get('/payments/:bookingId', getPaymentStatus);
+router.get("/payments/:bookingId", getPaymentStatus);
 
 /**
  * @swagger
@@ -103,6 +103,9 @@ router.get('/payments/:bookingId', getPaymentStatus);
  *       404:
  *         description: No captured payment found
  */
-router.post('/payments/:bookingId/refund', /* verifyToken, requireAdmin, */ refundPayment);
+router.post(
+  "/payments/:bookingId/refund",
+  /* verifyToken, requireAdmin, */ refundPayment
+);
 
 module.exports = router;

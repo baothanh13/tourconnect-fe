@@ -14,8 +14,6 @@ module.exports = async (req, res) => {
     category,
     tour_date, // thêm
     tour_time, // thêm
-    tour_date, // thêm
-    tour_time, // thêm
   } = req.body || {};
 
   // Build dynamic SET

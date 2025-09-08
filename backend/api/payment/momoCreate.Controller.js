@@ -1,27 +1,14 @@
 const { connectToDB } = require('../../config/db');
 const axios = require('axios');
 const crypto = require('crypto');
-const { v4: uuidv4 } = require('uuid');
-const generateId = require('../../utils/generateId'); // Import utility to generate IDs
+const generateId = require('../../utils/generateId');
 
 /**
  * POST /api/payments/momo/create
- * body: { bookingId, amount, currency, returnUrl?, notifyUrl? }
- */ 
-console.log("🔑 MoMo ENV:", {
-  partnerCode: process.env.MOMO_PARTNER_CODE,
-  accessKey: process.env.MOMO_ACCESS_KEY,
-  secretKey: process.env.MOMO_SECRET_KEY ? "LOADED" : "MISSING"
-});
-
+ * body: { bookingId, amount }
+ */
 module.exports = async (req, res) => {
-  const {
-    bookingId,
-    amount,
-    currency = 'VND',
-    returnUrl,
-    notifyUrl
-  } = req.body || {};
+  const { bookingId, amount, currency = 'VND' } = req.body || {};
 
   if (!bookingId || !amount) {
     return res.status(400).json({ message: 'bookingId and amount are required' });
@@ -38,83 +25,52 @@ module.exports = async (req, res) => {
   try {
     const conn = await connectToDB();
 
-    // Lấy booking để xác định payer (tourist) & payee (guide)
+    // 🔍 Lấy booking
     const [bookings] = await conn.execute(
-      `SELECT b.id, b.total_price, b.tourist_id, b.guide_id
-       FROM bookings b
-       WHERE b.id = ?`,
+      `SELECT id, total_price FROM bookings WHERE id = ?`,
       [bookingId]
     );
     if (bookings.length === 0) {
       return res.status(404).json({ message: 'Booking not found' });
     }
-    const booking = bookings[0];
 
-    // (Optional) Khóa kiểm tra số tiền
-    // if (Number(booking.total_price) !== Number(amount)) {
-    //   return res.status(400).json({ message: 'Amount mismatch with booking total_price' });
-    // }
-
-    const orderId   = `momo_${generateId('payment')}`;   // của bạn
-    const requestId =  generateId('payment')           // của bạn
+    // Tạo orderId, requestId
+    const orderId   = bookingId; 
+    const requestId = generateId('payment');
     const orderInfo = `Payment for booking ${bookingId}`;
-    const redirectUrl = returnUrl || process.env.BASE_RETURN_URL;
-    const ipnUrl      = notifyUrl || process.env.BASE_NOTIFY_URL;
+
+    // 🚩 Domain local
+    const redirectUrl = "http://localhost:3000/payment/success";
+    const ipnUrl      = "http://localhost:5000/api/payments/momo/callback";
+
     const requestType = 'captureWallet';
     const extraData   = Buffer.from(JSON.stringify({ bookingId })).toString('base64');
 
-    // Chuỗi ký chữ ký theo tài liệu MoMo
+    // 🔑 Ký chữ ký
     const rawSignature =
       `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}` +
       `&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}` +
       `&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}` +
       `&requestId=${requestId}&requestType=${requestType}`;
 
-    const signature = crypto
-      .createHmac('sha256', secretKey)
+    const signature = crypto.createHmac('sha256', secretKey)
       .update(rawSignature)
       .digest('hex');
 
     const payload = {
-      partnerCode,
-      accessKey,
-      requestId,
-      amount: String(amount),
-      orderId,
-      orderInfo,
-      redirectUrl,
-      ipnUrl,
-      extraData,
-      requestType,
-      signature,
-      lang: 'vi'
+      partnerCode, accessKey, requestId, amount: String(amount),
+      orderId, orderInfo, redirectUrl, ipnUrl,
+      extraData, requestType, signature, lang: 'vi'
     };
 
-    // Gọi MoMo tạo link thanh toán
+    console.log("📤 Sending MoMo create payment request:", payload);
+
+    // 🚀 Gọi MoMo
     const momoRes = await axios.post(endpoint, payload, {
       headers: { 'Content-Type': 'application/json' }
     });
-
     const momoData = momoRes.data;
-
-    // Lưu bản ghi payments (pending/requires_action)
-    const paymentId = uuidv4();
-    await conn.execute(
-      `INSERT INTO payments
-        (id, booking_id, payer_id, payee_guide_id, amount, currency, method, status,
-         platform_fee, provider_order_id, provider_payload)
-       VALUES (?, ?, ?, ?, ?, ?, 'momo', ?, 0.00, ?, JSON_OBJECT('create', ?))`,
-      [
-        paymentId, bookingId, booking.tourist_id, booking.guide_id,
-        amount, currency,
-        momoData?.resultCode === 0 ? 'requires_action' : 'failed',
-        orderId,
-        JSON.stringify(momoData)
-      ]
-    );
-
-    // Cập nhật trạng thái booking nếu muốn (vẫn pending cho tới khi callback)
-    // await conn.execute(`UPDATE bookings SET payment_status = 'pending' WHERE id = ?`, [bookingId]);
+    console.log("📥 MoMo response:", momoData);
 
     if (momoData?.resultCode !== 0) {
       return res.status(400).json({
@@ -123,17 +79,24 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Trả về payUrl / deeplink để FE redirect
+    // 💾 Cập nhật trạng thái booking → pending payment
+    await conn.execute(
+      `UPDATE bookings
+       SET payment_status = 'pending'
+       WHERE id = ?`,
+      [bookingId]
+    );
+
     return res.json({
       message: 'MoMo payment created',
-      paymentId,
+      bookingId,
       orderId,
       payUrl: momoData.payUrl,
       deeplink: momoData.deeplink,
       qrCodeUrl: momoData.qrCodeUrl
     });
   } catch (err) {
-    console.error('MoMo Create Error:', err?.response?.data || err);
+    console.error('❌ MoMo Create Error:', err?.response?.data || err);
     return res.status(500).json({ message: 'Server error', error: err?.message });
   }
 };

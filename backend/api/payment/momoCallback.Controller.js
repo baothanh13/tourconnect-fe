@@ -1,33 +1,17 @@
 const { connectToDB } = require('../../config/db');
 const crypto = require('crypto');
 
-/**
- * POST /api/payments/momo/callback
- * MoMo IPN (webhook) sẽ gọi tới endpoint này
- * Xác minh chữ ký -> cập nhật payments + bookings
- */
 module.exports = async (req, res) => {
   try {
     const secretKey = process.env.MOMO_SECRET_KEY;
+    const isProd = process.env.NODE_ENV === 'production';
 
-    // Payload theo tài liệu MoMo
     const {
-      partnerCode,
-      orderId,
-      requestId,
-      amount,
-      orderInfo,
-      orderType,
-      transId,
-      resultCode,
-      message,
-      payType,
-      responseTime,
-      extraData,
-      signature
+      partnerCode, orderId, requestId, amount, orderInfo, orderType,
+      transId, resultCode, message, payType, responseTime, extraData, signature
     } = req.body || {};
 
-    // Build raw signature để verify
+    // 🔑 Tạo lại chữ ký để kiểm tra
     const rawSignature =
       `accessKey=${process.env.MOMO_ACCESS_KEY}` +
       `&amount=${amount}` +
@@ -43,75 +27,61 @@ module.exports = async (req, res) => {
       `&resultCode=${resultCode}` +
       `&transId=${transId}`;
 
-    const calcSignature = crypto
-      .createHmac('sha256', secretKey)
+    const calcSignature = crypto.createHmac('sha256', secretKey)
       .update(rawSignature)
       .digest('hex');
 
-    if (calcSignature !== signature) {
-      // Sai chữ ký -> từ chối
+    if (isProd && calcSignature !== signature) {
+      console.warn('⚠️ Invalid MoMo signature', { orderId });
       return res.status(400).json({ message: 'Invalid signature' });
+    } else if (!isProd) {
+      console.log('⚠️ Sandbox mode: skip signature validation', { orderId });
     }
 
-    // Giải bookingId từ extraData (có thể sử dụng trong tương lai)
-    // let bookingIdFromExtra = null;
-    // try {
-    //   const decoded = JSON.parse(Buffer.from(extraData || '', 'base64').toString('utf8'));
-    //   bookingIdFromExtra = decoded?.bookingId || null;
-    // } catch {}
+    console.log("📥 MoMo Callback:", req.body);
 
     const conn = await connectToDB();
 
-    // Tìm payment theo provider_order_id (orderId)
-    const [pays] = await conn.execute(
-      `SELECT id, booking_id FROM payments WHERE provider_order_id = ? LIMIT 1`,
-      [orderId]
-    );
-
-    if (pays.length === 0) {
-      // Không tìm thấy payment tương ứng -> vẫn trả 204 để MoMo không spam
-      return res.status(204).send();
+    // Decode extraData → bookingId
+    let bookingId;
+    try {
+      const extra = JSON.parse(Buffer.from(extraData, 'base64').toString());
+      bookingId = extra.bookingId;
+    } catch (e) {
+      console.warn("⚠️ Cannot decode extraData", extraData);
     }
-    const payment = pays[0];
 
-    // Update trạng thái theo resultCode
+    if (!bookingId) {
+      console.warn("⚠️ Callback without bookingId");
+      return res.json({ resultCode: 0, message: 'OK' });
+    }
+
     if (Number(resultCode) === 0) {
-      await conn.execute(
-        `UPDATE payments
-         SET status = 'captured',
-             provider_transaction_id = ?,
-             provider_payload = JSON_SET(COALESCE(provider_payload, JSON_OBJECT()), '$.callback', CAST(? AS JSON)),
-             paid_at = CURRENT_TIMESTAMP
-         WHERE provider_order_id = ?`,
-        [String(transId), JSON.stringify(req.body), orderId]
-      );
+      console.log('✅ MoMo payment success:', { orderId, bookingId });
 
-      // Cập nhật booking
       await conn.execute(
-        `UPDATE bookings SET payment_status = 'paid', status = 'confirmed' WHERE id = ?`,
-        [payment.booking_id]
+        `UPDATE bookings
+         SET payment_status = 'paid',
+             status = 'confirmed'
+         WHERE id = ?`,
+        [bookingId]
       );
     } else {
-      await conn.execute(
-        `UPDATE payments
-         SET status = 'failed',
-             provider_transaction_id = ?,
-             provider_payload = JSON_SET(COALESCE(provider_payload, JSON_OBJECT()), '$.callback', CAST(? AS JSON))
-         WHERE provider_order_id = ?`,
-        [String(transId || ''), JSON.stringify(req.body), orderId]
-      );
+      console.warn('❌ MoMo payment failed', { orderId, resultCode, message });
 
       await conn.execute(
-        `UPDATE bookings SET payment_status = 'pending' WHERE id = ?`,
-        [payment.booking_id]
+        `UPDATE bookings
+         SET payment_status = 'pending',
+             status = 'cancelled'
+         WHERE id = ?`,
+        [bookingId]
       );
     }
 
-    // Trả OK cho MoMo
-    return res.status(204).send(); // hoặc res.json({ result: 0 })
+    // Luôn trả OK cho MoMo
+    return res.json({ resultCode: 0, message: 'OK' });
   } catch (err) {
-    console.error('MoMo Callback Error:', err);
-    // Luôn trả 204 để tránh retry quá nhiều (tùy chính sách)
-    return res.status(204).send();
+    console.error('❌ MoMo Callback Error:', err);
+    return res.json({ resultCode: 0, message: 'OK' });
   }
 };

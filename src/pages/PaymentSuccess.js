@@ -18,7 +18,7 @@ const PaymentSuccess = () => {
   useEffect(() => {
     const verifyPayment = async () => {
       try {
-        // Get payment info from localStorage
+        // Get booking info from localStorage
         const pendingPayment = localStorage.getItem("pendingPayment");
 
         if (!pendingPayment) {
@@ -29,29 +29,25 @@ const PaymentSuccess = () => {
 
         const paymentInfo = JSON.parse(pendingPayment);
 
-        // Get payment status from backend
+        // Get booking payment status from backend
         const statusData = await PaymentService.getPaymentStatus(
-          paymentInfo.paymentId
+          paymentInfo.bookingId
         );
 
-        if (
-          statusData.status === "completed" ||
-          statusData.status === "succeeded"
-        ) {
+        const booking = statusData.booking;
+
+        if (booking?.payment_status === "paid") {
           setPaymentStatus("success");
-          setPaymentDetails(statusData);
+          setPaymentDetails(booking);
 
           // Clear pending payment from localStorage
           localStorage.removeItem("pendingPayment");
-        } else if (
-          statusData.status === "failed" ||
-          statusData.status === "cancelled"
-        ) {
-          setPaymentStatus("failed");
-          setError(statusData.message || "Payment failed");
-        } else {
+        } else if (booking?.payment_status === "pending") {
           setPaymentStatus("pending");
-          setPaymentDetails(statusData);
+          setPaymentDetails(booking);
+        } else {
+          setPaymentStatus("failed");
+          setError("Payment failed or cancelled");
         }
       } catch (err) {
         console.error("Payment verification error:", err);
@@ -99,19 +95,17 @@ const PaymentSuccess = () => {
                 <h3>Payment Details</h3>
                 <div className="detail-row">
                   <span>Booking ID:</span>
-                  <span>{paymentDetails.booking_id}</span>
-                </div>
-                <div className="detail-row">
-                  <span>Payment ID:</span>
                   <span>{paymentDetails.id}</span>
                 </div>
                 <div className="detail-row">
                   <span>Amount:</span>
-                  <span>₫{paymentDetails.amount?.toLocaleString()}</span>
+                  <span>₫{paymentDetails.total_price?.toLocaleString()}</span>
                 </div>
                 <div className="detail-row">
                   <span>Status:</span>
-                  <span className="status-badge success">PAID</span>
+                  <span className="status-badge success">
+                    {paymentDetails.payment_status.toUpperCase()}
+                  </span>
                 </div>
               </div>
             )}

@@ -221,11 +221,11 @@ const PaymentForm = ({
       setLoading(true);
       setErrors({});
 
-      let paymentData;
+      let result;
 
       switch (selectedMethod) {
         case "card":
-          paymentData = {
+          result = await PaymentService.processPayment({
             method: "card",
             card: {
               number: cardData.cardNumber.replace(/\s/g, ""),
@@ -234,57 +234,49 @@ const PaymentForm = ({
               name: cardData.cardholderName,
             },
             billing: billingAddress,
-            amount: bookingData.amount,
+            amount: bookingData.total_price,
             currency: "USD",
             bookingId: bookingData.id,
-          };
+          });
           break;
 
         case "momo":
-          paymentData = {
-            method: "momo",
-            momo: {
-              phoneNumber: momoData.phoneNumber,
-              amount: bookingData.amount,
-            },
-            bookingId: bookingData.id,
-          };
-          break;
+          const amountInVND = Math.round(bookingData.total_price * 24000);
+          const momoRes = await PaymentService.createMoMoPayment(
+            bookingData.id,
+            amountInVND,
+            "VND"
+          );
 
-        case "paypal":
-          paymentData = {
-            method: "paypal",
-            amount: bookingData.amount,
-            currency: "USD",
-            bookingId: bookingData.id,
-          };
-          break;
+          if (momoRes.payUrl) {
+            localStorage.setItem("pendingPayment", JSON.stringify({ bookingId: bookingData.id }));
+            window.location.href = momoRes.payUrl;
+            return; // stop here, redirect to MoMo
+          } else {
+            throw new Error("Failed to create MoMo payment");
+          }
 
         default:
-          paymentData = {
+          result = await PaymentService.processPayment({
             method: selectedMethod,
-            amount: bookingData.amount,
+            amount: bookingData.total_price,
             bookingId: bookingData.id,
-          };
+          });
       }
 
-      const result = await PaymentService.processPayment(paymentData);
-
-      if (result.success) {
+      if (result?.success) {
         onPaymentSuccess({
           paymentId: result.paymentId,
           transactionId: result.transactionId,
           method: selectedMethod,
-          amount: bookingData.amount,
+          amount: bookingData.total_price,
           status: "completed",
         });
       } else {
-        throw new Error(result.error || "Payment failed");
+        throw new Error(result?.error || "Payment failed");
       }
     } catch (error) {
-      setErrors({
-        payment: error.message || "Payment failed. Please try again.",
-      });
+      setErrors({ payment: error.message || "Payment failed. Please try again." });
       onPaymentError(error);
     } finally {
       setLoading(false);

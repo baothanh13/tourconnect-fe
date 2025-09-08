@@ -18,9 +18,8 @@ const MoMoPayment = ({ booking, onPaymentSuccess, onCancel }) => {
     setError(null);
 
     try {
-      // Convert price to VND (assuming your booking price is in USD, multiply by exchange rate)
-      // You may need to adjust this based on your actual currency handling
-      const amountInVND = Math.round(booking.total_price * 24000); // Rough USD to VND conversion
+      // Convert price to VND (if your booking.total_price is already VND, remove conversion)
+      const amountInVND = Math.round(booking.total_price * 24000);
 
       const paymentData = await PaymentService.createMoMoPayment(
         booking.id,
@@ -32,17 +31,15 @@ const MoMoPayment = ({ booking, onPaymentSuccess, onCancel }) => {
 
       // Redirect to MoMo payment page
       if (paymentData.payUrl) {
-        // Store payment info for when user returns
+        // Store booking info for when user returns
         localStorage.setItem(
           "pendingPayment",
           JSON.stringify({
             bookingId: booking.id,
-            paymentId: paymentData.paymentId,
-            orderId: paymentData.orderId,
           })
         );
 
-        // Open MoMo payment in new window or redirect
+        // Redirect to MoMo
         window.location.href = paymentData.payUrl;
       } else {
         throw new Error("No payment URL received from MoMo");
@@ -78,7 +75,7 @@ const MoMoPayment = ({ booking, onPaymentSuccess, onCancel }) => {
           </div>
           <div className="summary-row">
             <span>Participants:</span>
-            <span>{booking.number_of_people} people</span>
+            <span>{booking.number_of_tourists} people</span>
           </div>
           <div className="summary-row total">
             <span>Total Amount:</span>

@@ -8,19 +8,15 @@ const API_BASE_URL =
 
 export const PaymentService = {
   // Create MoMo payment
-  createMoMoPayment: async (bookingId, amount, currency = "VND") => {
+ createMoMoPayment: async (bookingId, amount, currency = "VND") => {
     try {
       const response = await fetch(`${API_BASE_URL}/payments/momo/create`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           bookingId,
           amount,
           currency,
-          returnUrl: `${window.location.origin}/payment/success`,
-          notifyUrl: `${API_BASE_URL}/payments/momo/callback`,
         }),
       });
 
@@ -29,39 +25,39 @@ export const PaymentService = {
         throw new Error(errorData.message || "Failed to create MoMo payment");
       }
 
-      const data = await response.json();
-      return data;
+      return await response.json(); // { bookingId, orderId, payUrl, ... }
     } catch (error) {
-      console.error("MoMo payment creation error:", error);
+      console.error("❌ MoMo payment creation error:", error);
       throw error;
     }
   },
 
+
   // Get payment status
-  getPaymentStatus: async (paymentId) => {
+ getPaymentStatus: async (bookingId) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/payments/status/${paymentId}`,
+        `${API_BASE_URL}/payments/status/${bookingId}`,
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to get payment status");
+        throw new Error(
+          errorData.message || "Failed to get booking payment status"
+        );
       }
 
-      const data = await response.json();
-      return data;
+      return await response.json(); // { booking: {...} }
     } catch (error) {
-      console.error("Payment status error:", error);
+      console.error("❌ Booking payment status error:", error);
       throw error;
     }
   },
+
 
   // Process booking payment
   processBookingPayment: async (bookingData, paymentMethod) => {

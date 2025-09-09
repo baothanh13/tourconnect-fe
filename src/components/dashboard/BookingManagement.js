@@ -14,10 +14,6 @@ import {
   FaExclamationTriangle,
   FaTimes,
   FaHourglassHalf,
-  FaTrashAlt,
-  FaShieldAlt,
-  FaCreditCard,
-  FaMoneyBillWave,
 } from "react-icons/fa";
 import "./BookingManagement.css";
 
@@ -117,41 +113,6 @@ const BookingManagement = () => {
     setShowModal(true);
   };
 
-  const handleDeleteBooking = async (booking) => {
-    // Check if booking is confirmed and prevent deletion
-    if (booking.status?.toLowerCase() === "confirmed") {
-      alert(
-        "Cannot delete confirmed bookings. Please contact support if needed."
-      );
-      return;
-    }
-
-    // Show confirmation dialog
-    const isConfirmed = window.confirm(
-      `Are you sure you want to delete booking ${
-        booking.id
-      }?\n\nBooking Status: ${booking.status?.toUpperCase()}\nPayment Status: ${booking.payment_status?.toUpperCase()}\n\nThis action cannot be undone.`
-    );
-
-    if (!isConfirmed) return;
-
-    try {
-      setLoading(true);
-      await adminService.deleteBooking(booking.id);
-
-      // Show success message
-      alert("Booking deleted successfully!");
-
-      // Refresh the bookings list
-      await fetchBookings();
-    } catch (error) {
-      console.error("Error deleting booking:", error);
-      alert(`Failed to delete booking: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "confirmed":
@@ -161,21 +122,6 @@ const BookingManagement = () => {
       case "cancelled":
         return "danger";
       case "completed":
-        return "info";
-      default:
-        return "secondary";
-    }
-  };
-
-  const getPaymentStatusColor = (paymentStatus) => {
-    switch (paymentStatus?.toLowerCase()) {
-      case "paid":
-        return "success";
-      case "pending":
-        return "warning";
-      case "failed":
-        return "danger";
-      case "refunded":
         return "info";
       default:
         return "secondary";
@@ -288,7 +234,6 @@ const BookingManagement = () => {
                 <th>Guests</th>
                 <th>Amount</th>
                 <th>Status</th>
-                <th>Payment</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -332,20 +277,6 @@ const BookingManagement = () => {
                     </span>
                   </td>
                   <td>
-                    <span
-                      className={`payment-badge ${getPaymentStatusColor(
-                        booking.payment_status
-                      )}`}
-                    >
-                      {booking.payment_status?.toLowerCase() === "paid" ? (
-                        <FaShieldAlt style={{ marginRight: "4px" }} />
-                      ) : (
-                        <FaCreditCard style={{ marginRight: "4px" }} />
-                      )}
-                      {booking.payment_status?.toUpperCase() || "PENDING"}
-                    </span>
-                  </td>
-                  <td>
                     <div className="action-buttons">
                       <button
                         onClick={() => handleViewBooking(booking)}
@@ -354,26 +285,6 @@ const BookingManagement = () => {
                       >
                         <FaEye />
                       </button>
-                      {/* Only show delete button if booking is NOT confirmed */}
-                      {booking.status?.toLowerCase() !== "confirmed" && (
-                        <button
-                          onClick={() => handleDeleteBooking(booking)}
-                          className="btn-delete"
-                          title="Delete Booking"
-                        >
-                          <FaTrashAlt />
-                        </button>
-                      )}
-                      {/* Show a disabled button with tooltip for confirmed bookings */}
-                      {booking.status?.toLowerCase() === "confirmed" && (
-                        <button
-                          className="btn-delete-disabled"
-                          title="Cannot delete confirmed bookings"
-                          disabled
-                        >
-                          <FaTrashAlt />
-                        </button>
-                      )}
                     </div>
                   </td>
                 </tr>

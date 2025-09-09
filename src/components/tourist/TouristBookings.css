@@ -429,6 +429,252 @@
 .detail-icon {
   color: var(--primary-color);
   font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+/* Beautiful Icon Styling */
+.detail-icon.paid-icon {
+  color: #4caf50;
+  animation: pulse-success 2s infinite;
+}
+
+.detail-icon.pending-icon {
+  color: #ff9800;
+  animation: rotate-pending 2s linear infinite;
+}
+
+@keyframes pulse-success {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes rotate-pending {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Button Icon Styling */
+.btn-secondary-tourist svg {
+  color: #3b82f6;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-payment svg {
+  color: #fff;
+  font-size: 1rem;
+  animation: bounce-payment 1.5s infinite;
+}
+
+@keyframes bounce-payment {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+.btn-danger svg {
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-primary svg {
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+/* Button Hover Effects for Icons */
+.btn-secondary-tourist:hover svg {
+  color: #1d4ed8;
+  transform: scale(1.1);
+}
+
+.btn-payment:hover svg {
+  transform: scale(1.1) rotate(5deg);
+  animation: none;
+}
+
+.btn-danger:hover svg {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.btn-primary:hover svg {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* ULTRA SPECIFIC BUTTON OVERRIDES - MAXIMUM PRIORITY */
+.tourist-bookings
+  .bookings-grid
+  .booking-card
+  .booking-actions
+  .btn-secondary-tourist,
+.tourist-bookings .booking-card .booking-actions .btn-secondary-tourist {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4) !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+.tourist-bookings
+  .bookings-grid
+  .booking-card
+  .booking-actions
+  .btn-secondary-tourist:hover,
+.tourist-bookings .booking-card .booking-actions .btn-secondary-tourist:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6) !important;
+  background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+}
+
+.tourist-bookings
+  .bookings-grid
+  .booking-card
+  .booking-actions
+  .btn-secondary-tourist
+  svg,
+.tourist-bookings .booking-card .booking-actions .btn-secondary-tourist svg {
+  color: white !important;
+  font-size: 1rem !important;
+}
+
+.tourist-bookings .bookings-grid .booking-card .booking-actions .btn-payment,
+.tourist-bookings .booking-card .booking-actions .btn-payment {
+  background: linear-gradient(135deg, #e91e63, #ad1457) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4) !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+.tourist-bookings
+  .bookings-grid
+  .booking-card
+  .booking-actions
+  .btn-payment:hover,
+.tourist-bookings .booking-card .booking-actions .btn-payment:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(233, 30, 99, 0.6) !important;
+}
+
+.tourist-bookings
+  .bookings-grid
+  .booking-card
+  .booking-actions
+  .btn-payment
+  svg,
+.tourist-bookings .booking-card .booking-actions .btn-payment svg {
+  color: white !important;
+  font-size: 1rem !important;
+}
+
+.tourist-bookings .bookings-grid .booking-card .booking-actions .btn-danger,
+.tourist-bookings .booking-card .booking-actions .btn-danger {
+  background: linear-gradient(135deg, #dc3545, #c82333) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4) !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+.tourist-bookings
+  .bookings-grid
+  .booking-card
+  .booking-actions
+  .btn-danger:hover,
+.tourist-bookings .booking-card .booking-actions .btn-danger:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(220, 53, 69, 0.6) !important;
+  filter: brightness(1.05) !important;
+}
+
+.tourist-bookings .bookings-grid .booking-card .booking-actions .btn-danger svg,
+.tourist-bookings .booking-card .booking-actions .btn-danger svg {
+  color: white !important;
+  font-size: 1rem !important;
+}
+
+.tourist-bookings .bookings-grid .booking-card .booking-actions .btn-primary,
+.tourist-bookings .booking-card .booking-actions .btn-primary {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4) !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+.tourist-bookings
+  .bookings-grid
+  .booking-card
+  .booking-actions
+  .btn-primary:hover,
+.tourist-bookings .booking-card .booking-actions .btn-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6) !important;
+  filter: brightness(1.05) !important;
+}
+
+.tourist-bookings
+  .bookings-grid
+  .booking-card
+  .booking-actions
+  .btn-primary
+  svg,
+.tourist-bookings .booking-card .booking-actions .btn-primary svg {
+  color: white !important;
+  font-size: 1rem !important;
+}
+
+/* Payment Status Styles */
+.payment-status-item {
+  margin-top: 0.2rem;
+}
+
+.payment-status {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.payment-status.paid {
+  color: #4caf50;
+}
+
+.payment-status.pending {
+  color: #ff9800;
+}
+
+/* Payment Button Styles */
+.btn-payment {
+  background: linear-gradient(135deg, #e91e63, #ad1457);
+  color: white;
+  box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+}
+
+.btn-payment:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(233, 30, 99, 0.6);
 }
 
 /* ---------- Actions ---------- */
@@ -454,31 +700,89 @@
   outline-offset: 2px;
 }
 .btn-primary {
-  background: linear-gradient(180deg, var(--primary), var(--primary-2));
-  color: #fff;
+  background: linear-gradient(
+    180deg,
+    var(--primary),
+    var(--primary-2)
+  ) !important;
+  color: #fff !important;
   box-shadow: 0 8px 20px color-mix(in oklab, var(--primary), transparent 80%);
 }
 .btn-primary:hover {
   transform: translateY(-1px);
   filter: brightness(1.05);
 }
-.btn-secondary-tourist {
-  background: var(--secondary-color);
-  color: black;
-  border: 1px solid var(--border-color);
-  justify-content: center;
+
+/* Enhanced Button Styles with Higher Specificity */
+.booking-actions .btn-secondary-tourist {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4) !important;
 }
-.btn-secondary:hover {
-  transform: translateY(-1px);
-  background: var(--hover-bg);
+
+.booking-actions .btn-secondary-tourist:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6) !important;
+  background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
 }
-.btn-danger {
-  background: #dc3545;
-  color: #fff;
+
+.booking-actions .btn-secondary-tourist svg {
+  color: white !important;
+  font-size: 1rem !important;
 }
-.btn-danger:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.05);
+
+.booking-actions .btn-payment {
+  background: linear-gradient(135deg, #e91e63, #ad1457) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4) !important;
+}
+
+.booking-actions .btn-payment:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(233, 30, 99, 0.6) !important;
+}
+
+.booking-actions .btn-payment svg {
+  color: white !important;
+  font-size: 1rem !important;
+}
+
+.booking-actions .btn-danger {
+  background: linear-gradient(135deg, #dc3545, #c82333) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4) !important;
+}
+
+.booking-actions .btn-danger:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(220, 53, 69, 0.6) !important;
+  filter: brightness(1.05) !important;
+}
+
+.booking-actions .btn-danger svg {
+  color: white !important;
+  font-size: 1rem !important;
+}
+
+.booking-actions .btn-primary {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4) !important;
+}
+
+.booking-actions .btn-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6) !important;
+  filter: brightness(1.05) !important;
+}
+
+.booking-actions .btn-primary svg {
+  color: white !important;
+  font-size: 1rem !important;
 }
 
 /* ---------- Empty state ---------- */

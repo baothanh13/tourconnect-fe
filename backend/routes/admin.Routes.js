@@ -5,6 +5,7 @@ const router = express.Router();
 const getAllUsers = require("../api/admin/getAllUsersController");
 const getAllGuides = require("../api/admin/getAllGuidesController");
 const getAllBookings = require("../api/admin/getAllBookingsController");
+const deleteBookingController = require("../api/admin/deleteBookingController");
 const getSystemStats = require("../api/admin/getSystemStatsController");
 const getSystemActivities = require("../api/admin/getSystemActivitiesController");
 const approveGuide = require("../api/admin/approveGuideController");
@@ -113,6 +114,31 @@ router.get("/guides", getAllGuides);
  *         description: Error fetching bookings
  */
 router.get("/bookings", getAllBookings);
+
+/**
+ * @swagger
+ * /api/admin/bookings/{id}:
+ *   delete:
+ *     summary: Delete a booking by ID
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The booking ID to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking deleted successfully
+ *       400:
+ *         description: Invalid request or booking cannot be deleted
+ *       404:
+ *         description: Booking not found
+ *       500:
+ *         description: Error deleting booking
+ */
+router.delete("/bookings/:id", deleteBookingController);
 
 /**
  * @swagger
@@ -255,7 +281,6 @@ router.put("/users/:id/profile", updateUserProfile);
  *         description: Internal server error
  */
 router.get("/users/:id", getUserById);
-
 
 /** * @swagger
  * /api/admin/activities:

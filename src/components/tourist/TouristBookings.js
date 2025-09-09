@@ -16,6 +16,14 @@ import {
   FaExclamationTriangle,
   FaArrowLeft,
   FaCreditCard,
+  FaMoneyBillWave,
+  FaEyeSlash,
+  FaTrashAlt,
+  FaPencilAlt,
+  FaInfoCircle,
+  FaShieldAlt,
+  FaCheck,
+  FaHourglassHalf,
 } from "react-icons/fa";
 import "./TouristBookings.css";
 
@@ -289,6 +297,23 @@ const TouristBookings = () => {
                     <span>{booking.location}</span>
                   </div>
 
+                  {/* Payment Status Display */}
+                  <div className="detail-item payment-status-item">
+                    {booking.payment_status === "paid" ? (
+                      <FaShieldAlt className="detail-icon paid-icon" />
+                    ) : (
+                      <FaHourglassHalf className="detail-icon pending-icon" />
+                    )}
+                    <span
+                      className={`payment-status ${
+                        booking.payment_status || "pending"
+                      }`}
+                    >
+                      Payment:{" "}
+                      {booking.payment_status === "paid" ? "PAID" : "PENDING"}
+                    </span>
+                  </div>
+
                   {booking.time && (
                     <div className="detail-item">
                       <FaClock className="detail-icon" />
@@ -306,7 +331,7 @@ const TouristBookings = () => {
                     setShowDetails(true);
                   }}
                 >
-                  <FaEye /> View Details
+                  <FaInfoCircle /> View Details
                 </button>
 
                 {booking.status === "confirmed" &&
@@ -315,7 +340,7 @@ const TouristBookings = () => {
                       className="btn-payment"
                       onClick={() => handlePayment(booking)}
                     >
-                      <FaCreditCard /> Pay Now
+                      <FaMoneyBillWave /> Pay Now
                     </button>
                   )}
 
@@ -324,7 +349,7 @@ const TouristBookings = () => {
                     className="btn-danger"
                     onClick={() => handleCancelBooking(booking.id)}
                   >
-                    <FaTimes /> Cancel
+                    <FaTrashAlt /> Cancel
                   </button>
                 )}
 
@@ -335,7 +360,7 @@ const TouristBookings = () => {
                       // Navigate to edit booking
                     }}
                   >
-                    <FaEdit /> Edit
+                    <FaPencilAlt /> Edit
                   </button>
                 )}
               </div>
@@ -422,26 +447,11 @@ const TouristBookings = () => {
 
       {/* Payment Modal */}
       {showPayment && selectedBookingForPayment && (
-        <div className="modal-overlay">
-          <div
-            className="modal-content payment-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header">
-              <h3>Make Payment</h3>
-              <button className="close-btn" onClick={handlePaymentClose}>
-                <FaTimes />
-              </button>
-            </div>
-            <div className="modal-body">
-              <MoMoPayment
-                booking={selectedBookingForPayment}
-                onPaymentComplete={handlePaymentClose}
-                onCancel={handlePaymentClose}
-              />
-            </div>
-          </div>
-        </div>
+        <MoMoPayment
+          booking={selectedBookingForPayment}
+          onPaymentSuccess={handlePaymentClose}
+          onCancel={handlePaymentClose}
+        />
       )}
     </div>
   );

@@ -255,7 +255,7 @@ const ToursManagement = () => {
                     {formatCurrency(tour.price)}
                   </td>
                   <td>
-                    <div className="action-buttons">
+                    <div className="action-buttons-tours">
                       <button
                         onClick={() => handleViewTour(tour)}
                         className="btn-view"

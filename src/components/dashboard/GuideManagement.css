@@ -78,9 +78,6 @@
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #eee;
-  white-space: normal;   /* Cho phép xuống dòng */
-  word-break: break-word; /* Cắt từ nếu quá dài */
-  line-height: 1.4;      /* Thoáng chữ */
 }
 
 .guides-table th {

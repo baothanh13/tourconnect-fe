@@ -132,7 +132,7 @@ const MoMoPayment = ({ booking, onPaymentSuccess, onCancel }) => {
                 onClick={() => setSelectedPaymentMethod("cash")}
               >
                 <FaMoneyBillWave />
-                Cash
+                Direct Payment
               </button>
             </div>
 
@@ -153,7 +153,7 @@ const MoMoPayment = ({ booking, onPaymentSuccess, onCancel }) => {
                   <div className="method-info">
                     <FaMoneyBillWave className="method-icon cash" />
                     <div>
-                      <h4>Cash Payment</h4>
+                      <h4>Direct Payment</h4>
                       <p>Pay directly to your guide</p>
                     </div>
                   </div>

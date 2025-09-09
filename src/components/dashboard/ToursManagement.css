@@ -93,10 +93,15 @@
 .tours-table table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 1100px;
+  min-width: 1000px;
 }
 
-.tours-table th,
+.tours-table th{
+  font-weight: 600;
+  color: #333;
+  position: sticky;
+  top: 0;
+}
 .tours-table td {
   padding: 12px;
   text-align: left;
@@ -107,11 +112,11 @@
   background: #f8f9fa;
   font-weight: 600;
   color: #555;
-  font-size: 14px;
+  font-size: 18px;
 }
 
 .tours-table td {
-  font-size: 14px;
+  font-size: 16px;
   color: #333;
 }
 
@@ -125,6 +130,7 @@
   font-weight: bold;
   color: #666;
 }
+
 
 .title-cell {
   max-width: 200px;
@@ -152,12 +158,12 @@
   color: #28a745;
 }
 
-.action-buttons {
+.action-buttons-tours {
   display: flex;
   gap: 5px;
 }
 
-.action-buttons button {
+.action-buttons-tours button {
   padding: 6px 8px;
   border: none;
   border-radius: 4px;

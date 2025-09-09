@@ -646,21 +646,6 @@ const UserManagement = () => {
                       placeholder="Enter phone number (optional)"
                     />
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="create-avatar">Avatar URL</label>
-                    <input
-                      type="url"
-                      id="create-avatar"
-                      value={createFormData.avatar_url}
-                      onChange={(e) =>
-                        setCreateFormData({
-                          ...createFormData,
-                          avatar_url: e.target.value,
-                        })
-                      }
-                      placeholder="Enter avatar URL (optional)"
-                    />
-                  </div>
                 </div>
               </div>
             </div>

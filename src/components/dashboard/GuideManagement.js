@@ -160,8 +160,12 @@ const GuideManagement = () => {
                   <td>{guide.id}</td>
                   <td>{guide.user_name}</td>
                   <td>{guide.location}</td>
-                  <td>{guide.languages}</td>
-                  <td>{guide.specialties}</td>
+                  <td>{Array.isArray(guide.languages)
+                      ? guide.languages.join(", ")
+                      : guide.languages || "Not specified"}</td>
+                  <td>{Array.isArray(guide.specialties)
+                      ? guide.specialties.join(", ")
+                      : guide.specialties || "Not specified"}</td>
                   <td>
                     {guide.experience_years
                       ? `${guide.experience_years} years`

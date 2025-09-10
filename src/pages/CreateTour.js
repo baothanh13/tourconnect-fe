@@ -290,7 +290,7 @@ const CreateTour = () => {
           >
             Cancel
           </button>
-          <button type="submit" className="btn-primary" disabled={loading}>
+          <button type="submit" className="btn-primary-create-tour" disabled={loading}>
             {loading ? (
               <>Creating...</>
             ) : (

@@ -217,6 +217,8 @@
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
   border: 2px solid rgba(40, 167, 69, 0.3);
+  border-radius: 6px;
+  width: 30%;
 }
 
 .btn-primary-create-tour::before {

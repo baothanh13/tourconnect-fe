@@ -108,18 +108,6 @@ export const adminService = {
     }
   },
 
-  // Delete booking
-  async deleteBooking(bookingId) {
-    try {
-      const response = await apiClient.delete(`/admin/bookings/${bookingId}`);
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Failed to delete booking."
-      );
-    }
-  },
-
   async createUser(userData) {
     try {
       const response = await apiClient.post("/admin/users", userData);

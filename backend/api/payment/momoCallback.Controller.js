@@ -1,32 +1,21 @@
-const { connectToDB } = require("../../config/db");
-const crypto = require("crypto");
+const { connectToDB } = require('../../config/db');
+const crypto = require('crypto');
 
 module.exports = async (req, res) => {
   try {
     const secretKey = process.env.MOMO_SECRET_KEY;
-    const isProd = process.env.NODE_ENV === "production";
+    const isProd = process.env.NODE_ENV === 'production';
 
     const {
-      partnerCode,
-      orderId,
-      requestId,
-      amount,
-      orderInfo,
-      orderType,
-      transId,
-      resultCode,
-      message,
-      payType,
-      responseTime,
-      extraData,
-      signature,
+      partnerCode, orderId, requestId, amount, orderInfo, orderType,
+      transId, resultCode, message, payType, responseTime, extraData, signature
     } = req.body || {};
 
     // 🔑 Tạo lại chữ ký để kiểm tra
     const rawSignature =
       `accessKey=${process.env.MOMO_ACCESS_KEY}` +
       `&amount=${amount}` +
-      `&extraData=${extraData || ""}` +
+      `&extraData=${extraData || ''}` +
       `&message=${message}` +
       `&orderId=${orderId}` +
       `&orderInfo=${orderInfo}` +
@@ -38,16 +27,15 @@ module.exports = async (req, res) => {
       `&resultCode=${resultCode}` +
       `&transId=${transId}`;
 
-    const calcSignature = crypto
-      .createHmac("sha256", secretKey)
+    const calcSignature = crypto.createHmac('sha256', secretKey)
       .update(rawSignature)
-      .digest("hex");
+      .digest('hex');
 
     if (isProd && calcSignature !== signature) {
-      console.warn("⚠️ Invalid MoMo signature", { orderId });
-      return res.status(400).json({ message: "Invalid signature" });
+      console.warn('⚠️ Invalid MoMo signature', { orderId });
+      return res.status(400).json({ message: 'Invalid signature' });
     } else if (!isProd) {
-      console.log("⚠️ Sandbox mode: skip signature validation", { orderId });
+      console.log('⚠️ Sandbox mode: skip signature validation', { orderId });
     }
 
     console.log("📥 MoMo Callback:", req.body);
@@ -57,7 +45,7 @@ module.exports = async (req, res) => {
     // Decode extraData → bookingId
     let bookingId;
     try {
-      const extra = JSON.parse(Buffer.from(extraData, "base64").toString());
+      const extra = JSON.parse(Buffer.from(extraData, 'base64').toString());
       bookingId = extra.bookingId;
     } catch (e) {
       console.warn("⚠️ Cannot decode extraData", extraData);
@@ -65,24 +53,12 @@ module.exports = async (req, res) => {
 
     if (!bookingId) {
       console.warn("⚠️ Callback without bookingId");
-      return res.json({ resultCode: 0, message: "OK" });
+      return res.json({ resultCode: 0, message: 'OK' });
     }
 
     if (Number(resultCode) === 0) {
-      console.log("✅ MoMo payment success:", { orderId, bookingId });
+      console.log('✅ MoMo payment success:', { orderId, bookingId });
 
-      // Update payments table
-      await conn.execute(
-        `UPDATE payments 
-         SET status = 'captured', 
-             provider_transaction_id = ?,
-             paid_at = NOW(),
-             provider_payload = ?
-         WHERE provider_order_id = ?`,
-        [transId, JSON.stringify(req.body), orderId]
-      );
-
-      // Update bookings table
       await conn.execute(
         `UPDATE bookings
          SET payment_status = 'paid',
@@ -91,21 +67,11 @@ module.exports = async (req, res) => {
         [bookingId]
       );
     } else {
-      console.warn("❌ MoMo payment failed", { orderId, resultCode, message });
+      console.warn('❌ MoMo payment failed', { orderId, resultCode, message });
 
-      // Update payments table
-      await conn.execute(
-        `UPDATE payments 
-         SET status = 'failed',
-             provider_payload = ?
-         WHERE provider_order_id = ?`,
-        [JSON.stringify(req.body), orderId]
-      );
-
-      // Update bookings table
       await conn.execute(
         `UPDATE bookings
-         SET payment_status = 'failed',
+         SET payment_status = 'pending',
              status = 'cancelled'
          WHERE id = ?`,
         [bookingId]
@@ -113,9 +79,9 @@ module.exports = async (req, res) => {
     }
 
     // Luôn trả OK cho MoMo
-    return res.json({ resultCode: 0, message: "OK" });
+    return res.json({ resultCode: 0, message: 'OK' });
   } catch (err) {
-    console.error("❌ MoMo Callback Error:", err);
-    return res.json({ resultCode: 0, message: "OK" });
+    console.error('❌ MoMo Callback Error:', err);
+    return res.json({ resultCode: 0, message: 'OK' });
   }
 };

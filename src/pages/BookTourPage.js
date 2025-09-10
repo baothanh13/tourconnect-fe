@@ -244,7 +244,7 @@ const BookTourPage = () => {
                 {/* Booking Form */}
                 {selectedGuide && (
                   <div className="booking-form-section">
-                    <h2>Step 2: Book Your Tour</h2>
+                    <h2>Step 2: Book Your Guides</h2>
 
                     <form onSubmit={handleSubmit} className="booking-form">
                       <div className="form-row">

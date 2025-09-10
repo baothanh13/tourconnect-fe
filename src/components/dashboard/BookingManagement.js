@@ -228,7 +228,7 @@ const BookingManagement = () => {
                 <th>Booking ID</th>
                 <th>Tourist</th>
                 <th>Guide</th>
-                <th>Tour</th>
+                <th>Guide Name</th>
                 <th>Date</th>
                 <th>Duration</th>
                 <th>Guests</th>

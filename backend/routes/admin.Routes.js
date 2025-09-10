@@ -12,6 +12,8 @@ const deleteUserController = require("../api/admin/deleteUserController");
 const updateUserProfile = require("../api/admin/updateUserProfileController");
 const getUserById = require("../api/admin/getUserByIdController");
 const createUserController = require("../api/admin/createUserController");
+const updatePaymentStatus = require('../api/admin/updatePaymentStatus.Controller');
+const deleteBooking = require('../api/admin/deleteBooking.Controller');
 
 // Nếu có auth middleware, bật khi cần bảo vệ Admin APIs
 // const verifyToken = require("../middleware/verifyToken");
@@ -269,4 +271,6 @@ router.get("/users/:id", getUserById);
  *         description: Error fetching system activities
  */
 router.get("/activities", getSystemActivities);
+router.put('/:id/payment_status', updatePaymentStatus);
+router.delete('/:id', deleteBooking);
 module.exports = router;

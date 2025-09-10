@@ -8,7 +8,6 @@ const getBookingById = require('../api/bookings/getBookingById.Controller');
 const updateBooking = require('../api/bookings/updateBooking.Controller');
 const updateBookingStatus = require('../api/bookings/updateBookingStatus.Controller');
 const updatePaymentStatus = require('../api/bookings/updatePaymentStatus.Controller');
-const deleteBooking = require('../api/bookings/deleteBooking.Controller');
 const verifyToken = require('../middleware/verifyToken');
 
 /**
@@ -217,6 +216,5 @@ router.put('/:id/status', verifyToken, updateBookingStatus);
  *         description: Trạng thái payment đã được cập nhật
  */
 router.put('/:id/payment_status', updatePaymentStatus);
-router.delete('/:id', deleteBooking);
 
 module.exports = router;

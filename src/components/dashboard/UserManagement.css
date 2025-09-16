@@ -166,14 +166,14 @@
   color: #f44336;
 }
 
-.action-buttons {
+.action-buttons-user {
   display: flex;
   gap: 8px;
   justify-content: center;
   align-items: center;
 }
 
-.action-buttons button {
+.action-buttons-user button {
   padding: 8px 10px;
   border: none;
   border-radius: 6px;

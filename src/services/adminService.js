@@ -256,6 +256,20 @@ export const adminService = {
     }
   },
 
+  async updatePaymentStatus(bookingId, payment_status) {
+    try {
+      const response = await apiClient.put(
+        `/admin/${bookingId}/payment_status`,
+        { payment_status }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Failed to update payment status."
+      );
+    }
+  },
+
   // Get guide details by ID
   async getGuideDetails(guideId) {
     try {

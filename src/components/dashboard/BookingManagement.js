@@ -6,7 +6,7 @@ import {
   FaCalendarAlt,
   FaMapMarkerAlt,
   FaUser,
-  FaClock,
+  FaEdit,
   FaUsers,
   FaDollarSign,
   FaInfoCircle,
@@ -116,6 +116,17 @@ const BookingManagement = () => {
     setSelectedBooking(booking);
     setShowModal(true);
   };
+
+ const handleUpdatePaymentStatus = async (booking, newStatus) => {
+    try {
+      await adminService.updatePaymentStatus(booking.id, newStatus);
+      alert(`Payment status updated successfully`);
+      fetchBookings(); // Gọi hàm reload danh sách bookings để UI cập nhật
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
 
   const handleDeleteBooking = async (booking) => {
     // Check if booking is confirmed and prevent deletion
@@ -287,7 +298,7 @@ const BookingManagement = () => {
                 <th>Guests</th>
                 <th>Amount</th>
                 <th>Status</th>
-                <th>Payment</th>
+                <th>Payment Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -324,21 +335,21 @@ const BookingManagement = () => {
                     </span>
                   </td>
                   <td>
-                    <span
-                      className={`payment-badge ${getPaymentStatusColor(
+                    <select
+                      className={`payment-dropdown ${getPaymentStatusColor(
                         booking.payment_status
                       )}`}
-                    >
-                      {booking.payment_status?.toLowerCase() === "paid" ? (
-                        <FaShieldAlt style={{ marginRight: "4px" }} />
-                      ) : (
-                        <FaCreditCard style={{ marginRight: "4px" }} />
-                      )}
-                      {booking.payment_status?.toUpperCase() || "PENDING"}
-                    </span>
+                    value={booking.payment_status}
+                        onChange={(e) => handleUpdatePaymentStatus(booking, e.target.value)}
+                      >
+                    <option value="none">None</option>
+                    <option value="pending">Pending</option>
+                    <option value="paid">Paid</option>
+                    <option value="fail">Fail</option>
+                  </select>
                   </td>
                   <td>
-                    <div className="action-buttons">
+                    <div className="action-buttons-booking">
                       <button
                         onClick={() => handleViewBooking(booking)}
                         className="btn-view"

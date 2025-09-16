@@ -12,8 +12,8 @@ const deleteUserController = require("../api/admin/deleteUserController");
 const updateUserProfile = require("../api/admin/updateUserProfileController");
 const getUserById = require("../api/admin/getUserByIdController");
 const createUserController = require("../api/admin/createUserController");
-const updatePaymentStatus = require('../api/admin/updatePaymentStatus.Controller');
-const deleteBooking = require('../api/admin/deleteBooking.Controller');
+const updatePaymentStatus = require('../api/admin/updatePaymentStatusController');
+const deleteBooking = require('../api/admin/deleteBookingController');
 
 // Nếu có auth middleware, bật khi cần bảo vệ Admin APIs
 // const verifyToken = require("../middleware/verifyToken");

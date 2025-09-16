@@ -301,7 +301,7 @@ const UserManagement = () => {
                 </td> */}
                 <td>{new Date(user.created_at).toLocaleDateString()}</td>
                 <td>
-                  <div className="action-buttons">
+                  <div className="action-buttons-user">
                     <button
                       onClick={() => handleViewUser(user)}
                       className="btn-view"

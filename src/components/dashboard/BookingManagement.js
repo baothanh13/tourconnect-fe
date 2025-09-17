@@ -163,7 +163,6 @@ const BookingManagement = () => {
     }
   };
 
-
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "confirmed":

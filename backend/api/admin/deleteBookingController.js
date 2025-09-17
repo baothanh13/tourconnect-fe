@@ -36,7 +36,6 @@ module.exports = async (req, res) => {
 
     // Delete related records first (if any foreign key constraints exist)
     // Delete from payments table if exists
-    await conn.execute("DELETE FROM payments WHERE booking_id = ?", [id]);
 
     // Delete from reviews table if exists
     await conn.execute("DELETE FROM reviews WHERE booking_id = ?", [id]);

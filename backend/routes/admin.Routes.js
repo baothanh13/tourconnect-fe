@@ -13,7 +13,7 @@ const updateUserProfile = require("../api/admin/updateUserProfileController");
 const getUserById = require("../api/admin/getUserByIdController");
 const createUserController = require("../api/admin/createUserController");
 const updatePaymentStatus = require('../api/admin/updatePaymentStatusController');
-const deleteBooking = require('../api/admin/deleteBookingController');
+const deleteBookingController = require('../api/admin/deleteBookingController');
 
 // Nếu có auth middleware, bật khi cần bảo vệ Admin APIs
 // const verifyToken = require("../middleware/verifyToken");
@@ -272,5 +272,5 @@ router.get("/users/:id", getUserById);
  */
 router.get("/activities", getSystemActivities);
 router.put('/:id/payment_status', updatePaymentStatus);
-router.delete('/:id', deleteBooking);
+router.delete("/bookings/:id", deleteBookingController);
 module.exports = router;

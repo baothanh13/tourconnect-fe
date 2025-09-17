@@ -1,26 +1,44 @@
-const sql = require('mssql');
+require("dotenv").config();
+const mysql = require("mysql2/promise");
 
 const config = {
-    user: 'tourconnect_user', 
-    password: 'Tienminh25052004@', 
-    server: 'localhost', 
-    database: 'TourConnect', 
-    options: {
-        encrypt: false,
-        trustServerCertificate: true 
-    }
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10, // Limit connections
+  queueLimit: 0,
 };
 
+// Create a connection pool instead of individual connections
+const pool = mysql.createPool(config);
+
 async function connectToDB() {
-    try {
-        await sql.connect(config);
-        console.log('Connected to SQL Server');
-    } catch (err) {
-        console.error('Database connection failed: ', err);
-    }
+  try {
+    const connection = await pool.getConnection();
+    connection.release(); // Always release the connection back to pool
+    return pool; // Return the pool for queries
+  } catch (err) {
+    console.error("❌ Database connection error:", err.message);
+    throw err;
+  }
 }
 
+// ✅ Helper query: luôn đảm bảo release connection
+async function query(sql, params) {
+  const connection = await pool.getConnection();
+  try {
+    const [results] = await connection.execute(sql, params);
+    return results;
+  } finally {
+    connection.release();
+  }
+}
+
+// Export the pool directly for queries
 module.exports = {
-    sql,
-    connectToDB
+  connectToDB,
+  pool,  // Export pool for direct use
+  query, // ✅ Export thêm helper query
 };

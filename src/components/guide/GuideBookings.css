@@ -1,0 +1,272 @@
+/* =========================================================
+   GuideBookings.css — LIGHT THEME + SMALL STATS CARDS (4 cột)
+   ========================================================= */
+
+/* ---------- Tokens ---------- */
+:root{
+  --page-bg: radial-gradient(1200px 600px at 20% -10%, #ede9f7 0%, #ffffff 55%) no-repeat,
+             linear-gradient(#ffffff,#ffffff);
+  --card-bg:#ffffff;
+  --text-strong:#0f172a;
+  --text-muted:#6b7280;
+  --border:#e5e7eb;
+
+  --shadow-sm: 0 1px 2px rgba(16,24,40,0.06);
+  --shadow-md: 0 8px 24px rgba(16,24,40,0.08), 0 2px 8px rgba(16,24,40,0.05);
+  --shadow-lg: 0 16px 40px rgba(16,24,40,0.10), 0 4px 12px rgba(16,24,40,0.06);
+
+  /* accent của stats */
+  --accent-1: linear-gradient(90deg,#6b6cfb 0%, #b38bff 100%);
+  --accent-2: linear-gradient(90deg,#ffb26b 0%, #ff6b6b 100%);
+  --accent-3: linear-gradient(90deg,#2dd4bf 0%, #10b981 100%);
+  --accent-4: linear-gradient(90deg,#60a5fa 0%, #2563eb 100%);
+}
+
+/* ---------- Page ---------- */
+.guide-bookings-page{
+  min-height:100vh;
+  background: linear-gradient(135deg, #ffffff 0%, #eaebed 100%);
+  padding:28px;
+  max-width:1300px;
+  margin:0 auto;
+  color:var(--text-strong);
+}
+
+/* ---------- Header ---------- */
+.bookings-header{
+  background: rgb(246, 246, 246);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:24px;
+  box-shadow:var(--shadow-md);
+  margin-bottom:24px;
+}
+.header-left{display:flex;align-items:center;gap:16px;}
+.back-button{
+  width:56px;height:56px;border-radius:14px;border:none;
+  background:#4b5563;color:#fff;display:grid;place-items:center;
+  box-shadow:var(--shadow-sm);cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.back-button:hover{transform:translateY(-1px);background:#374151;box-shadow:var(--shadow-md);}
+.bookings-header h1{margin:0 0 6px;font-size:2rem;font-weight:800;color:#0f172a;}
+.bookings-header p{margin:0;color:var(--text-muted);}
+
+/* =========================================================
+   STATS — SMALL CARDS (4 cột)
+   ========================================================= */
+.stats-grid{
+  display:grid !important;
+  grid-template-columns: repeat(4, minmax(240px, 1fr)) !important;
+  gap:18px !important;
+  margin-bottom:22px;
+}
+
+.stats-grid > .stat-card{
+  position:relative;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:18px 18px 16px !important;
+  min-height:112px !important;
+  display:flex;align-items:center;gap:14px;
+  box-shadow:var(--shadow-md);
+  transition:transform .15s ease, box-shadow .15s ease;
+  overflow:hidden;
+}
+.stats-grid > .stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.stats-grid > .stat-card::before{
+  content:""; position:absolute; left:18px; right:18px; top:12px; height:4px;
+  border-radius:999px; background:var(--accent-1); opacity:.95;
+}
+.stats-grid > .pending::before{background:var(--accent-2);}
+.stats-grid > .confirmed::before{background:var(--accent-3);}
+.stats-grid > .completed::before{background:var(--accent-4);}
+
+.stat-icon{
+  width:52px;height:52px;border-radius:14px;color:#fff;
+  display:grid;place-items:center;font-size:1.25rem;
+  background:#5146e5; box-shadow:inset 0 1px 0 rgba(255,255,255,.25), var(--shadow-sm);
+  margin-top:6px;
+}
+.pending .stat-icon{background:#f59e0b;}
+.confirmed .stat-icon{background:#10b981;}
+.completed .stat-icon{background:#3b82f6;}
+
+.stat-info h3{margin:8px 0 6px;font-size:1.35rem;font-weight:800;color:#0f172a;line-height:1;}
+.stat-info p{margin:0; font-size:.82rem; font-weight:700; letter-spacing:.06em;
+  color:var(--text-muted); text-transform:uppercase;}
+
+/* =========================================================
+   Search & Filter (card sáng + ô search dài)
+   ========================================================= */
+.bookings-controls-guide {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Mỗi cột chiếm 50% */
+  gap: 18px;
+  margin-bottom: 22px;
+  align-items: stretch; /* ép 2 khối cao bằng nhau */
+}
+
+.search-section,
+.filter-section-guide {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: var(--shadow-md);
+  height: 100%; /* đảm bảo chiếm toàn bộ chiều cao của grid cell */
+}
+
+.search-label,
+.filter-section label {
+  display: block;
+  margin-bottom: 12px;
+  color: #232a38;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+.search-input{
+  width:100%;
+  background:#f8fafc;
+  color:#0f172a;
+  border:1px solid #e6eaf1;
+  border-radius:999px;
+  padding:16px 18px;
+  font-size:1rem;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.8),
+    0 6px 14px rgba(17,24,39,.06),
+    0 18px 35px rgba(17,24,39,.08);
+}
+.search-input::placeholder{color:#9aa4b2;}
+.filter-info{color:#64748b;font-weight:600;padding-top:10px;font-size:.92rem;}
+
+/* Pills (nếu dùng button thay vì <select>) */
+.filter-tabs{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.filter-chip{
+  padding:10px 14px;border-radius:12px;border:1px solid #e6eaf1;
+  background:#ffffff;color:#334155;font-weight:600;cursor:pointer;
+  box-shadow:var(--shadow-sm);transition:all .15s ease;
+}
+.filter-chip:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.filter-chip.active{background:#1d4ed8;color:#fff;border-color:#1d4ed8;}
+
+/* =========================================================
+   Table (light)
+   ========================================================= */
+.bookings-table-container{
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:var(--shadow-md);
+}
+.bookings-table{width:100%;border-collapse:collapse;}
+.bookings-table thead{
+  background:#f8fafc; color:#111827; border-bottom:1px solid var(--border);
+}
+.bookings-table thead th{
+  padding:14px 12px;text-align:left;font-weight:700;font-size:.86rem;
+  letter-spacing:.05em;text-transform:uppercase;
+}
+.bookings-table tbody tr{border-bottom:1px solid var(--border);transition:background .12s ease;}
+.bookings-table tbody tr:hover{background:#f9fafb;}
+.bookings-table td{padding:14px 12px;vertical-align:middle;font-size:.95rem;color:#111827;}
+
+.booking-id{
+  font-family:ui-monospace,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+  background:#f1f5f9;border:1px solid #e5e7eb;color:#374151;
+  padding:3px 8px;border-radius:6px;font-size:.78rem;
+}
+.user-info,.tour-info,.date-info,.duration-info,.guests-info,.amount-info{
+  display:flex;align-items:center;gap:8px;color:#111827;
+}
+.user-icon,.location-icon,.calendar-icon,.duration-icon,.guests-icon,.amount-icon{
+  color:#64748b;font-size:.95rem;
+}
+.time-slot{color:#6b7280;font-size:.8rem;}
+.amount{font-weight:700;color:#16a34a;}
+
+/* Status badge */
+.status-badge{
+  display:inline-flex;align-items:center;gap:8px;padding:6px 12px;
+  border-radius:999px;font-size:.78rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  border:1px solid transparent;
+}
+.status-badge.success {background:#ecfdf5;border-color:#a7f3d0;color:#059669;}
+.status-badge.warning {background:#fff7ed;border-color:#fed7aa;color:#d97706;}
+.status-badge.danger  {background:#fef2f2;border-color:#fecaca;color:#dc2626;}
+.status-badge.info    {background:#eff6ff;border-color:#bfdbfe;color:#2563eb;}
+.status-badge.secondary{background:#f1f5f9;border-color:#e2e8f0;color:#475569;}
+
+/* Action buttons */
+.action-buttons{display:flex;gap:6px;align-items:center;}
+.btn-view,.btn-confirm,.btn-decline{
+  width:36px;height:36px;border-radius:10px;border:1px solid #e6eaf1;
+  display:grid;place-items:center;cursor:pointer;background:#ffffff;color:#475569;
+  box-shadow:var(--shadow-sm);transition:transform .12s ease, box-shadow .12s ease, background .12s ease, color .12s ease;
+}
+.btn-view:hover,.btn-confirm:hover,.btn-decline:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.btn-confirm{color:#059669;}
+.btn-confirm:hover{background:#10b981;color:#fff;border-color:#10b981;}
+.btn-decline{color:#dc2626;}
+.btn-decline:hover{background:#ef4444;color:#fff;border-color:#ef4444;}
+
+/* Empty state */
+.empty-state{
+  text-align:center;padding:56px 24px;background:var(--card-bg);
+  border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow-md);
+}
+.empty-state h3{margin:14px 0 6px;color:#334155;}
+.empty-state p{margin:0;color:#7b8798;}
+
+/* ---------- Modal ---------- */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(15,23,42,.35);
+  backdrop-filter:blur(2px);display:grid;place-items:center;z-index:1000;
+}
+.modal-content{
+  background:var(--card-bg);color:#0f172a;border:1px solid var(--border);
+  border-radius:20px;width:140%;max-width:900px;max-height:90vh;overflow-y:auto;
+  box-shadow:var(--shadow-lg);
+}
+.modal-header{
+  padding:18px 22px;background:#f8fafc;border-bottom:1px solid var(--border);
+  border-top-left-radius:20px;border-top-right-radius:20px;display:flex;justify-content:space-between;align-items:center;
+}
+.modal-header h3{margin:0;font-size:1.2rem;font-weight:700;display:flex;gap:8px;align-items:center;}
+.close-btn{
+  width:40px;height:40px;border-radius:10px;border:1px solid #e6eaf1;background:#ffffff;color:#334155;
+  display:grid;place-items:center;font-size:1.4rem;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .12s ease, box-shadow .12s ease;
+}
+.close-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.modal-body{padding:22px;}
+
+.booking-section{margin-bottom:22px;}
+.booking-section h4{
+  margin:0 0 10px;font-weight:700;color:#0f172a;display:flex;gap:8px;align-items:center;
+  padding-bottom:8px;border-bottom:1px solid var(--border);
+}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;}
+.booking-detail-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 12px;background:#f8fafc;border:1px solid var(--border);border-radius:10px;
+}
+.booking-id-full{
+  font-family:ui-monospace,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+  font-size:.78rem;background:#eef2f7;border:1px solid #e5e7eb;color:#374151;
+  padding:2px 6px;border-radius:6px;
+}
+.price-highlight{color:#16a34a !important;font-weight:800;}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px){
+  .stats-grid{grid-template-columns:repeat(2,minmax(240px,1fr)) !important;}
+}
+@media (max-width: 640px){
+  .guide-bookings-page{padding:18px;}
+  .stats-grid{grid-template-columns:1fr !important;}
+  .bookings-header h1{font-size:1.6rem;}
+  .stat-info h3{font-size:1.25rem;}
+}

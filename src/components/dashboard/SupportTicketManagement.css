@@ -1,0 +1,405 @@
+.support-ticket-management {
+  padding: 20px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.ticket-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ticket-management-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.filters select,
+.search-input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.search-input {
+  min-width: 200px;
+}
+
+.tickets-table {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.tickets-table table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px;
+}
+
+.tickets-table th,
+.tickets-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.tickets-table th {
+  background: #f1f3f4;
+  font-weight: 600;
+  color: #333;
+  position: sticky;
+  top: 0;
+}
+
+.tickets-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.ticket-id {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #2196f3;
+}
+
+.ticket-type {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ticket-type span {
+  text-transform: capitalize;
+}
+
+.ticket-subject strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.ticket-subject p {
+  margin: 0;
+  color: #666;
+  font-size: 12px;
+}
+
+.user-info span {
+  display: block;
+  color: #333;
+}
+
+.user-info small {
+  color: #666;
+  font-size: 11px;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-badge.success {
+  background: #e8f5e8;
+  color: #388e3c;
+}
+
+.status-badge.warning {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.status-badge.danger {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.status-badge.secondary {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.priority-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.priority-badge.high {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.action-buttons button {
+  padding: 6px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.action-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-view {
+  background: #2196f3;
+  color: white;
+}
+
+.btn-view:hover {
+  background: #1976d2;
+}
+
+.btn-progress {
+  background: #ff9800;
+  color: white;
+}
+
+.btn-progress:hover:not(:disabled) {
+  background: #f57c00;
+}
+
+.btn-resolve {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-resolve:hover:not(:disabled) {
+  background: #388e3c;
+}
+
+.btn-delete {
+  background: #f44336;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #d32f2f;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.ticket-section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ticket-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.ticket-section h4 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 16px;
+  border-left: 4px solid #2196f3;
+  padding-left: 10px;
+}
+
+.ticket-detail-item {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.ticket-detail-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.ticket-detail-item strong {
+  display: inline-block;
+  width: 120px;
+  color: #555;
+}
+
+.ticket-detail-item .status-badge {
+  margin-left: 10px;
+}
+
+.ticket-message {
+  margin: 8px 0 0 0;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border-left: 4px solid #2196f3;
+}
+
+.existing-response {
+  padding: 15px;
+  background: #e8f5e8;
+  border-radius: 4px;
+  border-left: 4px solid #4caf50;
+}
+
+.existing-response p {
+  margin: 0 0 10px 0;
+}
+
+.existing-response small {
+  color: #666;
+  font-style: italic;
+}
+
+.response-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.response-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.btn-submit-response {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  align-self: flex-start;
+}
+
+.btn-submit-response:hover {
+  background: #1976d2;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 20px;
+  border-top: 1px solid #eee;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-success {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #388e3c;
+}
+
+.btn-warning {
+  background: #ff9800;
+  color: white;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background: #f57c00;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+}

@@ -1,53 +1,103 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
-const Header = () => {
+const Header = ({ toggleSidebar }) => {
   const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
+    // Redirect to home page after logout
+    setTimeout(() => {
+      navigate("/");
+    }, 100); // Small delay to ensure logout completes
   };
 
   return (
     <header className="app-header">
-      <Link to="/" className="logo">
-        TourConnect
-      </Link>
+      <div className="header-left">
+        <button
+          className="sidebar-toggle"
+          onClick={toggleSidebar}
+          aria-label="Toggle menu"
+        >
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+          <span className="hamburger-line"></span>
+        </button>
+        <Link to="/" className="logo">
+          TourConnect
+        </Link>
+      </div>
 
       <nav className="nav-menu">
-        <Link to="/guides">Tìm Hướng Dẫn Viên</Link>
+        <Link to="/guides">Find Guides</Link>
+        <Link to="/tours">Tours</Link>
+        <Link to="/blog">Blog</Link>
+        <Link to="/help">Help</Link>
+        <Link to="/careers">Careers</Link>
+
+        {isAuthenticated && (
+          <Link to="/book-tour" className="book-tour-link">
+            Booking
+          </Link>
+        )}
 
         {isAuthenticated ? (
           <div className="user-menu">
             <span className="user-greeting">
-              Xin chào, {user.name || user.email}
-              {user.userType === "guide" && " (HDV)"}
-              {user.userType === "admin" && " (Admin)"}
-              {user.userType === "support" && " (Hỗ trợ)"}
+              <span className="greeting-text">Hi, </span>
+              <span className="user-name">
+                {(user.name || user.email).split(" ")[0]}
+              </span>
+              {user.role === "guide" && (
+                <span className="user-role"> (Guide)</span>
+              )}
+              {user.role === "admin" && (
+                <span className="user-role"> (Admin)</span>
+              )}
+              {user.role === "support" && (
+                <span className="user-role"> (Support)</span>
+              )}
+              {user.role === "tourist" && (
+                <span className="user-role"> (Tourist)</span>
+              )}
             </span>
 
-            {user.userType === "guide" && (
+            {user.role === "tourist" && (
+              <Link to="/tourist/dashboard" className="dashboard-link">
+                Dashboard
+              </Link>
+            )}
+
+            {user.role === "guide" && (
               <Link to="/guide/dashboard" className="dashboard-link">
                 Dashboard
               </Link>
             )}
 
-            {user.userType === "admin" && (
+            {user.role === "admin" && (
               <Link to="/admin/dashboard" className="dashboard-link">
-                Admin Panel
+                Admin
+              </Link>
+            )}
+
+            {user.role === "support" && (
+              <Link to="/support/dashboard" className="dashboard-link">
+                Support
               </Link>
             )}
 
             <button onClick={handleLogout} className="logout-btn">
-              Đăng xuất
+              Logout
             </button>
           </div>
         ) : (
           <div className="auth-links">
-            <Link to="/login">Đăng Nhập</Link>
+            <Link to="/login">Login</Link>
             <Link to="/register" className="register-link">
-              Đăng Ký
+              Register
             </Link>
           </div>
         )}

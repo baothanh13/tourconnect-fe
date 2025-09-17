@@ -1,224 +1,446 @@
-import React, { useState, useMemo } from 'react';
-import { mockGuides, cities, specialties } from '../data/mockData';
-import GuideCard from '../components/guide/GuideCard';
-import './GuidesListPage.css';
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
+import GuideCard from "../components/GuideCard";
+import guidesService from "../services/guidesService";
+import "./GuidesListPage.css";
+
+// Custom debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
 
 const GuidesListPage = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
-  const [selectedSpecialty, setSelectedSpecialty] = useState('');
-  const [priceRange, setPriceRange] = useState([0, 1000]);
-  const [minRating, setMinRating] = useState(0);
-  const [sortBy, setSortBy] = useState('rating');
-  const [availableOnly, setAvailableOnly] = useState(false);
+  const [guides, setGuides] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [totalResults, setTotalResults] = useState(0);
+  const [searchParams] = useSearchParams();
 
-  const filteredAndSortedGuides = useMemo(() => {
-    // Safety check for undefined mockGuides
-    if (!mockGuides || !Array.isArray(mockGuides)) {
-      return [];
-    }
-    
-    let filtered = mockGuides.filter(guide => {
-      // Search query filter
-      const matchesSearch = !searchQuery || 
-        guide.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        guide.bio.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        guide.specialties.some(spec => spec.toLowerCase().includes(searchQuery.toLowerCase()));
-
-      // City filter
-      const matchesCity = !selectedCity || guide.location === selectedCity;
-
-      // Specialty filter
-      const matchesSpecialty = !selectedSpecialty || guide.specialties.includes(selectedSpecialty);
-
-      // Price range filter
-      const matchesPrice = guide.pricePerHour >= priceRange[0] && guide.pricePerHour <= priceRange[1];
-
-      // Rating filter
-      const matchesRating = guide.rating >= minRating;
-
-      // Availability filter
-      const matchesAvailability = !availableOnly || guide.isAvailable;
-
-      return matchesSearch && matchesCity && matchesSpecialty && matchesPrice && matchesRating && matchesAvailability;
-    });
-
-    // Sort guides
-    return filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'rating':
-          return b.rating - a.rating;
-        case 'price-low':
-          return a.pricePerHour - b.pricePerHour;
-        case 'price-high':
-          return b.pricePerHour - a.pricePerHour;
-        case 'experience':
-          return b.experienceYears - a.experienceYears;
-        case 'reviews':
-          return b.totalReviews - a.totalReviews;
-        default:
-          return 0;
-      }
-    });
-  }, [searchQuery, selectedCity, selectedSpecialty, priceRange, minRating, sortBy, availableOnly]);
-
-  const resetFilters = () => {
-    setSearchQuery('');
-    setSelectedCity('');
-    setSelectedSpecialty('');
-    setPriceRange([0, 1000]);
-    setMinRating(0);
-    setSortBy('rating');
-    setAvailableOnly(false);
+  const initialFilters = {
+    location: searchParams.get("location") || "",
+    priceRange: [10, 100], // Set realistic default range
+    languages: [],
+    specialties: [],
+    rating: 0,
+    searchQuery: "",
+    page: 1,
+    limit: 20,
   };
+
+  // State for the filters that are ACTIVELY applied to the search
+  const [filters, setFilters] = useState(initialFilters);
+
+  // --- New state to hold the CURRENT form values ---
+  const [formFilters, setFormFilters] = useState(initialFilters);
+
+  const [sortBy, setSortBy] = useState("rating");
+
+  // Debounce the filters to prevent excessive API calls
+  const debouncedFilters = useDebounce(filters, 500);
+
+  useEffect(() => {
+    // This useEffect now calls the real API when debouncedFilters or sortBy change
+    const loadGuides = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        // Prepare API filters
+        const apiFilters = {
+          page: debouncedFilters.page,
+          limit: debouncedFilters.limit,
+        };
+
+        // Location filter
+        if (debouncedFilters.location.trim()) {
+          apiFilters.location = debouncedFilters.location.trim();
+        }
+
+        // Languages filter
+        if (debouncedFilters.languages.length > 0) {
+          apiFilters.languages = debouncedFilters.languages.join(",");
+        }
+
+        // Specialties filter (categories)
+        if (debouncedFilters.specialties.length > 0) {
+          apiFilters.specialties = debouncedFilters.specialties.join(",");
+        }
+
+        // Rating filter
+        if (debouncedFilters.rating > 0) {
+          apiFilters.minRating = debouncedFilters.rating;
+        }
+
+        // Price range filter - always send if user has modified it
+        if (
+          debouncedFilters.priceRange[0] > 0 ||
+          debouncedFilters.priceRange[1] < 100
+        ) {
+          apiFilters.priceRange = `${debouncedFilters.priceRange[0]}-${debouncedFilters.priceRange[1]}`;
+        }
+
+        // Only available guides
+        apiFilters.available = "true";
+
+        // Call the real API
+        const response = await guidesService.getGuides(apiFilters);
+
+        let guidesData = response.guides || [];
+
+        // Apply search query filter (since API doesn't have full text search yet)
+        if (debouncedFilters.searchQuery.trim()) {
+          const searchTerm = debouncedFilters.searchQuery.toLowerCase().trim();
+          guidesData = guidesData.filter(
+            (guide) =>
+              guide.user_name?.toLowerCase().includes(searchTerm) ||
+              guide.description?.toLowerCase().includes(searchTerm) ||
+              (guide.specialties || []).some((specialty) =>
+                specialty.toLowerCase().includes(searchTerm)
+              ) ||
+              (guide.languages || []).some((lang) =>
+                lang.toLowerCase().includes(searchTerm)
+              )
+          );
+        }
+
+        // Apply client-side sorting (since API doesn't support all sort options)
+        switch (sortBy) {
+          case "rating":
+            guidesData.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+            break;
+          case "price-low":
+            guidesData.sort(
+              (a, b) => (a.price_per_hour || 0) - (b.price_per_hour || 0)
+            );
+            break;
+          case "price-high":
+            guidesData.sort(
+              (a, b) => (b.price_per_hour || 0) - (a.price_per_hour || 0)
+            );
+            break;
+          case "reviews":
+            guidesData.sort(
+              (a, b) => (b.total_reviews || 0) - (a.total_reviews || 0)
+            );
+            break;
+          default:
+            break;
+        }
+
+        setGuides(guidesData);
+        setTotalResults(response.total || guidesData.length);
+      } catch (err) {
+        console.error("❌ Error loading guides:", err);
+        setError(err.message || "Failed to load guides");
+        setGuides([]);
+        setTotalResults(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadGuides();
+  }, [debouncedFilters, sortBy]);
+
+  // --- CHANGE 2: All input handlers now update the temporary `formFilters` state ---
+  const handleFilterChange = (filterType, value) => {
+    setFormFilters((prev) => ({
+      ...prev,
+      [filterType]: value,
+    }));
+  };
+
+  const handleLanguageToggle = (language) => {
+    setFormFilters((prev) => ({
+      ...prev,
+      languages: prev.languages.includes(language)
+        ? prev.languages.filter((lang) => lang !== language)
+        : [...prev.languages, language],
+    }));
+  };
+
+  const handleSpecialtyToggle = (specialty) => {
+    setFormFilters((prev) => ({
+      ...prev,
+      specialties: prev.specialties.includes(specialty)
+        ? prev.specialties.filter((spec) => spec !== specialty)
+        : [...prev.specialties, specialty],
+    }));
+  };
+
+  // --- CHANGE 3: Create a new function to apply the form filters to the search ---
+  const handleApplyFilters = () => {
+    setFilters(formFilters);
+  };
+
+  const clearFilters = () => {
+    setFormFilters(initialFilters);
+    setFilters(initialFilters); // Also reset the active filters
+  };
+
+  const availableLanguages = [
+    "English",
+    "Vietnamese",
+    "French",
+    "Spanish",
+    "German",
+    "Korean",
+    "Japanese",
+  ];
+  const availableSpecialties = [
+    "Food Tours",
+    "Cultural Tours",
+    "Historical Sites",
+    "Architecture",
+    "Photography",
+    "Art & Culture",
+    "Adventure",
+    "Nature",
+    "Beach Activities",
+    "Water Sports",
+    "Royal Heritage",
+  ];
+
+  if (loading) {
+    return <LoadingSpinner message="Finding amazing guides for you..." />;
+  }
 
   return (
     <div className="guides-list-page">
-      <div className="container">
-        <div className="page-header">
-          <h1>Find Your Perfect Tour Guide</h1>
-          <p>Discover amazing local experiences with verified professional guides</p>
-        </div>
+      <div className="page-header">
+        <h1>Find Your Perfect Guide</h1>
+        <p>Discover local experts ready to show you the authentic Vietnam</p>
+      </div>
 
-        {/* Search and Filter Section */}
-        <div className="search-filter-section">
-          <div className="search-bar">
+      <div className="guides-content">
+        <aside className="filters-panel">
+          <div className="filters-header">
+            <h3>Filters</h3>
+            <button className="clear-filters" onClick={clearFilters}>
+              Clear All
+            </button>
+          </div>
+
+          {/* All inputs now use `formFilters` for their value */}
+          <div className="filter-group">
+            <label>Search</label>
             <input
               type="text"
-              placeholder="Search guides, specialties, or locations..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
+              placeholder="Guide name or specialty..."
+              value={formFilters.searchQuery}
+              onChange={(e) =>
+                handleFilterChange("searchQuery", e.target.value)
+              }
+              className="filter-input"
             />
           </div>
 
-          <div className="filters-container">
-            <div className="filter-row">
-              <div className="filter-group">
-                <label>City/Location</label>
-                <select 
-                  value={selectedCity} 
-                  onChange={(e) => setSelectedCity(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="">All Cities</option>
-                  {cities && cities.map(city => (
-                    <option key={city} value={city}>{city}</option>
-                  ))}
-                </select>
-              </div>
+          <div className="filter-group">
+            <label>Location</label>
+            <input
+              type="text"
+              placeholder="City or region..."
+              value={formFilters.location}
+              onChange={(e) => handleFilterChange("location", e.target.value)}
+              className="filter-input"
+            />
+          </div>
 
-              <div className="filter-group">
-                <label>Specialty</label>
-                <select 
-                  value={selectedSpecialty} 
-                  onChange={(e) => setSelectedSpecialty(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="">All Specialties</option>
-                  {specialties && specialties.map(specialty => (
-                    <option key={specialty} value={specialty}>{specialty}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="filter-group">
-                <label>Sort By</label>
-                <select 
-                  value={sortBy} 
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="rating">Highest Rated</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="experience">Most Experienced</option>
-                  <option value="reviews">Most Reviews</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="filter-row">
-              <div className="filter-group">
-                <label>Price Range: ${priceRange[0]} - ${priceRange[1]}/hour</label>
-                <div className="price-range-container">
+          <div className="filter-group">
+            <label>Price Range ($/hour)</label>
+            <div className="price-range">
+              <div className="price-inputs">
+                <div className="price-input-group">
+                  <label>Min: ${formFilters.priceRange[0]}</label>
                   <input
                     type="range"
                     min="0"
-                    max="1000"
-                    value={priceRange[0]}
-                    onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
-                    className="price-range-slider"
+                    max="100"
+                    value={formFilters.priceRange[0]}
+                    onChange={(e) =>
+                      handleFilterChange("priceRange", [
+                        parseInt(e.target.value),
+                        formFilters.priceRange[1],
+                      ])
+                    }
+                    className="price-slider"
                   />
+                </div>
+                <div className="price-input-group">
+                  <label>Max: ${formFilters.priceRange[1]}</label>
                   <input
                     type="range"
                     min="0"
-                    max="1000"
-                    value={priceRange[1]}
-                    onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                    className="price-range-slider"
+                    max="200"
+                    value={formFilters.priceRange[1]}
+                    onChange={(e) =>
+                      handleFilterChange("priceRange", [
+                        formFilters.priceRange[0],
+                        parseInt(e.target.value),
+                      ])
+                    }
+                    className="price-slider"
                   />
                 </div>
               </div>
-
-              <div className="filter-group">
-                <label>Minimum Rating</label>
-                <select 
-                  value={minRating} 
-                  onChange={(e) => setMinRating(parseFloat(e.target.value))}
-                  className="filter-select"
-                >
-                  <option value={0}>Any Rating</option>
-                  <option value={3}>3+ Stars</option>
-                  <option value={4}>4+ Stars</option>
-                  <option value={4.5}>4.5+ Stars</option>
-                </select>
+              <div className="price-display">
+                ${formFilters.priceRange[0]} - ${formFilters.priceRange[1]}
               </div>
+            </div>
+          </div>
 
-              <div className="filter-group checkbox-group">
-                <label className="checkbox-label">
+          <div className="filter-group">
+            <label>Languages</label>
+            <div className="checkbox-group">
+              {availableLanguages.map((language) => (
+                <label key={language} className="checkbox-item">
                   <input
                     type="checkbox"
-                    checked={availableOnly}
-                    onChange={(e) => setAvailableOnly(e.target.checked)}
+                    checked={formFilters.languages.includes(language)}
+                    onChange={() => handleLanguageToggle(language)}
                   />
-                  Available Now Only
+                  <span>{language}</span>
                 </label>
-              </div>
-
-              <div className="filter-group">
-                <button onClick={resetFilters} className="reset-filters-btn">
-                  Reset Filters
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Results Section */}
-        <div className="results-section">
-          <div className="results-header">
-            <p className="results-count">
-              {filteredAndSortedGuides.length} guide{filteredAndSortedGuides.length !== 1 ? 's' : ''} found
-            </p>
-          </div>
-
-          {filteredAndSortedGuides.length === 0 ? (
-            <div className="no-results">
-              <h3>No guides found</h3>
-              <p>Try adjusting your filters or search criteria</p>
-              <button onClick={resetFilters} className="reset-btn">
-                Clear All Filters
-              </button>
-            </div>
-          ) : (
-            <div className="guides-grid">
-              {filteredAndSortedGuides.map(guide => (
-                <GuideCard key={guide.id} guide={guide} />
               ))}
             </div>
+          </div>
+
+          <div className="filter-group">
+            <label>Specialties</label>
+            <div className="checkbox-group">
+              {availableSpecialties.map((specialty) => (
+                <label key={specialty} className="checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={formFilters.specialties.includes(specialty)}
+                    onChange={() => handleSpecialtyToggle(specialty)}
+                  />
+                  <span>{specialty}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="filter-group">
+            <label>Minimum Rating</label>
+            <div className="rating-filter">
+              {[4, 4.5, 4.8].map((rating) => (
+                <button
+                  key={rating}
+                  className={`rating-button ${
+                    formFilters.rating === rating ? "active" : ""
+                  }`}
+                  onClick={() =>
+                    handleFilterChange(
+                      "rating",
+                      formFilters.rating === rating ? 0 : rating
+                    )
+                  }
+                >
+                  ⭐ {rating}+
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* --- CHANGE 4: Add the "Apply Filters" button --- */}
+          <div className="filter-group">
+            <button className="apply-filters-btn" onClick={handleApplyFilters}>
+              Apply Filters
+            </button>
+          </div>
+        </aside>
+
+        <main className="results-panel">
+          {error && (
+            <div className="error-message">
+              <h3>❌ Error Loading Guides</h3>
+              <p>{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="btn-primary"
+              >
+                Try Again
+              </button>
+            </div>
           )}
-        </div>
+
+          {!error && (
+            <>
+              <div className="results-header">
+                <div className="results-info">
+                  <span>{totalResults} guides found</span>
+                </div>
+                <div className="sort-controls">
+                  <label>Sort by:</label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="sort-select"
+                  >
+                    <option value="rating">Highest Rated</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="reviews">Most Reviews</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="guides-grid">
+                {guides.map((guide) => (
+                  <GuideCard
+                    key={guide.id}
+                    guide={{
+                      // API field mapping - keep original field names
+                      id: guide.id,
+                      user_name: guide.user_name,
+                      user_email: guide.user_email,
+                      phone: guide.phone,
+                      location: guide.location,
+                      current_location: guide.current_location,
+                      avatar_url:
+                        guide.avatar_url ||
+                        "https://images.unsplash.com/photo-1494790108755-2616b612b372?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150&q=80",
+                      rating: guide.rating,
+                      total_reviews: guide.total_reviews,
+                      price_per_hour: guide.price_per_hour,
+                      experience_years: guide.experience_years,
+                      description: guide.description,
+                      languages: guide.languages || [],
+                      specialties: guide.specialties || [],
+                      certificates: guide.certificates || [],
+                      is_available: guide.is_available,
+                      verification_status: guide.verification_status,
+                    }}
+                  />
+                ))}
+              </div>
+
+              {guides.length === 0 && !loading && (
+                <div className="no-results">
+                  <h3>No guides found</h3>
+                  <p>Try adjusting your filters or search criteria</p>
+                  <button onClick={clearFilters} className="btn-primary">
+                    Clear Filters
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </main>
       </div>
     </div>
   );

@@ -1,0 +1,128 @@
+/* Reviews Management Styles - slightly larger table to show full info */
+.reviews-management {
+  padding: 20px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.reviews-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reviews-management-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.header-actions .refresh-btn {
+  padding: 10px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  color: #374151;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  width: 100px;
+}
+
+.header-actions .refresh-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.error-banner {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.no-reviews {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  color: #6b7280;
+}
+
+.reviews-table {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.reviews-table table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px; /* slightly wider than tours to fit long comments */
+}
+
+.reviews-table th,
+.reviews-table td {
+  padding: 14px; /* slightly larger paddings */
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 15px; /* a bit larger text */
+}
+
+.reviews-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #555;
+}
+
+.mono-cell {
+  font-family: "Monaco", "Menlo", "Consolas", monospace;
+  font-weight: 600;
+  color: #555;
+}
+
+.title-cell {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comment-cell {
+  max-width: 600px; /* allow longer comments */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rating-cell {
+  font-weight: 700;
+  color: #0ea5e9;
+}
+
+@media (max-width: 768px) {
+  .reviews-management {
+    padding: 10px;
+  }
+
+  .reviews-management-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .reviews-table table {
+    min-width: 900px;
+  }
+}
+
+

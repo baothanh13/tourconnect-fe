@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const momoCreate = require("../api/payment/momoCreate.Controller");
-const momoCallback = require("../api/payment/momoCallback.Controller");
-const getPaymentStatus = require("../api/payment/getPaymentStatus.Controller");
+const momoCreate = require("../api/payment/momoCreate.Controller.js");
+const momoCallback = require("../api/payment/momoCallback.Controller.js");
+const getPaymentStatus = require("../api/payment/getPaymentStatus.Controller.js");
 
 /**
  * @swagger
